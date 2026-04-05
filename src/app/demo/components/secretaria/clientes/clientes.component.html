@@ -1,0 +1,327 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px;">
+    <h4 style="margin-top: -10px;">Mis Clientes</h4>
+</div>
+<div class="card">
+    <p-table class="centered-table" [value]="clientes" [lazy]="true" (onLazyLoad)="onLazyLoad($event)"
+        [totalRecords]="totalRecords" [rows]="10" [paginator]="true" responsiveLayout="scroll" styleClass="relative"
+        [ngClass]="{'table-shadow': loading}">
+        <ng-template pTemplate="caption">
+            <div class="flex justify-content-between flex-column sm:flex-row">
+                <button pButton pRipple label="Nuevo Cliente" icon="pi pi-plus" class="mr-2 mb-2"
+                    (click)="showModalDialog()"></button>
+                <span class="p-input-icon-left mb-2">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Código del Cliente" class="w-full"
+                        (input)="onInputChange('id', $event)" />
+                </span>
+
+                <span class="p-input-icon-left mb-2">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Nombre o Apellido" class="w-full"
+                        (input)="onInputChange('nombreApellido', $event)" />
+                </span>
+
+                <span class="p-input-icon-left mb-2">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Nº de Cédula" class="w-full"
+                        (input)="onInputChange('cedula', $event)" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center;">Código</th>
+                <th style="text-align: center;">Nombres</th>
+                <th style="text-align: center;">Apellidos</th>
+                <th style="text-align: center;">Nº de Céduda</th>
+                <th style="text-align: center;">Nº de Celular</th>
+                <th style="text-align: center;">Recinto</th>
+                <th style="text-align: center;">Nº de Hectáreas</th>
+                <th style="text-align: center;">Certificado</th>
+                <th style="text-align: center;">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cliente>
+            <tr>
+                <td style="text-align: center;">{{cliente.id}}</td>
+                <td style="text-align: center;">{{cliente.nombres}}</td>
+                <td style="text-align: center;">{{cliente.apellidos}}</td>
+                <td style="text-align: center;">{{cliente.cedula}}</td>
+                <td style="text-align: center;">{{cliente.telefono}}</td>
+                <td style="text-align: center;">{{cliente.recinto.nombreRecinto}}</td>
+                <td style="text-align: center;">{{cliente.hectareas}}</td>
+                <td style="text-align: center;">
+                    <button *ngIf="cliente.certificado" pButton pRipple type="button" label="Si"
+                        class="p-button-outlined mr-2 mb-2" (click)="confirmCertificadoChange(cliente)"></button>
+
+                    <button *ngIf="!cliente.certificado" pButton pRipple type="button" label="No"
+                        class="p-button-outlined p-button-danger mr-2 mb-2"
+                        (click)="confirmCertificadoChange(cliente)"></button>
+                </td>
+                <td style="text-align: center;"><button pButton pRipple type="button" icon="pi pi-pencil"
+                        class="p-button-success mr-2 mb-2" (click)="showEditModalDialog(cliente)"></button></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="8">No existen registros</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="8">Loading users data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div *ngIf="loading" class="table-loading-overlay">
+        <div class="loading-box">
+            <p-progressSpinner styleClass="spinner-overlay"></p-progressSpinner>
+        </div>
+    </div>
+</div>
+
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+<!-- Modal para registrar un nuevo recinto -->
+<p-dialog [(visible)]="displayRecintoModal" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="registerFormRecinto" (ngSubmit)="onSubmitRecinto()">
+        <h3 style="text-align: center;">Nuevo Recinto</h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="CloseRecintoModalDialog()"
+                class="p-button-danger mr-2 mb-2 "></button>
+        </div>
+        <div class="grid p-fluid mt-3">
+            <div class="field col-12">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-home"></i>
+                    </span>
+                    <input id="nombreRecinto" type="text" pInputText placeholder="Nombre del recinto"
+                        formControlName="nombreRecinto" required />
+                </div>
+                <div *ngIf="registerFormRecinto.get('nombreRecinto')?.invalid && (registerFormRecinto.get('nombreRecinto')?.dirty || registerFormRecinto.get('nombreRecinto')?.touched)"
+                    class="p-error">
+                    Nombre del recinto es requerido.
+                </div>
+            </div>
+
+            <div class="flex flex-column" style="height: 100%; position: relative; padding-bottom: 100px;">
+                <div class="flex justify-content-end mt-auto" style="position: absolute; bottom: 0; right: 16px;">
+                    <button pButton pRipple label="Registrar" type="submit" icon="pi pi-save"></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+<!-- Modal para registrar un nuevo usuario -->
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <h3 style="text-align: center;">Nuevo Cliente</h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="CloseModalDialog()"
+                class="p-button-danger mr-2 mb-2 "></button>
+        </div>
+        <div class="grid p-fluid mt-3">
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="nombre" />
+                        <label for="nombre">Nombres</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="apellido" />
+                        <label for="apellido">Apellidos</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-id-card"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="cedula" lenght="10" />
+                        <label for="cedula">Nº de Cédula</label>
+                    </span>
+                </div>
+                <div *ngIf="registerForm.get('cedula')?.invalid && (registerForm.get('cedula')?.dirty || registerForm.get('cedula')?.touched)"
+                    class="p-error">
+                    <small *ngIf="registerForm.get('cedula')?.errors?.['pattern']">Solo se permiten números</small>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6" style="position: relative;">
+                <p-dropdown placeholder="Seleccione el recinto" [options]="recintos" optionLabel="nombreRecinto"
+                    formControlName="recinto" [showClear]="true" [appendTo]="'body'" [filter]="true"
+                    filterPlaceholder="Buscar Recinto" (onFilter)="onFilter($event)"
+                    (onChange)="onRecintoSelect($event)">
+                </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-phone"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="telefono" />
+                        <label for="telefono">Nro. Celular</label>
+                    </span>
+                </div>
+                <div *ngIf="registerForm.get('telefono')?.invalid && (registerForm.get('telefono')?.dirty || registerForm.get('telefono')?.touched)"
+                    class="p-error">
+                    <small *ngIf="registerForm.get('telefono')?.errors?.['pattern']">Solo se permiten números</small>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-globe"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="hectareas" />
+                        <label for="hectareas">Nro. de Hectáreas</label>
+                    </span>
+                </div>
+                <div *ngIf="registerForm.get('hectareas')?.invalid && (registerForm.get('hectareas')?.dirty || registerForm.get('hectareas')?.touched)"
+                    class="p-error">
+                    <small *ngIf="registerForm.get('hectareas')?.errors?.['pattern']">Solo se permiten números y un
+                        punto decimal.</small>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-content-between">
+            <div>
+                <button pButton label="Agregar Nuevo Recinto" (click)="showRecintoModalDialog()" type="button"
+                    icon="pi pi-plus" class="p-button-success" style="margin-right: 10px;"></button>
+            </div>
+            <div class="flex justify-content-end">
+
+                <button pButton label="Registrar" icon="pi pi-save" type="submit"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+<p-dialog [(visible)]="displayEditModal" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
+
+    <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+        <h3 style="text-align: center;">Actualización de Cliente</h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="CloseEditModalDialog()"
+                class="p-button-danger mr-2 mb-2 "></button>
+        </div>
+        <div class="grid p-fluid mt-3">
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="nombre" />
+                        <label for="nombre">Nombres</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="apellido" />
+                        <label for="apellido">Apellidos</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-id-card"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="cedula" />
+                        <label for="cedula">Nº de Cédula</label>
+                    </span>
+                </div>
+                <div *ngIf="editForm.get('cedula')?.invalid && (editForm.get('cedula')?.dirty || editForm.get('cedula')?.touched)"
+                    class="p-error">
+                    <small *ngIf="editForm.get('cedula')?.errors?.['pattern']">Solo se permiten números</small>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6" style="position: relative;">
+                <p-dropdown placeholder="Seleccione el recinto" [options]="recintos" optionLabel="nombreRecinto"
+                    formControlName="recinto" [showClear]="true" [filter]="true" [appendTo]="'body'"
+                    filterPlaceholder="Buscar Recinto" (onFilter)="onFilter($event)"
+                    (onChange)="onRecintoSelect($event)">
+                </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-phone"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="telefono" />
+                        <label for="telefono">Nro. Celular</label>
+                    </span>
+                </div>
+                <div *ngIf="editForm.get('telefono')?.invalid && (editForm.get('telefono')?.dirty || editForm.get('telefono')?.touched)"
+                    class="p-error">
+                    <small *ngIf="editForm.get('telefono')?.errors?.['pattern']">Solo se permiten números</small>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-globe"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="hectareas" />
+                        <label for="hectareas">Nro. de Hectáreas</label>
+                    </span>
+                </div>
+                <div *ngIf="editForm.get('hectareas')?.invalid && (editForm.get('hectareas')?.dirty || editForm.get('hectareas')?.touched)"
+                    class="p-error">
+                    <small *ngIf="editForm.get('hectareas')?.errors?.['pattern']">Solo se permiten números y un
+                        punto decimal.</small>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-content-between">
+            <div>
+                <button pButton label="Agregar Nuevo Recinto" (click)="showRecintoModalDialog()" type="button"
+                    icon="pi pi-plus" class="p-button-success" style="margin-right: 10px;"></button>
+            </div>
+            <div class="flex justify-content-end">
+                <button pButton label="Actualizar Datos" icon="pi pi-save" type="submit"
+                    class="p-button-raised p-button-primary"></button>
+                <button pButton label="Nuevo Cliente" icon="pi pi-replay" (click)="onEditDeleteSubmit()"
+                    class="p-button-raised p-button-secondary ml-2"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>

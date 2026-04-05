@@ -1,0 +1,28 @@
+.status-label {
+   padding: 0.25rem 0.5rem;
+   border-radius: 0.25rem;
+   font-weight: bold;
+   display: inline-block;
+   text-align: center;
+   min-width: 80px;
+}
+
+.status-activo {
+   background-color: #e79494;
+   color: #a81616;
+}
+
+.status-pagado {
+   background-color: #c3e6cb;
+   color: #155724;
+}
+
+.dialog-header {
+   position: relative;
+}
+
+.cancel-button {
+   position: absolute;
+   top: 10px;
+   right: 10px;
+}

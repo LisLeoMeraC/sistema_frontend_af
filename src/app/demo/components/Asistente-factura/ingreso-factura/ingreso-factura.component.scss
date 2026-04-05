@@ -1,0 +1,38 @@
+.table-loading-overlay {
+    position: absolute;
+    top: 33%; /* Mover más hacia abajo */
+    left: 13%; /* Mover más hacia la derecha */
+    width: 60%; /* Ancho opcional */
+    height: 60%; /* Altura opcional */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.loading-box {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 1px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.spinner-overlay {
+    width: 60px;
+    height: 70px;
+    z-index: 100;
+}
+
+p-table.relative {
+    position: relative;
+}
+
+.table-shadow {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+    transition: box-shadow 0.3s ease; /* Animación suave */
+}
+
+.table-row-hover {
+    cursor: pointer;
+}

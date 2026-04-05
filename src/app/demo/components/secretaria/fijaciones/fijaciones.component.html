@@ -1,0 +1,444 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px">
+    <h4 style="margin-top: -10px">Mis Fijaciones</h4>
+</div>
+<div class="card">
+    
+    <p-table [value]="fijaciones" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+
+            <form [formGroup]="searchForm">
+                <div class="grid p-fluid">
+
+                    <div class="col-12 md:col-3">
+                        <div class="p-inputgroup">
+                            <button pButton pRipple label="Nueva Fijación" icon="pi pi-plus" class="mr-2"
+                                (click)="registrarFijacion()" [disabled]="!allFijacionesCortadas"></button>
+                        </div>
+                    </div>
+                    <!-- Primera columna: Fecha Inicio -->
+                    <div class="col-12 md:col-3">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-calendar"></i>
+                            </span>
+                            <span class="p-float-label">
+                                <p-calendar id="fechaInicio" formControlName="fechaI" [showIcon]="true"
+                                    dateFormat="dd/mm/yy" [appendTo]="'body'">
+                                </p-calendar>
+                                <label for="fechaInicio">Fecha Inicio</label>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Segunda columna: Fecha Fin -->
+                    <div class="col-10 md:col-3">
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-calendar"></i>
+                            </span>
+                            <span class="p-float-label">
+                                <p-calendar id="fechaFin" formControlName="fechaF" [showIcon]="true"
+                                    dateFormat="dd/mm/yy" [appendTo]="'body'">
+                                </p-calendar>
+                                <label for="fechaFin">Fecha Fin</label>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Tercera columna: Botones -->
+                    <div class="col-12 md:col-3">
+                        <div class="p-inputgroup">
+                            <button pButton type="button" (click)="cargarFijacionesPorFecha()" label="Buscar "
+                                icon="pi pi-search" class="mr-2"></button>
+                            <button pButton type="button" (click)="limpiarControles()" label="Limpiar"
+                                icon="pi pi-trash" class="p-button-warning"></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="flex table-header"></div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th></th>
+                <th style="min-width: 10rem" pSortableColumn="Cod">Cod</th>
+                <th style="min-width: 10rem" pSortableColumn="descripcion">
+                    Descripción
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="fechaInicio">
+                    Fecha Inicio
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="fechaCorte">
+                    Fecha de Corte
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="acciones">
+                    Acciones
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-fijacion let-expanded="expanded">
+            <tr>
+                <td>
+                    <button type="button" pButton pRipple (click)="toggleRow(fijacion)"
+                        class="p-button-text p-button-rounded p-button-plain" [icon]="
+                            expanded
+                                ? 'pi pi-chevron-down'
+                                : 'pi pi-chevron-right'
+                        "></button>
+                </td>
+                <td style="min-width: 10rem">{{ fijacion.id }}</td>
+                <td style="min-width: 1rem">{{ fijacion.descripcion }}</td>
+                <td style="min-width: -10rem">
+                    {{ fijacion.fechaInicio | date : "yyyy-MM-dd" }}
+                </td>
+                <td style="min-width: 7rem">{{ fijacion.fechaCorte | date : "yyyy-MM-dd" }}</td>
+                <td style="min-width: 5rem">
+                    <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-success mb-2 mr-2"
+                        pTooltip="Fijar" tooltipPosition="top" (click)="openNuevoFijadosDialog(fijacion)"
+                        [disabled]="fijacion.fechaCorte != null"></button>
+
+                    <button pButton pRipple type="button" icon="pi pi-chart-line" class="p-button-warning mb-2 mr-2"
+                        pTooltip="QQ Enviado" tooltipPosition="top" (click)="openNewEnviadosDialog(fijacion)"
+                        [disabled]="fijacion.fechaCorte != null"></button>
+
+                    <button pButton pRipple type="button" icon="pi pi-pause" class="p-button-danger mb-2 mr-2"
+                        pTooltip="Hacer Corte" tooltipPosition="top" (click)="confirmHacerCorteFijacion(fijacion)"
+                        [disabled]="fijacion.fechaCorte != null"></button>
+
+                </td>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-fijacion>
+            <tr>
+                <td colspan="7">
+                    <div class="p-3">
+                        <p-table [value]="fijacion.detalleFijacion" dataKey="id" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center;" pSortableColumn="fecha">Fecha</th>
+                <th style="text-align: center;" pSortableColumn="qqFijados">QQ Fijados</th>
+                <th style="text-align: center;" pSortableColumn="precio">Precio</th>
+                <th style="text-align: center;" pSortableColumn="qqEnviados">QQ Enviados</th>
+                <th style="text-align: center;" pSortableColumn="qqEnviados">Custodia</th>
+                <th style="text-align: center;" pSortableColumn="qqEnviados">Transporte</th>
+                <th style="text-align: center;" pSortableColumn="qqEnviados">Valor Total</th>
+                <th style="text-align: center;" pSortableColumn="qqEnviados">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-detalle>
+            <tr>
+                <td style="text-align: center;">{{ detalle.fecha }}</td>
+                <td style="text-align: center;">{{ detalle.qqFijados | number:'1.2-2'}}</td>
+                <td style="text-align: center;">{{ detalle.precio | number:'1.2-2' }}</td>
+                <td style="text-align: center;">{{ detalle.qqEnviados | number:'1.2-2' }}</td>
+                <td style="text-align: center;">
+                    {{ detalle.custodia | number:'1.2-2' }}
+                    <span *ngIf="detalle.custodia && detalle.qqEnviados">({{ detalle.custodia * detalle.qqEnviados | number:'1.2-2' }})</span>
+                </td>
+                <td style="text-align: center;">
+                    {{ detalle.transporte | number:'1.2-2' }}
+                    <span *ngIf="detalle.transporte">({{detalle.transporte * detalle.qqEnviados | number:'1.2-2'}})</span>
+                </td>
+                <td style="text-align: center;">{{ detalle.qqFijados * detalle.precio | number:'1.2-2' }}</td>
+                <td style="text-align: center;">
+                    <button pButton pRipple type="button" icon="pi pi-pencil" (click)="openDialogEdicion(detalle)"
+                        class="p-button-primary p-button-text mr-2 mb-2" pTooltip="Editar Registro"
+                        tooltipPosition="top"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash"
+                        class="p-button-danger p-button-text mr-2 mb-2" (click)="confirmDeleteDetalleFijacion(detalle, fijacion)" pTooltip="Eliminar Registro"
+                        tooltipPosition="top"></button>
+
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">No existen registros.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Inputs que se mostrarán solo si la fila está expandida -->
+    <div class="grid p-fluid justify-content-end">
+        <!-- Primera fila de inputs -->
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-plus"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="totalQQFijados| number:'1.2-2'" disabled class="red-text" />
+                    <label for="cantidadVendida">Total QQ Fijados</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-dollar"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="totalQQEnviados | number:'1.2-2'" disabled
+                        class="red-text" />
+                    <label for="totalRecibido">Total QQ Enviados</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-percentage"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" class="imputTotales" pInputText
+                        [value]="totalMultiplicacion | currency:'USD':'code'" disabled class="red-text" />
+                    <label for="SumaTotal">Total Dinero</label>
+                </span>
+            </div>
+        </div>
+        <!-- Segunda fila de inputs (nuevos) -->
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-plus"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="qqPendientes| number:'1.2-2'" disabled class="red-text" />
+                    <label for="qqPendientes">QQ Pendientes</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-dollar"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="sacosPendientes| number:'1.2-2'" disabled class="red-text" />
+                    <label for="sacosPendientes">Sacos Pendientes</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-percentage"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" class="imputTotales" pInputText [value]="precioPromedio| currency:'USD':'code'"
+                        disabled class="red-text" />
+                    <label for="precioPromedio">Precio Promedio</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-tag"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="retencion| currency:'USD':'code'" disabled
+                        class="red-text" />
+                    <label for="nuevoCampo4">Retencion 1.75%</label>
+                </span>
+            </div>
+        </div>
+        <div class="col-12 md:col-3">
+            <div class="p-inputgroup mt-2">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-calendar"></i>
+                </span>
+                <span class="p-float-label">
+                    <input type="text" pInputText [value]="precioNeto | currency:'USD':'code'" disabled
+                        class="red-text" />
+                    <label for="nuevoCampo5">Precio Neto</label>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+</div>
+
+
+<p-confirmDialog header="Confirmación" key="confirmDelReg" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+
+<p-confirmDialog header="Confirmación" key="confirmHaCorte" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+<p-dialog [(visible)]="dialogDetalleFijados" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="detalleFijadosForm">
+        <h3 style="text-align: center;" class="mt-3">{{ esEdicion ? 'Editar Fijación de Cacao' : 'Nueva Fijación de
+            Cacao' }}</h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeFijadoDialog()"
+                class="p-button-danger mr-2 "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="p-inputgroup ">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-code"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="codFijacion" />
+                        <label for="codFijacion">Código de Fijación</label>
+                    </span>
+
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fechaIngreso" formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fecha">Fecha</label>
+                    </span>
+                </div>
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-hourglass"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="qqFijados" />
+                        <label for="qqFijados">QQ Fijados</label>
+                    </span>
+                </div>
+                <div *ngIf="detalleFijadosForm.get('qqFijados')?.invalid && (detalleFijadosForm.get('qqFijados')?.dirty || detalleFijadosForm.get('qqFijados')?.touched)" class="p-error">
+                    <small *ngIf="detalleFijadosForm.get('qqFijados')?.errors?.['pattern']">Solo se permiten números y un punto decimal.</small>                
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-dollar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="precio" />
+                        <label for="precio">Precio</label>
+                    </span>
+                </div>
+                <div *ngIf="detalleFijadosForm.get('precio')?.invalid && (detalleFijadosForm.get('precio')?.dirty || detalleFijadosForm.get('precio')?.touched)" class="p-error">
+                    <small *ngIf="detalleFijadosForm.get('precio')?.errors?.['pattern']">Solo se permiten números y un punto decimal.</small>                
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton [label]="esEdicion ? 'Actualizar' : 'Registrar'" type="button" icon="pi pi-save"
+                [disabled]="detalleFijadosForm.invalid"
+                    (click)="guardarOActualizarFijacion()"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+
+
+
+
+<p-dialog [(visible)]="dialogDetalleEnviados" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="detalleEnviadosForm">
+        <h3 style="text-align: center;" class="mt-3">{{esEdicion? 'Editar QQ Enviados':'Registro QQ Enviados'}}</h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeEnviadosDialog()"
+                class="p-button-danger mr-2 "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="p-inputgroup ">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-code"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="codFijacion" />
+                        <label for="codFijacion">Código de Fijación</label>
+                    </span>
+
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fecha" formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fecha">Fecha</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="qqEnviados" />
+                        <label for="qqEnviados">QQ Enviados</label>
+                    </span>
+                </div>
+                <div *ngIf="detalleEnviadosForm.get('qqEnviados')?.invalid && (detalleEnviadosForm.get('qqEnviados')?.dirty || detalleEnviadosForm.get('qqEnviados')?.touched)" class="p-error">
+                    <small *ngIf="detalleEnviadosForm.get('qqEnviados')?.errors?.['pattern']">Solo se permiten números y un punto decimal.</small>                
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="custodia" />
+                        <label for="custodia">Pago Custodia(x QQ)</label>
+                    </span>
+
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="totalCustodia" />
+                        <label for="totalCustodia">Pago Total</label>
+                    </span>
+
+                </div>
+                <div *ngIf="detalleEnviadosForm.get('custodia')?.invalid && (detalleEnviadosForm.get('custodia')?.dirty || detalleEnviadosForm.get('custodia')?.touched)" class="p-error">
+                    <small *ngIf="detalleEnviadosForm.get('custodia')?.errors?.['pattern']">Solo se permiten números y un punto decimal.</small>                
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="transporte" />
+                        <label for="transporte">Pago Transporte</label>
+                    </span>
+
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="totalTransporte"/>
+                        <label for="totalTransporte">Pago Total</label>
+                    </span>
+                </div>
+                <div *ngIf="detalleEnviadosForm.get('transporte')?.invalid && (detalleEnviadosForm.get('transporte')?.dirty || detalleEnviadosForm.get('transporte')?.touched)" class="p-error">
+                    <small *ngIf="detalleEnviadosForm.get('transporte')?.errors?.['pattern']">Solo se permiten números y un punto decimal.</small>                
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton [label]="esEdicion ? 'Actualizar' : 'Registrar'" type="button" icon="pi pi-save"
+                [disabled]="detalleEnviadosForm.invalid"
+                    (click)="registrarDetalleEnviados()"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>

@@ -1,0 +1,570 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px;">
+    <h4 style="margin-top: -10px;">Balance Comercial</h4>
+</div>
+
+<div class="card">
+    <p-table [value]="balances" [rows]="7" [rowHover]="true" scrollDirection="both" [scrollable]="true"
+        scrollHeight="400px" responsiveLayout="scroll" [paginator]="true">
+        <ng-template pTemplate="caption">
+            <!--Aqui van controles ya sea un boton o un algun filtro-->
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center;">Id Balance</th>
+                <th style="text-align: center;">Descripción</th>
+                <th style="text-align: center;">Fecha Inicio</th>
+                <th style="text-align: center;">Fecha Fin</th>
+                <th style="text-align: center;">Estado</th>
+                <th style="text-align: center;">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-balance>
+            <tr>
+                <td style="text-align: center;">{{balance.id}}</td>
+                <td style="text-align: center;">{{balance.descripcion}}</td>
+                <td style="text-align: center;">{{balance.fechaInicio | date: 'yyyy-MM-dd' }}</td>
+                <td style="text-align: center;">{{balance.fechaFin | date: 'yyyy-MM-dd' }}</td>
+                <td style="text-align: center;">
+                    <span [ngClass]="{
+                        'status-label': true,
+                        'status-abierto': balance.estado === true,
+                        'status-cerrado': balance.estado === false
+                    }">
+                        {{ balance.estado ? 'Activo' : 'Compras Cerradas' }}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+
+                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-help mr-2 mb-2"
+                        pTooltip="Ver Información" tooltipPosition="top" (click)="openViewBalance(balance.id)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7">No existen registros</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="7">Loading users data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<!--Para mostrar la informacion-->
+<p-dialog [(visible)]="openViewBalanceModel" [modal]="true" [closable]="false" [style]="{width: '90vw'}">
+    <form>
+        <h3 style="text-align: center;" class="mt-3">Balance Semanal</h3>
+        
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeViewBalance()"
+                class="p-button-danger mr-2 small-button"></button>
+        </div>
+
+        <!-- Contenedor de dos columnas -->
+        <div class="grid">
+            <div class="col-12 xl:col-6">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h5>Compras</h5>
+                    <!-- Aquí está el botón al lado del h5 -->
+                    <button pButton pRipple icon="pi pi-plus" class="mr-2 mb-2" pTooltip="Agregar Compra"
+                        tooltipPosition="top" [disabled]="selectedBalance?.estado === false"
+                         (click)="openTransaccionDialog('compra')"></button>
+                </div>
+
+                <p-table [value]="transaccionesCompra" [rows]="4" [rowHover]="true" styleClass="p-datatable-gridlines"
+                    scrollDirection="both" [scrollable]="true" scrollHeight="200px" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 20%; text-align: center;">Fecha</th>
+                            <th style="width: 23%; text-align: center;">Descripción</th>
+                            <th style="width: 18%; text-align: center;">QQ. Netos</th>
+                            <th style="width: 11%; text-align: center;">Precio</th>
+                            <th style="width: 18%; text-align: center;">Total</th>
+                            <th style="width: 17%; text-align: center;">Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-compra>
+                        <tr>
+                            <td style="text-align: center;">{{compra.fecha | date: 'yyyy-MM-dd'}}</td>
+                            <td>{{compra.descripcion}}</td>
+                            <td style="text-align: center;">{{compra.qqNetos | number: '1.2-2'}}</td>
+                            <td style="text-align: center;">{{compra.precio | number: '1.2-2'}}</td>
+                            <td style="text-align: center;">{{compra.total | number: '1.2-2'}}</td>
+                            <td style="width: 5px; padding: 0; margin: 0; text-align: center;">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-success p-button-text"
+                                    [disabled]="selectedBalance?.estado === false"
+                                    style="font-size: 12px; padding: 2px; width: 24px; height: 24px; margin: 0;"
+                                    (click)="openUpdTransaccionDialog(compra)">
+                                </button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-danger p-button-text"
+                                    [disabled]="selectedBalance?.estado === false"
+                                    style="font-size: 12px; padding: 2px; width: 24px; height: 24px; margin: 0;"
+                                    (click)="confirmDeleteTransaccion(compra)">
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6">No existen registros</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td colspan="6">Loading data. Please wait.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div class="field" style="text-align: left; margin-top: 1rem;">
+                    <div class="p-inputgroup mr-2" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" [value]="totalQqCompra | number:'1.2-2'" pInputText disabled  class="color-text"/>
+                            <label>Total QQ</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup mr-2" style="width: 37%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" [value]="totalCompra | number:'1.2-2'" pInputText disabled  class="color-text" />
+                            <label>Total</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="promedioCompra | number:'1.2-2'" disabled  class="color-text"/>
+                            <label>Promedio Precio</label>
+                        </span>
+                    </div>
+
+                    
+                </div>
+                <div class="field" style="text-align: left; margin-top: 1rem;">
+                    
+                    <div class="p-inputgroup mr-2" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="sacosCompra| number:'1.2-2'" disabled  class="color-text" />
+                            <label>Sacos</label>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 xl:col-6">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h5>Ventas</h5>
+                    <!-- Aquí está el botón al lado del h5 -->
+                    <button pButton pRipple icon="pi pi-plus" class="mr-2 mb-2" pTooltip="Agregar Venta"
+                        tooltipPosition="top" (click)="openTransaccionDialog('venta')"></button>
+                </div>
+                <p-table [value]="transaccionesVenta" [rows]="4" [rowHover]="true" styleClass="p-datatable-gridlines"
+                    scrollDirection="both" [scrollable]="true" scrollHeight="200px" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 20%; text-align: center;">Fecha</th>
+                            <th style="width: 23%; text-align: center;">Descripción</th>
+                            <th style="width: 18%; text-align: center;">QQ. Netos</th>
+                            <th style="width: 11%; text-align: center;">Precio</th>
+                            <th style="width: 18%; text-align: center;">Total</th>
+                            <th style="width: 17%; text-align: center;">Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-venta>
+                        <tr>
+                            <td style="text-align: center;">{{venta.fecha| date: 'yyyy-MM-dd'}}</td>
+                            <td>{{venta.descripcion}}</td>
+                            <td style="text-align: center;">{{venta.qqNetos | number: '1.2-2'}}</td>
+                            <td style="text-align: center;">{{venta.precio | number: '1.2-2'}}</td>
+                            <td style="text-align: center;">{{venta.total | number: '1.2-2'}}</td>
+                            <td style="width: 5px; padding: 0; margin: 0; text-align: center;">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-success p-button-text"
+                                    style="font-size: 12px; padding: 2px; width: 24px; height: 24px; margin: 0;"
+                                    (click)="openUpdTransaccionDialog(venta)">
+                                </button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-danger p-button-text"
+                                    style="font-size: 12px; padding: 2px; width: 24px; height: 24px; margin: 0;"
+                                    (click)="confirmDeleteTransaccion(venta)">
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6">No existen registros</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td colspan="6">Loading data. Please wait.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div class="field" style="text-align: left; margin-top: 1rem;">
+                    <div class="p-inputgroup mr-2" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="totalQqVenta | number:'1.2-2'" disabled  class="color-text"/>
+                            <label>Total QQ</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup mr-2" style="width: 37%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="totalVenta | number:'1.2-2'" disabled  class="color-text" />
+                            <label>Total</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="promedioVenta | number:'1.2-2'" disabled   class="color-text"/>
+                            <label>Promedio Precio</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field" style="text-align: left; margin-top: 1rem;">
+                    
+                    <div class="p-inputgroup mr-2" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="sacosVenta| number:'1.2-2'" disabled  class="color-text" />
+                            <label>Sacos</label>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-12 xl:col-6">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h5>Otros Gastos</h5>
+                    <!-- Aquí está el botón al lado del h5 -->
+                    <button pButton pRipple icon="pi pi-plus" class="mr-2 mb-2" pTooltip="Agregar Gasto"
+                        (click)="openGastoDialog()" tooltipPosition="top"></button>
+                </div>
+                <p-table [value]="gastos" [rows]="4" [rowHover]="true" styleClass="p-datatable-gridlines"
+                    scrollDirection="both" [scrollable]="true" scrollHeight="200px" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 45%; text-align: center;">Tipo de Gasto</th>
+                            <th style="width: 20%; text-align: center;">Valor Pagado</th>
+                            <th style="width: 20%; text-align: center;">Acciones</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-gasto>
+                        <tr>
+                            <td  style="text-align: center;">{{gasto.tiposGastos.gasto}}</td>
+                            <td  style="text-align: center;">{{gasto.montoPagado | number: '1.2-2'}}</td>
+                            <td style="width: 5px; padding: 0; margin: 0; text-align: center;">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-success p-button-text mr-2 mb-2"  (click)="openGastoDialogUpd(gasto)">
+                                </button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-danger p-button-text mr-2 mb-2"
+                                    (click)="confirmDeleteGasto(gasto)">
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6">No existen registros</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody">
+                        <tr>
+                            <td colspan="6">Loading data. Please wait.</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div class="field" style="text-align: right; margin-top: 1rem;">
+                    <div class="p-inputgroup" style="width: auto; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="totalGastos | number:'1.2-2'" disabled   class="color-text"/>
+                            <label>Total de Gastos</label>
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12 xl:col-6">
+                <h5>Cálculos - Utilidad Neta</h5>
+
+                <div class="field" style="text-align: left; margin-top: 1rem;">
+                    
+                    <h6>QQ En Calificación</h6>
+                    <div class="p-inputgroup mr-2" style="width: 37%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="perdidaQQ | number:'1.2-2'" disabled  class="color-text" />
+                            <label>{{labelQQ}}</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup" style="width: 30%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="porcentajePerdidaQQ" disabled  class="color-text" />
+                            <label>{{labelPorcentaje}}</label>
+                        </span>
+                    </div>
+                    <h6>Cálculo - Utilidad Neta</h6>
+                    <div class="p-inputgroup mr-2" style="width: 37%; display: inline-flex;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="sumaTotal | number:'1.2-2'"  disabled class="color-text" />
+                            <label>Ventas-Compras</label>
+                        </span>
+                    </div>
+                    <div class="p-inputgroup" style="width: 40%; display: inline-flex;"> <!-- Aumentar el ancho -->
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-dollar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <input type="text" pInputText [value]="utilidadNeta | number:'1.2-2'" disabled class="red-text large-input" />
+                            <label>Utilidad Neta</label>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+
+<p-dialog [(visible)]="dialogTransaccion" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="transaccionForm" (ngSubmit)="registrarTransaccion()">
+        <h3 style="text-align: center;" class="mt-3">Registro de {{ tipoTransaccion === 'compra' ? 'Compra' : 'Venta' }}
+        </h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeTransaccionDialog()"
+                class="p-button-danger mr-2 small-button "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fecha" formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fecha">Fecha</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="descripcion" />
+                        <label for="descripcion">Descripción</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="qqNetos" />
+                        <label for="qqNetos">QQ. Netos</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="precio" />
+                        <label for="precio">Precio</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton type="submit" icon="pi pi-save" label="Registrar {{tipoTransaccion}}"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+<!--Dialog de confirmacion para eleiminar u registro-->
+<!--Transaccion-->
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+
+<!--Para actualizar-->
+<p-dialog [(visible)]="dialogUpdateTransaccion" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="updateTransaccionForm" (ngSubmit)="actualizarTransaccion()">
+        <h3 style="text-align: center;" class="mt-3">Editar Registro
+        </h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeUpdTransaccionDialog()"
+                class="p-button-danger mr-2 small-button "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="p-inputgroup mt-4" style="display: inline-flex; width: 48%;">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="id" />
+                        <label for="id">Cod</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4" style="display: inline-flex; width: 48%;">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="tipo" />
+                        <label for="tipo">Tipo</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fecha" formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fecha">Fecha</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="descripcion" />
+                        <label for="descripcion">Descripción</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="qqNetos" />
+                        <label for="qqNetos">QQ. Netos</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-truck"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="precio" />
+                        <label for="precio">Precio</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton type="submit" icon="pi pi-save" label="Guardar Cambios"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+<p-dialog [(visible)]=" dialogGastos" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="gastosForm" (ngSubmit)="registrarGasto()">
+        <h3 style="text-align: center;" class="mt-3"> {{ isEditMode ? 'Actualizar Gasto' : 'Registro de Gastos' }}</h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeGastoDialog()"
+                class="p-button-danger mr-2 small-button "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="mt-4">
+                    <span class="p-float-label">
+                        <p-dropdown id="tiposGastos" placeholder="Tipo de Gastoo" [options]="tiposGastos"
+                            optionLabel="gasto" formControlName="tipoGasto" [showClear]="true" [appendTo]="'body'"
+                            [ngStyle]="{'width': '100%'}">
+                        </p-dropdown>
+                        <label for="tipoCacao">Tipo de Gasto</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-dollar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="montoPagado" />
+                        <label for="montoPagado">Valor Pagado</label>
+                    </span>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton type="submit" icon="pi pi-save" [label]="isEditMode ? 'Guardar Cambios' : 'Registrar Gasto'"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+

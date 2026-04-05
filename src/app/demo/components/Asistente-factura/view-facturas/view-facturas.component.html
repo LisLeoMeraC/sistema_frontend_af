@@ -1,0 +1,165 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px">
+    <h4 style="margin-top: -10px">Facturas de Compras de Cacao</h4>
+</div>
+<div class="card">
+    <h4>Facturas Ingresadas</h4>
+    <form [formGroup]="searchForm" (ngSubmit)="consultarFacturasConFiltros()">
+        <p-table [value]="facturasPaginadas" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" responsiveLayout="scroll"
+            [totalRecords]="totalRecords" [paginator]="true" [rows]="10" styleClass="relative"
+            [ngClass]="{ 'table-shadow': loading }">
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-between flex-wrap gap-2">
+
+
+                    <span class="p-float-label small-input-container">
+                        <input type="text" pInputText formControlName="codigoCliente" class="small-input" />
+                        <label for="codigoCliente">ID Cliente</label>
+                    </span>
+
+                    <span class="p-input-icon-left">
+                        <p-dropdown [options]="months" formControlName="selectedMonth" placeholder="Selecciona un mes"
+                            class="w-full"></p-dropdown>
+                    </span>
+
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-calendar"></i>
+                        <input pInputText type="text" placeholder="Año" formControlName="selectedYear"
+                            class="small-input" />
+                    </span>
+
+                    <button pButton pRipple type="submit" label="Consultar" icon="pi pi-refresh" ></button>
+
+                    <button pButton pRipple type="button" label="Limpiar" (click)="limpiarFiltros()" icon="pi pi-trash"
+                        class="p-button-warning ml-2"></button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="text-align: center">Código Cliente</th>
+                    <th style="text-align: center; width: 30%">Cliente</th>
+                    <th style="text-align: center">Fecha de Compra</th>
+                    <th style="text-align: center">
+                        Cant Registradas en Libras
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-factura>
+                <tr>
+                    <td style="text-align: center">{{ factura.clienteId }}</td>
+                    <td style="text-align: center; width: 30%">
+                        {{ factura.nombres }} {{ factura.apellidos }}
+                    </td>
+                    <td style="text-align: center">{{ factura.fecha }}</td>
+                    <td style="text-align: center">
+                        {{ factura.cantQuintales }}
+                    </td>
+                    <td>
+                        <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-success mb-2 mr-2"
+                            (click)="showModalUpdate(factura)"></button>
+
+                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="confirmDeleteTransaccion(factura)" class="p-button-danger mr-2 mb-2"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6">No existen registros.</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="6">Loading users data. Please wait.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </form>
+</div>
+
+<p-dialog [(visible)]="modalUpdate" [modal]="true" [closable]="false" [style]="{ width: '40vw' }">
+    <form [formGroup]="updateForm" (ngSubmit)="onUpdateFactura()">
+        <h3 style="text-align: center">
+            Actualizar Factura con ID: {{ facturaId }}
+        </h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-danger mr-2 mb-2"
+                (click)="closeModalUpdate()"></button>
+        </div>
+        <div class="grid p-fluid mt-3">
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-id-card"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="codigo" />
+                        <label for="codigo">Código</label>
+                    </span>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="nombres" />
+                        <label for="nombres">Nombres</label>
+                    </span>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="apellidos" />
+                        <label for="apellidos">Apellidos</label>
+                    </span>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fecha" formControlName="fecha" [showIcon]="true" [appendTo]="'body'"
+                            dateFormat="dd/mm/yy">
+                        </p-calendar>
+                        <label for="fecha">Fecha del pago</label>
+                    </span>
+                </div>
+            </div>
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-chart-line"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="cantQuintales" />
+                        <label for="cantQuintales">Cantidad en Libras</label>
+                    </span>
+                </div>
+                <div *ngIf="
+                        updateForm.get('libras')?.invalid &&
+                        (updateForm.get('libras')?.dirty ||
+                            updateForm.get('libras')?.touched)
+                    " class="p-error">
+                    <small *ngIf="updateForm.get('libras')?.errors?.['pattern']">Solo se permiten números y un punto
+                        decimal.</small>
+                </div>
+            </div>
+        </div>
+        <p-footer class="flex justify-content-end">
+            <button pButton label="Actualizar" icon="pi pi-save" type="submit"></button>
+        </p-footer>
+    </form>
+</p-dialog>
+
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>

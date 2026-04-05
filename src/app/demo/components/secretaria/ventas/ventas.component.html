@@ -1,0 +1,259 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px">
+    <h4 style="margin-top: -10px">Ventas de Artículos</h4>
+</div>
+
+<div class="grid">
+    <div class="col-8 md:col-12">
+        <div class="card p-fluid">
+            <h5>Datos Generales</h5>
+            <div class="p-formgrid grid" style="margin-bottom: -2%;">
+                <div class="field col col-12 md:col-3 custom-calendar">
+                    <label htmlFor="fecha">Fecha</label>
+                    <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'"
+                        [(ngModel)]="fecha"></p-calendar>
+                </div>
+                <div class="field col col-12 md:col-4">
+                    <label htmlFor="comprador">Comprador</label>
+                    <input pInputText id="name2" type="text" [(ngModel)]="comprador" autocomplete="off" />
+                </div>
+
+                <div class="field col col-12 md:col-3 p-d-flex p-jc-end mt-5" style="margin-left: 5%;">
+                    <button pButton type="button" icon="pi pi-tags" label="Revisar Ventas" class="p-button-warning" (click)="mostrarComponenteVenta()"></button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card p-fluid ">
+            <div class="flex justify-content-between align-items-center">
+                <h5>Detalle de la orden de Venta</h5>
+                <div class="flex justify-content-between flex-column sm:flex-row">
+                    <button pButton pRipple label="Agregar Artículo" icon="pi pi-plus" class="mr-2 mb-2"
+                        (click)="openModalDialogArticulos()"></button>
+                </div>
+            </div>
+            <p-table [value]="ventas" [rows]="7" [rowHover]="true" scrollDirection="both" [scrollable]="true"
+                styleClass="p-datatable-gridlines" scrollHeight="400px" responsiveLayout="scroll" [paginator]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center;">Id Orden</th>
+                        <th style="text-align: center;">Artículo</th>
+                        <th style="text-align: center;">Cantidad</th>
+                        <th style="text-align: center;">Precio Unitario</th>
+                        <th style="text-align: center;">Subtotal</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-venta>
+                    <tr>
+                        <td style="text-align: center;">{{ venta.idOrden }}</td>
+                        <td style="text-align: center;">{{ venta.articulo }}</td>
+                        <td style="text-align: center;">
+                            <!-- Campo de cantidad editable -->
+                            <p-inputNumber [(ngModel)]="venta.cantidad" [min]="0" (onInput)="calcularSubtotal(venta)"
+                                [ngStyle]="{'width': '70px', 'text-align': 'center'}" inputId="cantidad" [step]="1"
+                                [showButtons]="false" [mode]="'decimal'" [disabled]="false">
+                            </p-inputNumber>
+                        </td>
+                        <td style="text-align: center;">
+                            <!-- Campo de precio unitario editable -->
+                            <p-inputNumber [(ngModel)]="venta.precioUnitario" [min]="0"
+                                (onInput)="calcularSubtotal(venta)"
+                                [ngStyle]="{'width': '70px', 'text-align': 'center'}" inputId="precioUnitario"
+                                [step]="0.01" [showButtons]="false" [disabled]="false">
+                            </p-inputNumber>
+                        </td>
+                        <td style="text-align: center;">
+                            <!-- Mostrar el subtotal -->
+                            {{ venta.subtotal | currency: 'USD' }}
+                        </td>
+                        <td style="text-align: center;">
+                            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-danger mb-2 mr-2"
+                                pTooltip="Quitar Artículo" tooltipPosition="top" (click)="eliminarFila(venta)"></button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No existen registros</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="8">Loading users data. Please wait.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <!-- Espacio entre la tabla y el input -->
+            <div style="margin-top: 20px;"></div>
+
+            <!-- Contenedor del input alineado a la derecha -->
+            <div class="flex justify-content-end" style="margin-bottom: -3%;">
+                <div class="field grid col-6 justify-content-end">
+                    <label htmlFor="name3" class="col-2 md:mb-0">Total $</label>
+                    <div class="col-12 md:col-6">
+                        <input pInputText id="name3" [value]="total | currency:'USD'" type="text" disabled />
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="card p-fluid">
+            <h5>Información de Pago</h5>
+            <div class="p-formgrid grid" style="margin-bottom: -2%;">
+                <div class="field col col-12 md:col-3">
+                    <label htmlFor="fecha">Estado de Orden</label>
+                    <div class>
+                        <p-dropdown [(ngModel)]="estadoSelecionado" placeholder="Elija.." optionLabel="nombre"
+                            [options]="opciones" [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}"
+                            (onChange)="onEstadoChange()">
+                        </p-dropdown>
+
+                    </div>
+                </div>
+                <div class="field col col-12 md:col-2" *ngIf="esPorPagar()">
+                    <label htmlFor="fecha">Abona Saldo?</label>
+                    <p-dropdown [(ngModel)]="isAbona" placeholder="Elija.." optionLabel="nombre" [options]="abona"
+                        [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}"
+                        (onChange)="onAbonoChange()">
+                    </p-dropdown>
+                </div>
+
+                <div class="field col col-12 md:col-3" *ngIf="(esPagado() || siAbona())">
+                    <label htmlFor="tipoPago">Tipo de Pago</label>
+                    <p-dropdown [(ngModel)]="tipoPagoSeleccionado" placeholder="Seleccione.." optionLabel="nombre"
+                        [options]="tiposDePago" [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}">
+                    </p-dropdown>
+                </div>
+
+                <div class="field col col-12 md:col-2" *ngIf="siAbona() && siTipoPagoSeleccionado()">
+                    <label htmlFor="monto">Monto</label>
+                    <input pInputText id="monto" type="text" [(ngModel)]="monto" />
+                </div>
+
+                <div class="field col col-12 md:col-2 p-d-flex p-jc-end mt-5" *ngIf="puedeRegistrarVenta()">
+                    <button pButton type="button" label="Registrar Venta" class="p-button-success"
+                        (click)="registrarVenta()"></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [(visible)]="displayModalArticulos" [modal]="true" [closable]="false" [style]="{width: '70vw'}">
+    <form>
+        <h3 style="text-align: center;">Inventario</h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeModalDialogArticulos()"
+                class="p-button-danger mr-2 mb-2"></button>
+        </div>
+        
+            <p-table [value]="articulos" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll"
+                [paginator]="true" [rows]="5" [(first)]="first">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between items-center">
+                        <!-- Input de búsqueda alineado a la derecha -->
+                        <div class="flex-1 col-4 " style="text-align: right;">
+                            <span class="p-input-icon-left mb-2">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" placeholder="Nombre del Artículo" [(ngModel)]="searchTermin" class="w-72"
+                                    (input)="onTermInput($event)" />
+                            </span>
+                        </div>
+                        <!-- Botón alineado a la derecha -->
+
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 2rem"></th>
+                        <th style="text-align: center;">Código</th>
+                        <th style="text-align: center;">Nombre</th>
+                        <th style="text-align: center;">Descripción</th>
+                        <th style="text-align: center;">Estado</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-articulo let-expanded="expanded">
+                    <tr>
+                        <td>
+                            <button type="button" pButton pRipple (click)="toggleRow(articulo)"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        </td>
+                        <td style="min-width: 12rem; text-align: center;">{{ articulo.id }}</td>
+                        <td style="min-width: 12rem; text-align: center;">{{ articulo.nombreArticulo }}</td>
+                        <td style="min-width: 12rem; text-align: center;">{{ articulo.descripcion }}</td>
+                        <td style="min-width: 12rem; text-align: center;">
+                            <span class="status-label"
+                                [ngClass]="articulo.estado ? 'status-en-stock' : 'status-sin-stock'" >
+                                {{ articulo.estado ? "En Stock" : "No hay stock" }}
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-articulo>
+                    <tr>
+                        <td colspan="5">
+                            <div class="p-3">
+                                <p-table [value]="articulo.ingresosStock" dataKey="id" responsiveLayout="scroll">
+                                    <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="codigo" style="text-align: center;">
+                            Código
+                        </th>
+                        <th pSortableColumn="fechaIngreso" style="text-align: center;">
+                            Fecha de Ingreso
+                        </th>
+                        <th pSortableColumn="unidades" style="text-align: center;">
+                            Unidades
+                        </th>
+                        <th pSortableColumn="precioVenta" style="text-align: center;">
+                            Precio de Venta
+                        </th>
+                        <th pSortableColumn="fechaVencimiento" style="text-align: center;">
+                            Fecha de Vencimiento
+                        </th>
+                        <th pSortableColumn="acciones" style="text-align: center;">
+                            Acciones
+                        </th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ingreso>
+                    <tr>
+                        <td style="text-align: center;">{{ ingreso.id}}</td>
+                        <td style="text-align: center;">{{ ingreso.fechaIngreso | date }}</td>
+                        <td style="text-align: center;">{{ ingreso.unidades }}</td>
+                        <td style="text-align: center;">{{ ingreso.precioVenta | currency: "USD" : "code" }}</td>
+                        <td style="text-align: center;">{{ ingreso.fechaVencimiento | date }}</td>
+                        <td style="text-align: center;">
+                            <button pButton pRipple type="button" icon="pi pi-shopping-cart"  pTooltip="Agregar artículo a la orden"
+                            tooltipPosition="top"
+                                class=" p-button-help mr-2 mb-2" (click)="agregarIngresoVenta(articulo, ingreso)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5">
+                            No hay ingresos para este artículo.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        </td>
+        </tr>
+        </ng-template>
+        </p-table>
+    </form>
+</p-dialog>

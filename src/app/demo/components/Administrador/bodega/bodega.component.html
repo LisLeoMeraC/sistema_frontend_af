@@ -1,0 +1,101 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px;">
+    <h4 style="margin-top: -10px;">Inventario</h4>
+</div>
+<div class="card">
+    <h4 class="titulo">Artículos en bodega</h4>
+        <p-table [value]="articulos" [rows]="10" [rowHover]="true" scrollDirection="both" [scrollable]="true" scrollHeight="400px"
+            styleClass="mt-3" responsiveLayout="scroll" [paginator]="true">
+
+            <ng-template pTemplate="caption">
+                <div class="p-d-flex p-ai-center p-jc-between p-field button-container">
+                    <span class="p-input-icon-left mr-2">
+                        <i class="pi pi-calendar"></i>
+                        <input pInputText type="text" placeholder="Nombre del artículo" (input)="onTermInput($event)"
+                            class="narrow-input" />
+                    </span>
+
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Código</th>
+                    <th>Artículo</th>
+                    <th>Descripción</th>
+                    <th>Cantidad existentes</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-articulo>
+                <tr>
+                    <td>{{ articulo.codigo}}</td>
+                    <td>{{ articulo.articulo}}</td>
+                    <td>{{ articulo.descripcion}}</td>
+                    <td>{{ articulo.totalUnidades}}</td>
+                    <td>
+                        <span class="status-label" [ngClass]="getStatusClass(articulo.estado)">
+                            {{ getStatusText(articulo.estado) }}
+                        </span>
+                    </td>
+                    <td>
+                        <button pButton pRipple type="button" icon="pi pi-info-circle" label="Más Detalles" class="p-button-info mr-2 mb-2"  (click)="openModalIngresos(articulo)"></button>
+                    </td>
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">No existen registros</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="8">No existen registros</td>
+                </tr>
+            </ng-template>
+        </p-table>
+</div>
+
+
+<p-dialog [(visible)]="ingresoStockModal" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
+        <h3 style="text-align: center;">Ordenes de Ingresos del Artículo {{ selectedArticulo?.articulo }}</h3>
+        
+        <p-table [value]="selectedArticulo?.ingresosStock" [rows]="5" [rowHover]="true" scrollDirection="both" [scrollable]="true" scrollHeight="400px"
+            styleClass="mt-3" responsiveLayout="scroll" [paginator]="true">
+
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Fecha de Ingreso</th>
+                    <th>Stock Disponible</th>
+                    <th>Precio de Venta</th>
+                    <th>Caducidad del Artículo</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-ingreso>
+                <tr>
+                    <td>{{ ingreso.fechaIngreso | date }}</td>
+                    <td>{{ ingreso.unidades }}</td>
+                    <td>{{ ingreso.precioVenta | currency:'USD':'code' }}</td>
+                    <td>{{ ingreso.fechaVencimiento | date }}</td>
+                    
+                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="8">No existen registros</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="8">No existen registros</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-footer class="flex justify-content-end">
+            <button pButton pRipple label="Cerrar" type="button" icon="pi pi-times" (click)="closeModalIngresos()"
+                        class="p-button-danger mr-2 mb-2"></button>
+        </p-footer>
+</p-dialog>

@@ -1,0 +1,184 @@
+<p-toast></p-toast>
+<div class="card" style="height: 30px;">
+    <h4 style="margin-top: -10px;">Compras de Otros productos</h4>
+</div>
+<div class="card">
+    <p-table [value]="comprasProductos" [rowHover]="true" scrollDirection="both" [scrollable]="true"
+        scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+        <ng-template pTemplate="caption">
+            <form [formGroup]="searchForm">
+            <div class="grid p-fluid">
+                <!-- Primera columna: Fecha Inicio -->
+                <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-calendar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <p-calendar id="fechaInicio" formControlName="fechaInicio" [showIcon]="true"
+                                        dateFormat="dd/mm/yy" [appendTo]="'body'">
+                            </p-calendar>
+                            <label for="fechaInicio">Fecha Inicio</label>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Segunda columna: Fecha Fin -->
+                <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-calendar"></i>
+                        </span>
+                        <span class="p-float-label">
+                            <p-calendar id="fechaFin" formControlName="fechaFin" [showIcon]="true"
+                                        dateFormat="dd/mm/yy" [appendTo]="'body'">
+                            </p-calendar>
+                            <label for="fechaFin">Fecha Fin</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-3">
+                    <div class>
+                        <span class="p-float-label">
+                            <p-dropdown id="tipoProducto" placeholder="Producto" [options]="tiposProductos" optionLabel="nombre"
+                                formControlName="producto" [showClear]="true" [appendTo]="'body'"
+                                [ngStyle]="{'width': '100%'}">
+                            </p-dropdown>
+                            <label for="Producto">Producto</label>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tercera columna: Botones -->
+                <div class="col-12 md:col-3">
+                    <div class="p-inputgroup">
+                        <button pButton type="button" label="Buscar" icon="pi pi-search" class="mr-2" (click)="cargarComprasporFecha()"></button>
+                        <button pButton type="button" label="Limpiar" icon="pi pi-trash" class="p-button-warning" (click)="limpiarFechas()"></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center;">Fecha</th>
+                <th style="text-align: center;">Producto</th>
+                <th style="text-align: center;">Total en Cantidad</th>
+                <th style="text-align: center;">Dinero Total</th>
+                <th style="text-align: center;">Tipo</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-semanal>
+            <tr>
+                <td style="text-align: center;">{{ semanal.fecha | date: 'yyyy-MM-dd' }}</td>
+                <td style="text-align: center;">{{semanal.producto}}</td>
+                <td style="text-align: center;">{{semanal.cantidad}} {{semanal.unidad_medida}}</td>
+                <td style="text-align: center;">{{semanal.dineroTotal | currency:'USD':'code'}}</td>
+                <td style="text-align: center;">
+                    <span [ngClass]="{
+                        'status-label': true,
+                        'status-compra': semanal.tipo === 'C',
+                        'status-venta': semanal.tipo === 'V',
+                        'status-proveedor': semanal.tipo === 'VP'
+                    }">
+                        {{ semanal.tipo === 'C' ? 'Compra' : (semanal.tipo === 'V' ? 'Venta' : 'Proveedor') }}
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">No existen registros</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="4">Loading users data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div class="grid p-fluid justify-content-end">
+    <!-- Primera columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-plus"></i>
+            </span>
+            <span class="p-float-label">
+                <input type="text" pInputText [value]="cantidad | number:'1.2-2'" disabled  class="red-text"/>
+                <label for="totalQuintales">Cantidad Comprada</label>
+            </span>
+        </div>
+    </div>
+
+    <!-- Segunda columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-dollar"></i>
+            </span>
+            <span class="p-float-label">
+                <input type="text" pInputText [value]="dineroTotal | currency:'USD':'code'" disabled class="red-text" />
+                <label for="dineroTotal">Total Pagado</label>
+            </span>
+        </div>
+    </div>
+
+    <!-- Tercera columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-percentage"></i>
+            </span>
+            <span class="p-float-label">
+                <input type="text" pInputText [value]="promedio | currency:'USD':'code'" disabled class="red-text"/>
+                <label for="promedio">Promedio Precio</label>
+            </span>
+        </div>
+    </div>
+</div>
+
+
+<div class="grid p-fluid justify-content-end">
+    <!-- Primera columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-plus"></i>
+            </span>
+            <span class="p-float-label">
+                <input type="text" pInputText [value]="cantidadVendida | number:'1.2-2'" disabled  class="red-text"/>
+                <label for="cantidadVendida">Cantidad Vendida</label>
+            </span>
+        </div>
+    </div>
+
+    <!-- Segunda columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-dollar"></i>
+            </span>
+            <span class="p-float-label">
+                <input type="text" pInputText [value]="totalRecibido | currency:'USD':'code'" disabled class="red-text" />
+                <label for="totalRecibido">Total Recibido</label>
+            </span>
+        </div>
+    </div>
+
+    <!-- Tercera columna -->
+    <div class="col-12 md:col-3">
+        <div class="p-inputgroup mt-2">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-percentage"></i>
+            </span>
+            <span class="p-float-label">
+                <input  type="text"  class="imputTotales" pInputText [value]="ganancia | currency:'USD':'code'" disabled class="red-text"/>
+                <label for="ganancia">Ganancia</label>
+            </span>
+        </div>
+    </div>
+</div>

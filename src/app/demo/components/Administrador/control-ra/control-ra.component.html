@@ -1,0 +1,372 @@
+<p-toast></p-toast>
+
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
+
+
+
+<div class="card">
+    <h5>Control RA</h5>
+    <p-tabView orientation="left">
+        <p-tabPanel header="Inicio RA" class="line-height-3 m-0">
+
+            <p-table [value]="controles" responsiveLayout="scroll" [paginator]="true" [rows]="5">
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+                        <button pButton pRipple label="Registro Tn" icon="pi pi-plus" (click)="openRegistroTnDialog()"
+                            class="mr-2 mb-2"></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center;">Periodo</th>
+                        <th style="text-align: center;">Tn Asignada</th>
+                        <th style="text-align: center;">QQ Asignados</th>
+                        <th style="text-align: center;">QQ Enviados</th>
+                        <th style="text-align: center;">QQ Restantes</th>
+                        <th style="text-align: center;">Estado</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-control>
+                    <tr>
+                        <td style="text-align: center;">{{ control.fechaInicio | date:'MMMM yyyy' }} / {{
+                            control.fechaFin | date:'MMMM yyyy' }}
+                        </td>
+                        <td style="text-align: center;">{{control.tnAsignada | number: '1.2-2' }}</td>
+                        <td style="text-align: center;">{{ control.qqAsignados | number: '1.2-2' }}</td>
+                        <td style="text-align: center;">{{ control.quintalesEnviados | number: '1.2-2' }}</td>
+                        <td style="text-align: center;">{{control.qqRestantes | number: '1.2-2'}}</td>
+                        <td style="text-align: center;">
+                            <span [ngClass]="{
+                                    'status-label': true,
+                                    'status-abierto': control.estado === true,
+                                    'status-cerrado': control.estado === false
+                                }">
+                                {{ control.estado ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-success mb-2 mr-2"
+                                [disabled]="!control.estado" pTooltip="Editar Datos" tooltipPosition="top"
+                                (click)="openEditTnDialog(control)"></button>
+                            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-danger mb-2"
+                                [disabled]="!control.estado" pTooltip="Finalizar Período" tooltipPosition="top"
+                                (click)="confirmDeactivate(control)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6">No users found.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="6">Loading users data. Please wait.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+        </p-tabPanel>
+        <p-tabPanel header="Contratos" class="line-height-3 m-0">
+
+            <p-table [value]="contratosFiltrados" responsiveLayout="scroll" styleClass="p-datatable-gridlines"
+                [rows]="8" scrollDirection="both" [scrollable]="true" scrollHeight="500px" styleClass="mt-3">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex justify-content-between flex-column sm:flex-row">
+
+                        <div class="col-12 md:col-5">
+                            <div class="p-inputgroup">
+                                <button pButton pRipple label="Nuevo Registro" (click)="openContratoDialog()"
+                                    icon="pi pi-plus" class="mr-2 mb-2"></button>
+                                <button pButton pRipple label="Resetear" (click)="cargarContratosRegistrados()"
+                                    icon="pi pi-sync" class="p-button-warning mr-2 mb-2"></button>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 md:col-3" style="margin-left: auto;">
+                            <div class="p-inputgroup">
+                                <span class="p-inputgroup-addon">
+                                    <i class="pi pi-file"></i>
+                                </span>
+                                <span class="p-float-label">
+                                    <input type="text" [(ngModel)]="currentLote" pInputText
+                                        (input)="filtrarContratosPorLote(getInputValue($event))" /> <label
+                                        for="lote">Lote</label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center;">Fecha</th>
+                        <th style="text-align: center;">QQ</th>
+                        <th style="text-align: center;">Contrato</th>
+                        <th style="text-align: center;">Lote</th>
+                        <th style="text-align: center;">Placa</th>
+                        <th style="text-align: center;">Observacion</th>
+                        <th style="text-align: center;">Estado</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-contrato>
+                    <tr>
+                        <td style="text-align: center; width: 100px;">{{contrato.fecha}}</td>
+                        <td style="text-align: center; width: 90px;">{{contrato.quintales | number: '1.2-2'}}</td>
+                        <td style="text-align: center; width: 90px;">{{contrato.contrato}}</td>
+                        <td style="text-align: center; width: 85px;" class="sombreado-lote">{{contrato.lote}}</td>
+                        <td style="text-align: center; width: 90px;">{{contrato.placa}}</td>
+                        <td style="text-align: center; ">{{contrato.observacion}}</td>
+                        <td style="text-align: center; width: 90px;">
+                            <span [ngClass]="{
+                        'status-label': true,
+                        'status-abierto': contrato.estado === true,
+                        'status-cerrado': contrato.estado === false
+                    }">
+                                {{ contrato.estado ? 'Pagado' : 'Sin Pagar' }}
+                            </span>
+                        </td>
+                        <td style="text-align: center; width: 160px;">
+                            <button pButton pRipple type="button" icon="pi pi-pencil"
+                                (click)="openContratoDialog(contrato)" class="p-button-success mb-2 mr-2"></button>
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="confirmDeleteContrato(contrato)" class="p-button-danger mb-2 mr-2"></button>
+                            <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-help mr-2 mb-2"
+                                (click)="openContratoDetailsDialog(contrato)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8">No existen registros.</td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="loadingbody">
+                    <tr>
+                        <td colspan="8">Loading users data. Please wait.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+
+        </p-tabPanel>
+
+    </p-tabView>
+</div>
+
+
+<p-dialog [(visible)]="dialogRegistroTonelada" [modal]="true" [closable]="false" [style]="{width: '25vw'}">
+    <form [formGroup]="registroToneladaForm">
+        <h3 style="text-align: center;" class="mt-3">
+            {{ isEditMode ? 'Editar Asignación de Tn' : 'Registro de Tn - Nuevo Periodo' }}
+        </h3>
+
+
+
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeRegistroTnDialog()"
+                class="p-button-danger mr-2 small-button"></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fechaInicio" formControlName="fechaInicio" [showIcon]="true"
+                            dateFormat="dd/mm/yy" [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fechaInicio">Periodo desde</label>
+                    </span>
+                </div>
+
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fechaFin" formControlName="fechaFin" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fechaFin">Periodo hasta</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4 ">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-table"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="tnAsignada" />
+                        <label for="tnAsignada">Tn Asignada</label>
+                    </span>
+                </div>
+                <div *ngIf="registroToneladaForm.get('tnAsignada')?.invalid && (registroToneladaForm.get('tnAsignada')?.dirty || registroToneladaForm.get('tnAsignada')?.touched)"
+                    class="p-error">
+                    <small *ngIf="registroToneladaForm.get('tnAsignada')?.errors?.['pattern']">Solo se permiten números
+                        y un punto decimal.</small>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton [label]="isEditMode ? 'Actualizar' : 'Registrar'" type="button" icon="pi pi-save"
+                    [disabled]="registroToneladaForm.invalid" (click)="registrarTnAsignadas()"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+
+
+
+<p-dialog [(visible)]="dialogContrato" [modal]="true" [closable]="false"
+    [style]="{'width': '80vw', 'max-width': '600px', 'min-width': '300px'}"
+    [breakpoints]="{'960px': '90vw', '640px': '95vw'}">
+    <form [formGroup]="newContratoForm" (ngSubmit)="saveContrato()">
+        <h3 style="text-align: center;">
+            {{ editing ? 'Editar Contrato' : (isDetail ? 'Detalles del Contrato' : 'Registro de Contratos') }}
+        </h3>
+        <div class="dialog-header cancel-button">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeContratoDialog()"
+                class="p-button-danger mr-2"></button>
+        </div>
+        <div class="grid p-fluid mt-3">
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fecha" formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fecha">Fecha</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-hourglass"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="kilogramos"
+                            (ngModelChange)="onKilogramosChange()" />
+                        <label for="kilogramos">Kilogramos(Kg)</label>
+                    </span>
+                </div>
+                <small *ngIf="kilogramosToQuintales">Equivale a {{ kilogramosToQuintales | number: '1.2-2' }} quintales
+                    (qq)</small>
+                <div *ngIf="newContratoForm.get('kilogramos')?.invalid && (newContratoForm.get('kilogramos')?.dirty || newContratoForm.get('kilogramos')?.touched)"
+                    class="p-error">
+                    <small *ngIf="newContratoForm.get('kilogramos')?.errors?.['pattern']">Solo se permiten números y un
+                        punto decimal.</small>
+                </div>
+
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-file-import"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="contrato" />
+                        <label for="contrato">Contrato</label>
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-file"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="lote" />
+                        <label for="lote">Lote</label>
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="col-12 md:col-4">
+                <span class="p-float-label">
+                    <p-dropdown [options]="estadoOptions" formControlName="estado"></p-dropdown>
+                    <label for="estado">Estado</label>
+                </span>
+            </div>
+
+            <div class="field col-12 md:col-13">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-file-edit"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="observacion" />
+                        <label for="observacion">Observación</label>
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-file-import"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="placa" />
+                        <label for="placa">Placa</label>
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fechaPago" formControlName="fechaPago" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'">
+                        </p-calendar>
+                        <label for="fechaPago">Fecha Pago</label>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+
+            <div class="flex justify-content-end mt-auto">
+                <button *ngIf="!isDetail" pButton label="{{ editing ? 'Guardar Cambios' : 'Registrar' }}"
+                    [disabled]="newContratoForm.invalid" icon="pi pi-save" type="submit">
+                </button>
+            </div>
+        </div>
+
+
+    </form>
+</p-dialog>

@@ -1,0 +1,114 @@
+:host ::ng-deep .custom-autocomplete .p-autocomplete-panel {
+    max-height: 150px; /* Ajusta la altura máxima según tu preferencia */
+    overflow-y: auto;
+}
+
+:host ::ng-deep .custom-autocomplete .p-autocomplete-items {
+    max-height: 150px; /* Debe coincidir con la altura máxima de p-autocomplete-panel */
+}
+
+:host ::ng-deep .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
+    height: 50px; /* Ajusta la altura de cada elemento según tu diseño */
+}
+
+.dialog-header {
+    position: relative;
+}
+
+.cancel-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+ 
+ :host ::ng-deep .p-multiselect {
+            min-width: 15rem;
+        }
+
+        :host ::ng-deep .multiselect-custom-virtual-scroll .p-multiselect {
+            min-width: 20rem;
+        }
+
+        :host ::ng-deep .multiselect-custom .p-multiselect-label {
+            padding-top: .25rem;
+            padding-bottom: .25rem;
+
+        }
+
+        :host ::ng-deep .multiselect-custom .country-item.country-item-value {
+            padding: .25rem .5rem;
+            border-radius: 3px;
+            display: inline-flex;
+            margin-right: .5rem;
+            background-color: var(--primary-color);
+            color: var(--primary-color-text);
+        }
+
+        :host ::ng-deep .multiselect-custom .country-item.country-item-value img.flag {
+            width: 17px;
+        }
+
+        :host ::ng-deep .multiselect-custom .country-item {
+            display: flex;
+            align-items: center;
+        }
+
+        :host ::ng-deep .multiselect-custom .country-item img.flag {
+            width: 18px;
+            margin-right: .5rem;
+        }
+
+        :host ::ng-deep .multiselect-custom .country-placeholder {
+            padding: 0.25rem;
+        }
+
+        :host ::ng-deep .p-colorpicker {
+            width: 2.5em
+        }
+        
+        .custom-autocomplete input {
+            pointer-events: none;
+            cursor: pointer;
+          }
+
+
+          .table-loading-overlay {
+            position: absolute;
+            top: 35%; /* Mover más hacia abajo */
+            left: 30%; /* Mover más hacia la derecha */
+            width: 60%; /* Ancho opcional */
+            height: 60%; /* Altura opcional */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+        
+        .loading-box {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .spinner-overlay {
+            width: 60px;
+            height: 70px;
+            z-index: 100;
+        }
+        
+        p-table.relative {
+            position: relative;
+        }
+        
+        .table-shadow {
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2); /* Efecto de sombra */
+            transition: box-shadow 0.3s ease; /* Animación suave */
+        }
+
+       
+        
+          
+

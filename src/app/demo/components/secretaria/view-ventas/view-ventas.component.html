@@ -1,0 +1,164 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
+    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<div class="card" style="height: 30px">
+    <h4 style="margin-top: -10px">Ordenes de ventas</h4>
+</div>
+
+<div class="card">
+    <p-table [value]="ordenesVenta" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll"
+        [paginator]="true" [rows]="5">
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-center justify-content-between mb-2">
+                <div class="button-group mr-2">
+                    <button pButton pRipple label="Ir a Ventas" icon="pi pi-arrow-left" class="p-button-warning mr-2"
+                        (click)="mostrarComponenteVenta()"></button>
+                </div>
+                <!--  <div class="flex">
+                    <span class="p-input-icon-left mr-2">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" placeholder="Nombre - Apellido - Cédula" />
+                    </span>
+
+                </div>-->
+            </div>
+            <div class="flex table-header"></div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 2rem; text-align: center;"></th>
+                <th style="text-align: center;">Id Orden</th>
+                <th style="text-align: center;">Comprador</th>
+                <th style="text-align: center;">Fecha</th>
+                <th style="text-align: center;">Total</th>
+                <th style="text-align: center;">Estado</th>
+                <th style="text-align: center;">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-orden let-expanded="expanded">
+            <tr>
+                <td style="text-align: center;">
+                    <button type="button" pButton pRipple (click)="toggleRow(orden)"
+                        class="p-button-text p-button-rounded p-button-plain"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                </td>
+                <td style="min-width: 10rem; text-align: center;">{{ orden.id }}</td>
+                <td style="min-width: 1rem; text-align: center;">{{ orden.comprador }}</td>
+                <td style="min-width: -10rem; text-align: center;">{{ orden.fecha | date }}</td>
+                <td style="min-width: 7rem; text-align: center;">{{ orden.valorTotal | currency:'USD':'code' }}</td>
+
+                <td style="min-width: 7rem; text-align: center;">
+                    <span [ngClass]="{
+                        'status-label': true,
+                        'status-activo': !orden.estado,   
+                        'status-pagado': orden.estado
+                    }">
+                        {{ orden.estado ? 'Pagado' : 'Pendiente' }}
+                    </span>
+                </td>
+
+                <td style="text-align: center;">
+                    <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-info mb-2 mr-2"
+                        pTooltip="Ver Detalles" tooltipPosition="top"></button>
+                    <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-success mr-2 mb-2"
+                        pTooltip="Registrar Pago" tooltipPosition="top" (click)="showPagoDialog(orden)"
+                        [disabled]="orden.estado"></button>
+                    <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-danger mr-2 mb-2"
+                        pTooltip="Eliminar Orden" tooltipPosition="top"
+                        (click)="confirmDeleteOrden(orden, $event)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-orden>
+            <tr>
+                <td colspan="7">
+                    <div class="p-3">
+                        <p-table [value]="orden.pagosOrdenesVenta" dataKey="id" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center;">Id</th>
+                <th style="text-align: center;">Fecha Pago</th>
+                <th style="text-align: center;">Tipo de Pago</th>
+                <th style="text-align: center;">Monto Pagado</th>
+                <th style="text-align: center;">Saldo</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pago>
+            <tr>
+                <td style="text-align: center;">{{ pago.id }}</td>
+                <td style="text-align: center;">{{ pago.fechaPago | date }}</td>
+                <td style="text-align: center;">{{ pago.tipoPago === 'E' ? 'Efectivo' : 'Transferencia' }}</td>
+                <td style="text-align: center;">{{ pago.valorPago | currency:'USD':'code' }}</td>
+                <td style="text-align: center;">{{ pago.saldo | currency:'USD':'code' }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4">No hay pagos para esta venta.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <form [formGroup]="nuevoPagoForm" (ngSubmit)="registrarPago()">
+        <h3 style="text-align: center;" class="mt-3">Registro de Pago</h3>
+        <div class="dialog-header cancel-button ">
+            <button pButton pRipple type="button" icon="pi pi-times" (click)="closePagoDialog()"
+                class="p-button-danger mr-2 "></button>
+        </div>
+        <div class="grid p-fluid">
+            <div class="field col-12 ">
+                <div class="p-inputgroup ">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-code"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="idOrdenVenta" />
+                        <label for="codigoPrestamo">Código de la orden</label>
+                    </span>
+
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-calendar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar id="fechaPago" formControlName="fechaPago" [showIcon]="false" [showOnFocus]="false"
+                            (onInput)="handleInput($event)" dateFormat="dd/mm/yy" [placeholder]="fechaPlaceholder">
+                        </p-calendar>
+                        <label for="fechaPago">Fecha del pago</label>
+                    </span>
+                </div>
+
+                <div class="mt-4">
+
+                    <span class="p-float-label">
+                        <p-dropdown id="tipoPago" placeholder="Elija.." optionLabel="nombre" optionValue="valor"
+                            [options]="tiposDePago" [showClear]="true" [appendTo]="'body'" formControlName="tipoPago">
+                        </p-dropdown>
+                        <label for="tipoPago">Tipo de Pago</label>
+                    </span>
+                </div>
+
+                <div class="p-inputgroup mt-4">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-dollar"></i>
+                    </span>
+                    <span class="p-float-label">
+                        <input type="text" pInputText formControlName="valorPago" />
+                        <label for="montoPagado">Monto de Pago</label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-column" style="height: 100%;">
+            <div class="flex justify-content-end mt-auto">
+                <button pButton label="Registrar" icon="pi pi-save" type="submit"></button>
+            </div>
+        </div>
+    </form>
+</p-dialog>
