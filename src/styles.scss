@@ -14,3 +14,44 @@ $gutter: 1rem; //for primeflex grid system
 /* Demos */
 @import "assets/demo/styles/flags/flags.css";
 @import "assets/demo/styles/badges.scss";
+
+:root {
+    --surface-card-rgb: 255, 255, 255;
+    --surface-border-rgb: 222, 226, 230;
+    --primary-color-rgb: 10, 110, 255;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+}
+
+/* Rebranding AgroFranco: Shimmer/Illumination Effect */
+.brand-agrofranco {
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(90deg, #1e293b 0%, #3b82f6 25%, #60a5fa 50%, #3b82f6 75%, #1e293b 100%);
+    background-size: 200% auto;
+    color: #1e293b;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-light 6s linear infinite;
+    display: flex;
+    align-items: center;
+    cursor: default;
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+}
+
+@keyframes shimmer-light {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+/* Utility to hide old text in layout */
+.layout-topbar-logo span, .layout-footer span.font-medium {
+    display: none !important;
+}

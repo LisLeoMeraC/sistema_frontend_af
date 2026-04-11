@@ -528,40 +528,50 @@ export class ConsultaCacaoComponent implements OnInit {
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Cantidad de Quintales',
-                            backgroundColor: '#42A5F5',
+                            label: 'Quintales Adquiridos',
+                            backgroundColor: '#2196F3',
+                            hoverBackgroundColor: '#1976D2',
                             borderColor: '#1E88E5',
+                            borderWidth: 1,
+                            borderRadius: 8, // Barras redondeadas "cool"
                             data: values,
+                            barPercentage: 0.6,
                         },
                     ],
                 };
 
                 this.graficoOptions = {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    },
                     plugins: {
                         legend: {
-                            position: 'top' as const,
-                            labels: {
-                                color: '#333',
-                            },
+                            display: false // Menos ruido, el label ya está en el dataset
                         },
                         tooltip: {
                             callbacks: {
                                 label: (tooltipItem: TooltipItem<'bar'>) => {
-                                    return `Quintales: ${parseFloat(tooltipItem.raw as string).toFixed(2)}`;
+                                    return ` Quintales: ${parseFloat(tooltipItem.raw as string).toFixed(2)} qq`;
                                 },
                             },
-                            backgroundColor: '#333',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
+                            backgroundColor: 'rgba(33, 37, 41, 0.9)',
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false
                         },
                     },
                     scales: {
                         x: {
                             ticks: {
-                                color: '#666',
+                                color: '#64748b',
                                 font: {
-                                    weight: '500',
+                                    size: 11,
+                                    weight: '600',
                                 },
                             },
                             grid: {
@@ -570,11 +580,13 @@ export class ConsultaCacaoComponent implements OnInit {
                             },
                         },
                         y: {
+                            beginAtZero: true,
                             ticks: {
-                                color: '#666',
+                                color: '#94a3b8',
+                                font: { size: 11 }
                             },
                             grid: {
-                                color: '#ddd',
+                                color: '#f1f5f9',
                                 drawBorder: false,
                             },
                         },

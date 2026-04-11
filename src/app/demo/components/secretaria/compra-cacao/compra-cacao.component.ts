@@ -106,24 +106,16 @@ export class CompraCacaoComponent implements OnInit {
         }
 
         const formValue = this.registerFormCompraCacao.value;
-        const fechaCompraLocal = new Date(formValue.fechaCompra);
-        const fechaCompraUTC = new Date(
-            Date.UTC(
-                fechaCompraLocal.getFullYear(),
-                fechaCompraLocal.getMonth(),
-                fechaCompraLocal.getDate(),
-                fechaCompraLocal.getHours(),
-                fechaCompraLocal.getMinutes(),
-                fechaCompraLocal.getSeconds()
-            )
-        );
+        
+        // Usar la fecha local directamente para evitar desfases de UTC que ocultan registros del "hoy"
+        const fechaCompra = new Date(formValue.fechaCompra);
 
         const compraCacao = {
             tipoCliente: {
-                id: this.registerFormCompraCacao.value.tipoCliente.value,
-            }, // Asegurarse de enviar solo el ID
-            tipoCacao: { id: this.registerFormCompraCacao.value.tipoCacao.id },
-            fechaCompra: fechaCompraUTC.toISOString(),
+                id: formValue.tipoCliente.value,
+            },
+            tipoCacao: { id: formValue.tipoCacao.id },
+            fechaCompra: fechaCompra.toISOString(),
             cantidadLibras: parseFloat(
                 this.registerFormCompraCacao.value.cantidadLibras
             ), // Convertir a número

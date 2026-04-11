@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Console, error } from 'console';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ControlRaService } from 'src/app/demo/service/control-ra.service';
 import { Contrato } from 'src/app/models/contrato';

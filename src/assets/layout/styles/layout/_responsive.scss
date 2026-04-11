@@ -33,12 +33,13 @@
 
         &.layout-static {
             .layout-main-container {
-                margin-left: 300px;
+                margin-left: 280px;
+                transition: margin-left $transitionDuration cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             &.layout-static-inactive {
                 .layout-sidebar {
-                    transform: translateX(-100%);
+                    transform: translateX(-110%); // Hide a bit more
                     left: 0;
                 }
 

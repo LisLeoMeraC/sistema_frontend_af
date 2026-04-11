@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { error } from 'console';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { IngresoFacturaService } from 'src/app/demo/service/ingreso-factura.service';
 import {

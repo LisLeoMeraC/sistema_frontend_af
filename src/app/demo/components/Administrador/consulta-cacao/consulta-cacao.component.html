@@ -1,216 +1,237 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px;">
-    <h4 style="margin-top: -10px;">Compras de Cacao por Cliente</h4>
-</div>
-<div class="card">
-    <form [formGroup]="registerForm" (ngSubmit)="consultar()">
 
-        <p-table [value]="facturas" [rows]="10" [rowHover]="true" scrollDirection="both" [scrollable]="true"
-            scrollHeight="400px" styleClass="mt-3 relative-table" responsiveLayout="scroll" [paginator]="true"
-            [ngClass]="{'table-shadow': loadings}">
+<!-- ===== HEADER PREMIUM COMPACTO ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 8px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-search-plus text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Consulta por Cliente</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Historial detallado de compras de cacao por productor</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PANEL DE FILTROS (REDISEÑADO) ===== -->
+<div class="card border-none shadow-2 border-round-xl p-3 mb-3">
+    <form [formGroup]="registerForm" (ngSubmit)="consultar()">
+        <div class="grid p-fluid align-items-end">
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Cliente</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon bg-gray-50"><i class="pi pi-user text-500"></i></span>
+                    <input type="text" pInputText formControlName="codigoCliente" placeholder="ID Cliente" class="border-round-none" />
+                    <button pButton pRipple type="button" icon="pi pi-search" (click)="openClienteModal()"
+                        class="p-button-secondary border-round-right-lg"></button>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Fecha Desde</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon bg-gray-50"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaDesde" placeholder="Desde" dateFormat="dd/mm/yy" [showButtonBar]="true"></p-calendar>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Fecha Hasta</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon bg-gray-50"><i class="pi pi-calendar-plus"></i></span>
+                    <p-calendar formControlName="fechaHasta" placeholder="Hasta" dateFormat="dd/mm/yy" [showButtonBar]="true"></p-calendar>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-3 flex gap-2">
+                <button pButton pRipple type="submit" label="Consultar" icon="pi pi-filter" 
+                        class="p-button-primary border-round-lg shadow-2 flex-1">
+                </button>
+                <button pButton pRipple type="button" icon="pi pi-refresh" 
+                        class="p-button-outlined p-button-secondary border-round-lg" 
+                        (click)="limpiarControlesPrincipales()">
+                </button>
+                <button pButton pRipple type="button" icon="pi pi-chart-bar" 
+                        class="p-button-info border-round-lg shadow-2" 
+                        (click)="showModalDialog()" pTooltip="Ver Análisis Gráfico">
+                </button>
+            </div>
+        </div>
+        
+        <div *ngIf="clienteNombre" class="mt-3 p-2 bg-primary-50 border-round-lg flex align-items-center">
+            <i class="pi pi-info-circle text-primary mr-2"></i>
+            <span class="text-primary font-bold">Mostrando resultados para: </span>
+            <span class="ml-2 text-900 font-medium">{{clienteNombre}}</span>
+        </div>
+    </form>
+</div>
+
+<!-- ===== SECCIÓN DE RESULTADOS Y TOTALES ===== -->
+<div class="grid mt-2">
+    <!-- Tabla de resultados -->
+    <div class="col-12 lg:col-9">
+        <div class="card border-none shadow-2 border-round-xl p-3 relative" [ngClass]="{'opacity-60': loadings}">
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Transacciones</h4>
+            </div>
+
+            <p-table [value]="facturas" [rows]="10" [rowHover]="true" styleClass="p-datatable-sm p-datatable-gridlines" 
+                responsiveLayout="scroll" [paginator]="true">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center" style="width: 140px;">ID Cliente</th>
+                        <th class="text-center">Fecha de Movimiento</th>
+                        <th class="text-right">Quintales (qq)</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-factura>
+                    <tr *ngFor="let detalle of factura?.detalles">
+                        <td class="text-center font-bold text-primary">{{ factura.idCliente }}</td>
+                        <td class="text-center text-700">
+                            <i class="pi pi-calendar-minus mr-2 text-500"></i>
+                            {{ detalle.fecha | date: 'dd/MM/yyyy' }}
+                        </td>
+                        <td class="text-right font-bold text-900">
+                            {{ detalle.cantQuintales | number:'1.2-2' }}
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center text-500 py-5">
+                            <i class="pi pi-search-minus text-4xl mb-3 block"></i>
+                            Seleccione un cliente y rango de fechas para consultar.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <!-- Spinner de carga -->
+            <div *ngIf="loadings" class="absolute top-0 left-0 w-full h-full border-round-xl flex align-items-center justify-content-center" 
+                style="background: rgba(255,255,255,0.7); z-index: 10;">
+                <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI del Total -->
+    <div class="col-12 lg:col-3">
+        <div class="card border-none shadow-3 p-4 border-round-xl bg-primary flex flex-column align-items-center justify-content-center text-center">
+            <div class="p-3 bg-white-alpha-20 border-round-circle mb-3 shadow-2">
+                <i class="pi pi-box text-white text-3xl"></i>
+            </div>
+            <span class="text-white-alpha-80 font-medium uppercase tracking-wider mb-2 text-sm">Volumen Consolidado</span>
+            <div class="text-white font-bold text-4xl mb-1">{{ totalLibras | number:'1.2-2' }}</div>
+            <span class="text-white-alpha-70 text-sm">Quintales Totales</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== DIÁLOGO DE GRÁFICO (MODERNIZADO - HEADER CLARO) ===== -->
+<p-dialog [(visible)]="ModalGrafico" [modal]="true" [closable]="true" [style]="{width: '70vw'}" 
+    styleClass="border-round-xl shadow-8">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-chart-bar text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Análisis Estadístico</div>
+                <div class="text-500" style="font-size: 0.8rem;">Tendencia de compras por período</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="p-1">
+        <form [formGroup]="graficoForm">
+            <div class="grid p-fluid align-items-end mb-4 bg-gray-50 p-3 border-round-xl border-1 border-200">
+                <div class="col-12 md:col-2">
+                    <label class="font-bold text-700 mb-2 block text-xs">Cód. Cliente</label>
+                    <input pInputText type="text" formControlName="codigoClienteModal" [(ngModel)]="codigoClienteModal" class="surface-0" readonly />
+                </div>
+                <div class="col-12 md:col-3">
+                    <label class="font-bold text-700 mb-2 block text-xs">Desde</label>
+                    <p-calendar [(ngModel)]="fechaDesde" dateFormat="dd-mm-yy" formControlName="fechaDesde" styleClass="surface-0"></p-calendar>
+                </div>
+                <div class="col-12 md:col-3">
+                    <label class="font-bold text-700 mb-2 block text-xs">Hasta</label>
+                    <p-calendar [(ngModel)]="fechaHasta" dateFormat="dd-mm-yy" formControlName="fechaHasta" styleClass="surface-0"></p-calendar>
+                </div>
+                <div class="col-12 md:col-4 flex gap-2">
+                    <button pButton pRipple label="Actualizar" icon="pi pi-sync" class="p-button-primary shadow-2 border-round-lg flex-1" (click)="generarGrafico()"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-outlined p-button-secondary border-round-lg" (click)="limpiarControles()"></button>
+                </div>
+            </div>
+
+            <h5 *ngIf="clienteNombre" class="text-center font-bold text-primary mb-4 border-bottom-1 surface-border pb-3">
+                <i class="pi pi-user mr-2"></i>{{clienteNombre}}
+            </h5>
+
+            <div class="flex justify-content-center">
+                <div style="width: 100%; height: 400px;" class="p-2">
+                    <p-chart type="bar" [data]="graficoData" [options]="graficoOptions" styleClass="w-full h-full"></p-chart>
+                </div>
+            </div>
+        </form>
+    </div>
+</p-dialog>
+
+<!-- ===== DIÁLOGO DE SELECCIÓN DE CLIENTE (MODERNIZADO - HEADER CLARO) ===== -->
+<p-dialog [(visible)]="ClientesModal" [modal]="true" [closable]="true" [style]="{width: '500px'}" 
+    styleClass="border-round-xl shadow-8">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-users text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Base de Productores</div>
+                <div class="text-500" style="font-size: 0.8rem;">Seleccione un cliente para la consulta</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="p-1">
+        <p-table #clientesTable [value]="clientes" [lazy]="true" (onLazyLoad)="onLazyLoad($event)"
+            [totalRecords]="totalRecords" [rows]="5" [paginator]="true" styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll">
 
             <ng-template pTemplate="caption">
-                <div class="button-container" style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <!-- Campo de entrada reducido -->
-                        <span class="p-float-label small-input-container">
-                            <input type="text" pInputText formControlName="codigoCliente" class="small-input" />
-                            <label for="codigoCliente">ID Cliente</label>
-                        </span>
-                        <!-- Botón de búsqueda más cerca del campo de entrada -->
-                        <button pButton pRipple type="button" icon="pi pi-search" (click)="openClienteModal()"
-                            class="p-button-secondary small-button"></button>
-                    </div>
-
-                    <span class="p-float-label narrow-datepicker">
-                        <p-calendar inputId="fechaDesde" formControlName="fechaDesde" [showIcon]="true"
-                            dateFormat="dd/mm/yy" placeholder="Desde" [showButtonBar]="true"></p-calendar>
-                        <label for="fechaDesde">Fecha Desde</label>
+                <div class="flex flex-column gap-2">
+                    <span class="p-input-icon-left w-full">
+                        <i class="pi pi-user-edit"></i>
+                        <input #searchInput pInputText type="text" placeholder="Búsqueda por nombre..." class="w-full" (input)="onTermInput($event)" />
                     </span>
-
-                    <span class="p-float-label narrow-datepicker">
-                        <p-calendar inputId="fechaHasta" formControlName="fechaHasta" [showIcon]="true"
-                            dateFormat="dd/mm/yy" placeholder="Hasta" [showButtonBar]="true"></p-calendar>
-                        <label for="fechaHasta">Fecha Hasta</label>
+                    <span class="p-input-icon-left w-full">
+                        <i class="pi pi-id-card"></i>
+                        <input #searchInputId pInputText type="text" placeholder="Búsqueda por ID..." class="w-full" (input)="onIdInput($event)" [(ngModel)]="searchTerm" />
                     </span>
-
-                    <button pButton pRipple type="submit" label="Consultar" icon="pi pi-refresh"
-                        style="width: 100px;"></button>
-                    <button pButton pRipple type="button" label="Limpiar" icon="pi pi-trash" class="p-button-warning"
-                        (click)="limpiarControlesPrincipales()"></button>
-                    <button pButton pRipple type="button" label="Gráfico" icon="pi pi-chart-line" class="p-button-info"
-                        (click)="showModalDialog()"></button>
                 </div>
-                <h5>{{clienteNombre}}</h5>
             </ng-template>
+
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Código del Cliente</th>
-                    <th>Fecha de compra</th>
-                    <th>Quintales</th>
+                    <th style="width: 80px;" class="text-center">Cod</th>
+                    <th>Nombres y Apellidos</th>
+                    <th style="width: 120px;">Cédula</th>
                 </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-factura>
-                <tr *ngFor="let detalle of factura.detalles">
-                    <td>{{ factura.idCliente }}</td>
-                    <td>{{ detalle.fecha | date: 'dd/MM/yyyy' }}</td>
-                    <td>{{ detalle.cantQuintales }}</td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-                <tr>
-                    <td colspan="8">No existen registros</td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="loadingbody">
-                <tr>
-                    <td colspan="8">No existen registros</td>
+            <ng-template pTemplate="body" let-cliente>
+                <tr (click)="onSelectCliente(cliente)" class="cursor-pointer hover:surface-100 transition-all">
+                    <td class="text-center font-bold text-primary">{{cliente.id}}</td>
+                    <td>{{cliente.nombres+' '+cliente.apellidos}}</td>
+                    <td class="text-700 text-sm">{{cliente.cedula}}</td>
                 </tr>
             </ng-template>
         </p-table>
-
-        <div *ngIf="loadings" class="table-loading-overlays">
-            <div class="loading-boxs">
-                <p-progressSpinner styleClass="spinner-overlays"></p-progressSpinner>
-            </div>
-        </div>
-
-        <div class="relative-container" style="position: relative; height: 100px;">
-            <span class="p-float-label" style="position: absolute; top: 10px; right: 10px;">
-                <input type="text" pInputText [value]="totalLibras" readonly />
-                <label for="total">Total de Quintales</label>
-            </span>
-        </div>
-    </form>
-</div>
-
-
-<p-dialog [(visible)]="ModalGrafico" [modal]="true" [closable]="false" [style]="{width: '60vw'}">
-    <h3 style="text-align: center;">Gráfico Estadístico De compras de Cacao por Cliente</h3>
-    <div class="dialog-header cancel-button">
-        <button pButton pRipple type="button" icon="pi pi-times" (click)="closeModalDialog()"
-            class="p-button-danger mr-2 mb-2 "></button>
-    </div>
-    <form [formGroup]="graficoForm">
-        <div class="p-fluid">
-            <div class="p-d-flex p-ai-center p-jc-between p-field button-container ">
-                <div class="p-field p-mr-2">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-search"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <input pInputText type="text" [(ngModel)]="codigoClienteModal"
-                                formControlName="codigoClienteModal" style="width: 80px;" />
-                            <label for="codigoClienteModal">Código</label>
-                        </span>
-                    </div>
-                </div>
-                <div class="p-field p-mr-2">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaDesde" [(ngModel)]="fechaDesde" dateFormat="dd-mm-yy"
-                                formControlName="fechaDesde"></p-calendar>
-                            <label for="fechaDesde">Fecha Desde:</label>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="p-field ">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaHasta" [(ngModel)]="fechaHasta" dateFormat="dd-mm-yy"
-                                formControlName="fechaHasta"></p-calendar>
-                            <label for="fechaHasta">Fecha Hasta:</label>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="p-field mt-2">
-                    <button pButton pRipple label="Generar" icon="pi pi-sync" class=" mr-2 mb-2"
-                        (click)="generarGrafico()"></button>
-                </div>
-                <div class="p-field mt-2">
-                    <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-warning mr-2 mb-2"
-                        (click)="limpiarControles()"></button>
-
-                </div>
-
-            </div>
-            <h5>{{clienteNombre}}</h5>
-            <div class="p-field mr-4">
-                <div style="width: 100%; height: 490px;">
-                    <p-chart type="bar" [data]="graficoData" [options]="graficoOptions"
-                        [style]="{'width': '100%', 'height': '100%'}"></p-chart>
-                </div>
-            </div>
-        </div>
-    </form>
-</p-dialog>
-
-
-
-<p-dialog [(visible)]="ClientesModal" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
-    <h3 style="text-align: center;">Mis Clientes</h3>
-    <div class="dialog-header cancel-button">
-        <button pButton pRipple type="button" icon="pi pi-times" (click)="closeClienteModal()"
-            class="p-button-danger mr-2 mb-2 "></button>
-    </div>
-
-    <p-table #clientesTable [value]="clientes" [lazy]="true" (onLazyLoad)="onLazyLoad($event)"
-        [totalRecords]="totalRecords" [rows]="5" [paginator]="true" scrollDirection="both" [scrollable]="true"
-        scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
-
-        <ng-template pTemplate="caption">
-            <div class="flex justify-content-between flex-column sm:flex-row">
-                <span class="p-input-icon-left mb-2">
-                    <i class="pi pi-search"></i>
-                    <input #searchInput pInputText type="text" placeholder="Nombre o Apellido" class="w-full"
-                        (input)="onTermInput($event)" />
-                </span>
-
-                <span class="p-input-icon-left mb-2">
-                    <i class="pi pi-search"></i>
-                    <input #searchInputId pInputText type="text" placeholder="Código del Cliente" class="w-full"
-                        (input)="onIdInput($event)" [(ngModel)]="searchTerm" />
-                </span>
-            </div>
-        </ng-template>
-
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Codigo</th>
-                <th>Cliente</th>
-                <th>Cédula</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-cliente>
-            <tr (click)="onSelectCliente(cliente)" class="table-row-hover">
-                <td>{{cliente.id}}</td>
-                <td>{{cliente.nombres+' '+cliente.apellidos}}</td>
-                <td>{{cliente.cedula}}</td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="8">No existen registros</td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="loadingbody">
-            <tr>
-                <td colspan="8">No existen registros</td>
-            </tr>
-        </ng-template>
-    </p-table>
-    <div *ngIf="loading" class="table-loading-overlay">
-        <div class="loading-box">
-            <p-progressSpinner styleClass="spinner-overlay"></p-progressSpinner>
+        
+        <div *ngIf="loading" class="flex justify-content-center py-4">
+            <p-progressSpinner styleClass="w-3rem h-3rem"></p-progressSpinner>
         </div>
     </div>
 </p-dialog>

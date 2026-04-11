@@ -1,388 +1,430 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px; display: flex; justify-content: space-between; align-items: center;">
-    <h4 style="margin: 0;">Ingreso de Artículos</h4>
-    <button pButton pRipple label="Ver Ordenes Ingresadas" icon="pi pi-view" class="p-button-warning mr-1"
-        (click)="openOrdenesIngresoModalDialog()"></button>
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
+    message="¿Está seguro de que desea continuar?"
+    [style]="{ width: '380px' }"
+    acceptButtonStyleClass="p-button-primary p-button-text"
+    rejectButtonStyleClass="p-button-danger p-button-text">
+</p-confirmDialog>
 
-
-    
-
-        
+<!-- ===== HEADER COMPACT ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 6px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-box text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Inventario</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Gestión de stock y precios</p>
+        </div>
+    </div>
+    <button pButton pRipple label="Órdenes" icon="pi pi-list"
+        class="p-button-warning p-button-outlined p-button-sm border-round-lg"
+        (click)="openOrdenesIngresoModalDialog()">
+    </button>
 </div>
-<div class="grid">
-    <div class="col-12 xl:col-6">
-        <div class="card">
-            <h5>Artículos</h5>
-            <p-table [value]="articulos" [rows]="7" [rowHover]="true" styleClass="p-datatable-gridlines"
-                [paginator]="true" (onRowSelect)="onRowArticuloSeleccionado($event)" rowSelectable="true">>
-                <ng-template pTemplate="caption">
-                    <div class="flex justify-content-between flex-column sm:flex-row">
-                        <span class="p-input-icon-left mb-2">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" placeholder="Nombre del Artículo" class="w-full"
-                                (input)="onTermInput($event)" />
-                        </span>
-                        <button pButton pRipple label="Nuevo Artículo" icon="pi pi-plus" class="mr-3 mb-2"
-                            (click)="showArticuloModalDialog()"></button>
 
+<!-- ===== MAIN GRID ===== -->
+<div class="grid">
+
+    <!-- LEFT: Tabla de artículos -->
+    <div class="col-12 xl:col-5">
+        <div class="card border-none shadow-2 border-round-xl overflow-hidden">
+
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <div>
+                    <h3 class="m-0 font-bold text-900" style="font-size: 1rem;">Artículos</h3>
+                    <p class="m-0 text-500" style="font-size: 0.8rem;">Selecciona un artículo para ingresar stock</p>
+                </div>
+            </div>
+
+            <p-table [value]="articulos" [rows]="8" [rowHover]="true"
+                styleClass="p-datatable-gridlines p-datatable-sm"
+                [paginator]="true"
+                (onRowSelect)="onRowArticuloSeleccionado($event)">
+
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between gap-2 flex-wrap">
+                        <span class="p-input-icon-left flex-1">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" placeholder="Buscar artículo..."
+                                class="w-full border-round-lg" (input)="onTermInput($event)" />
+                        </span>
+                        <button pButton pRipple label="Nuevo Artículo" icon="pi pi-plus"
+                            class="p-button-primary p-button-sm border-round-lg"
+                            (click)="showArticuloModalDialog()">
+                        </button>
                     </div>
                 </ng-template>
+
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="text-align: center;">Artículo</th>
-                        <th style="text-align: center;">Acciones</th>
+                        <th>Artículo</th>
+                        <th style="width: 80px; text-align: center;">Acciones</th>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="body" let-articulo>
-                    <tr (click)="onRowArticuloSeleccionado({data: articulo})">
-                        <td style="width: 250px;">{{articulo.nombreArticulo}} ({{articulo.descripcion}})</td>
-                        <td style="width: 1px; padding: 0; margin: 0; text-align: center;">
+                    <tr (click)="onRowArticuloSeleccionado({data: articulo})" style="cursor: pointer;">
+                        <td style="padding: 0.5rem;">
+                            <div class="flex align-items-center gap-2">
+                                <div class="flex align-items-center justify-content-center border-round-lg bg-primary-50"
+                                    style="width: 28px; height: 28px; min-width: 28px;">
+                                    <i class="pi pi-tag text-primary" style="font-size: 0.75rem;"></i>
+                                </div>
+                                <div class="flex flex-column" style="line-height: 1.2;">
+                                    <span class="font-semibold text-900" style="font-size: 0.85rem;">{{ articulo.nombreArticulo }}</span>
+                                    <span class="text-500" style="font-size: 0.75rem;">{{ articulo.descripcion }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: center; white-space: nowrap; width: 70px; padding: 0;">
                             <button pButton pRipple type="button" icon="pi pi-pencil"
-                                class="p-button-secondary p-button-text"
-                                (click)="showEditArticuloDialog(articulo , $event)"></button>
+                                class="p-button-rounded p-button-warning p-button-text p-button-sm"
+                                style="width: 2rem; height: 2rem;"
+                                (click)="showEditArticuloDialog(articulo, $event)">
+                            </button>
                             <button pButton pRipple type="button" icon="pi pi-trash"
-                                class="p-button-danger p-button-text"
-                                (click)="confirmDeleteArticulo(articulo, $event)"></button>
+                                class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                                style="width: 2rem; height: 2rem;"
+                                (click)="confirmDeleteArticulo(articulo, $event)">
+                            </button>
                         </td>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="3">No existen registros</td>
+                        <td colspan="2" class="text-center text-500 py-5">
+                            <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                            No existen artículos registrados.
+                        </td>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="loadingbody">
-                    <tr>
-                        <td colspan="3">Loading users data. Please wait.</td>
-                    </tr>
-                </ng-template>
+
             </p-table>
         </div>
     </div>
-    <div class="col-12 xl:col-6">
-        <div class="card">
-            <h5>Ingreso de Stock y Precio de Venta</h5>
+
+    <!-- RIGHT: Formulario de ingreso de stock -->
+    <div class="col-12 xl:col-7">
+        <div class="card border-none shadow-2 border-round-xl">
+
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <div>
+                    <h3 class="m-0 font-bold text-900" style="font-size: 1rem;">Ingreso de Stock</h3>
+                    <p class="m-0 text-500" style="font-size: 0.75rem;">Completa los datos</p>
+                </div>
+            </div>
+
             <form [formGroup]="registerForm" (ngSubmit)="registrarOrdenIngresoStock()">
-                <div class="grid p-fluid mt-3">
-                    <div class="field col-12 md:col-6">
+                <div class="grid p-fluid">
+
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Código</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-key"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <input type="text" pInputText formControlName="codigo" />
-                                <label for="codigo">Código</label>
-                            </span>
+                            <span class="p-inputgroup-addon"><i class="pi pi-key"></i></span>
+                            <input type="text" pInputText formControlName="codigo" placeholder="Código" />
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Nombre</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-tag"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <input type="text" pInputText formControlName="nombreArticulo" />
-                                <label for="nombreArticulo">Nombre del Artículo</label>
-                            </span>
+                            <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                            <input type="text" pInputText formControlName="nombreArticulo" placeholder="Nombre" />
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Fecha Ingreso</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-calendar"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <p-calendar id="fechaIngreso" formControlName="fechaIngreso" [showIcon]="true"
-                                    dateFormat="dd/mm/yy" [appendTo]="'body'">
-                                </p-calendar>
-                                <label for="fechaIngreso">Fecha de Ingreso</label>
-                            </span>
+                            <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                            <p-calendar formControlName="fechaIngreso" [showIcon]="true"
+                                dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa">
+                            </p-calendar>
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Expiración</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-calendar"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <p-calendar id="fechaIngreso" formControlName="fechaVencimiento" [showIcon]="true"
-                                    dateFormat="dd/mm/yy" [appendTo]="'body'">
-                                </p-calendar>
-                                <label for="fechaVencimiento">Fecha de Expiración</label>
-                            </span>
+                            <span class="p-inputgroup-addon"><i class="pi pi-calendar-times"></i></span>
+                            <p-calendar formControlName="fechaVencimiento" [showIcon]="true"
+                                dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa">
+                            </p-calendar>
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Unidades</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-tags"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <input type="text" pInputText formControlName="unidades" pKeyFilter="int" />
-                                <label for="unidades">Unidades</label>
-                            </span>
+                            <span class="p-inputgroup-addon"><i class="pi pi-hashtag"></i></span>
+                            <input type="text" pInputText formControlName="unidades"
+                                pKeyFilter="int" placeholder="0" />
                         </div>
                         <div *ngIf="registerForm.get('unidades')?.invalid && (registerForm.get('unidades')?.dirty || registerForm.get('unidades')?.touched)"
-                            class="p-error">
-                            <small *ngIf="registerForm.get('unidades')?.errors?.['pattern']">Solo se permiten números
-                                sin puntos ni comas.</small>
-                            <small *ngIf="registerForm.get('unidades')?.errors?.['required']">El campo de unidades es
-                                obligatorio.</small>
+                            class="p-error mt-1" style="font-size: 0.75rem;">
+                            <small *ngIf="registerForm.get('unidades')?.errors?.['required']">Obligatorio.</small>
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">P. Venta</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-dollar"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <input type="text" pInputText formControlName="precioVenta" pKeyFilter="money" />
-                                <label for="precioVenta">Precio de Venta</label>
-                            </span>
-                        </div>
-                        <div *ngIf="registerForm.get('precioVenta')?.invalid && (registerForm.get('precioVenta')?.dirty || registerForm.get('precioVenta')?.touched)"
-                            class="p-error">
-                            <small *ngIf="registerForm.get('precioVenta')?.errors?.['pattern']">Solo se permiten números
-                                y un punto decimal.</small>
-                            <small *ngIf="registerForm.get('precioVenta')?.errors?.['required']">El campo de precio de
-                                venta es obligatorio.</small>
+                            <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                            <input type="text" pInputText formControlName="precioVenta"
+                                pKeyFilter="money" placeholder="0.00" />
                         </div>
                     </div>
 
-
-                    <div class="field col-12 md:col-6">
+                    <div class="field col-12 md:col-6 mb-3">
+                        <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">P. Compra</label>
                         <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-dollar"></i>
-                            </span>
-                            <span class="p-float-label">
-                                <input type="text" pInputText formControlName="precioCompra" pKeyFilter="money" />
-                                <label for="precioCompra">Precio de Compra</label>
-                            </span>
-                        </div>
-                        <div *ngIf="registerForm.get('precioCompra')?.invalid && (registerForm.get('precioCompra')?.dirty || registerForm.get('precioCompra')?.touched)"
-                            class="p-error">
-                            <small *ngIf="registerForm.get('precioCompra')?.errors?.['pattern']">Solo se permiten
-                                números y un punto decimal.</small>
-                            <small *ngIf="registerForm.get('precioCompra')?.errors?.['required']">El campo de precio de
-                                compra es obligatorio.</small>
+                            <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                            <input type="text" pInputText formControlName="precioCompra"
+                                pKeyFilter="money" placeholder="0.00" />
                         </div>
                     </div>
 
-                    <div class="field col-12 md:col-6 align-items-center">
-                        <div class="p-inputgroup">
+                    <div class="field col-12 md:col-6 mb-3 flex align-items-end">
+                        <div class="flex gap-2 w-full">
                             <button pButton type="button" icon="pi pi-refresh" label="Limpiar"
-                                class="p-button-secondary mr-2" (click)="onClear()"></button>
-                            <button pButton type="submit" icon="pi pi-save" label="Registrar"></button>
+                                class="p-button-secondary p-button-outlined p-button-sm flex-1 border-round-lg"
+                                (click)="onClear()">
+                            </button>
+                            <button pButton type="submit" icon="pi pi-save" label="Registrar"
+                                class="p-button-primary p-button-sm flex-1 border-round-lg">
+                            </button>
                         </div>
                     </div>
-
-
 
                 </div>
-
             </form>
+
         </div>
     </div>
+
 </div>
 
 
-<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
-    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
-    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<!-- ===== DIALOG: NUEVO / EDITAR ARTÍCULO ===== -->
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false"
+    [style]="{width: '34vw'}" [breakpoints]="{'960px': '60vw', '640px': '95vw'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
 
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-tag text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">
+                    {{ isEditMode ? 'Editar Artículo' : 'Nuevo Artículo' }}
+                </div>
+                <div class="text-500" style="font-size: 0.8rem;">
+                    {{ isEditMode ? 'Modifica los datos del artículo' : 'Registra un nuevo artículo en el catálogo' }}
+                </div>
+            </div>
+        </div>
+    </ng-template>
 
-<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
     <form [formGroup]="registerFormArticulo" (ngSubmit)="onSubmitArticulo()">
-        <h3 style="text-align: center;">{{ isEditMode ? 'Editar Artículo' : 'Nuevo Artículo' }}</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeModalDialog()"
-                class="p-button-danger mr-2 mb-2 "></button>
-        </div>
-        <div class="grid p-fluid mt-4">
+        <div class="grid p-fluid mt-2">
+
             <div class="field col-12">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Nombre del Artículo</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="nombreArticulo" />
-                        <label for="nombreArticulo">Nombre del Articulo</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <input type="text" pInputText formControlName="nombreArticulo" placeholder="Nombre del artículo" />
                 </div>
             </div>
 
             <div class="field col-12">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Descripción</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-file"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="descripcion" />
-                        <label for="descripcion">Descripción</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-file"></i></span>
+                    <input type="text" pInputText formControlName="descripcion" placeholder="Descripción breve" />
                 </div>
             </div>
 
-
-        </div>
-        <div class="flex justify-content-end">
-            <button pButton label="{{ isEditMode ? 'Actualizar' : 'Registrar' }}" icon="pi pi-save"
-                type="submit"></button>
         </div>
     </form>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-danger"
+            (click)="closeModalDialog()">
+        </button>
+        <button pButton pRipple [label]="isEditMode ? 'Actualizar' : 'Registrar'"
+            icon="pi pi-save" type="button"
+            class="p-button-primary"
+            (click)="onSubmitArticulo()">
+        </button>
+    </ng-template>
+
 </p-dialog>
 
 
-<p-dialog [(visible)]="ordenesIngresosModal" [modal]="true" [closable]="false" [style]="{width: '65vw'}">
-    <h3 style="text-align: center;">Ordenes Registradas de Artículos</h3>
+<!-- ===== DIALOG: ÓRDENES DE INGRESO ===== -->
+<p-dialog [(visible)]="ordenesIngresosModal" [modal]="true" [closable]="false"
+    [style]="{width: '70vw'}" [breakpoints]="{'960px': '90vw', '640px': '100vw'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
 
-    <p-table [value]="ordenesIngreso" [rows]="6" [rowHover]="true" scrollDirection="both" [scrollable]="true"
-        scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll" [paginator]="true">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg" style="background: #fef3c7;">
+                <i class="pi pi-list text-xl" style="color: #d97706;"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Órdenes de Ingreso Registradas</div>
+                <div class="text-500" style="font-size: 0.8rem;">Historial de ingresos de stock con precios</div>
+            </div>
+        </div>
+    </ng-template>
 
+    <p-table [value]="ordenesIngreso" [rows]="7" [rowHover]="true"
+        scrollDirection="both" [scrollable]="true" scrollHeight="420px"
+        styleClass="p-datatable-gridlines p-datatable-sm mt-2"
+        responsiveLayout="scroll" [paginator]="true">
 
         <ng-template pTemplate="header">
             <tr>
-                <th td style="text-align: center;">Artículo</th>
-                <th td style="text-align: center;">Fecha Ingreso</th>
-                <th td style="text-align: center;">Fecha de Vencimiento</th>
-                <th td style="text-align: center;">Unidades</th>
-                <th td style="text-align: center;">Precio Compra</th>
-                <th td style="text-align: center;">Precio Venta</th>
-                <th td style="text-align: center;">Acciones</th>
+                <th>Artículo</th>
+                <th>Fecha Ingreso</th>
+                <th>Fecha Vencimiento</th>
+                <th style="text-align: center;">Unidades</th>
+                <th>Precio Compra</th>
+                <th>Precio Venta</th>
+                <th style="text-align: center; width: 70px;">Acciones</th>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-ingreso>
             <tr>
-                <td style="text-align: center;">{{ingreso.articulo.nombreArticulo}}</td>
-                <td style="text-align: center;">{{ingreso.fechaIngreso | date:'dd-MM-yyyy'}}  </td>
-                <td style="text-align: center;">{{ingreso.fechaVencimiento | date:'dd-MM-yyyy'}}</td>
-                <td style="text-align: center;">{{ingreso.unidades}}</td>
-                <td style="text-align: center;">{{ingreso.precioCompra | currency:'USD':'code'}}</td>
-                <td style="text-align: center;">{{ingreso.precioVenta | currency:'USD':'code'}}</td>
-                <td style="width: 1px; padding: 0; margin: 0; text-align: center;">
-                    <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-secondary p-button-text"
-                        (click)="openDialogUpdateIngresoStock(ingreso)"></button>
+                <td class="font-medium text-900">{{ ingreso.articulo.nombreArticulo }}</td>
+                <td>{{ ingreso.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+                <td>{{ ingreso.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+                <td style="text-align: center;">
+                    <span class="font-semibold">{{ ingreso.unidades }}</span>
+                </td>
+                <td>{{ ingreso.precioCompra | currency:'USD':'symbol':'1.2-2' }}</td>
+                <td>{{ ingreso.precioVenta | currency:'USD':'symbol':'1.2-2' }}</td>
+                <td style="text-align: center;">
+                    <button pButton pRipple type="button" icon="pi pi-pencil"
+                        class="p-button-rounded p-button-warning p-button-text"
+                        pTooltip="Editar" tooltipPosition="top"
+                        (click)="openDialogUpdateIngresoStock(ingreso)">
+                    </button>
                 </td>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="8">No existen registros</td>
+                <td colspan="7" class="text-center text-500 py-5">
+                    <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                    No existen órdenes de ingreso registradas.
+                </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="loadingbody">
-            <tr>
-                <td colspan="8">No existen registros</td>
-            </tr>
-        </ng-template>
+
     </p-table>
-    <p-footer class="flex justify-content-end">
-        <button pButton pRipple label="Cerrar" type="button" icon="pi pi-times" (click)="closeDialogOrdenesIngreso()"
-            class="p-button-danger mr-2 mb-2"></button>
-    </p-footer>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cerrar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-danger"
+            (click)="closeDialogOrdenesIngreso()">
+        </button>
+    </ng-template>
+
 </p-dialog>
 
 
+<!-- ===== DIALOG: ACTUALIZAR INGRESO DE STOCK ===== -->
+<p-dialog [(visible)]="updateOrdenesIngresoModal" [modal]="true" [closable]="false"
+    [style]="{width: '44vw'}" [breakpoints]="{'960px': '70vw', '640px': '95vw'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
 
-<p-dialog [(visible)]="updateOrdenesIngresoModal" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg" style="background: #fef3c7;">
+                <i class="pi pi-pencil text-xl" style="color: #d97706;"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Actualizar Ingreso de Stock</div>
+                <div class="text-500" style="font-size: 0.8rem;">Modifica los datos de la orden de ingreso</div>
+            </div>
+        </div>
+    </ng-template>
+
     <form [formGroup]="updateFormIngresoStock" (ngSubmit)="onUpdateIngresoStock()">
-        <h3 style="text-align: center;">Actualización de Ingreso de Stock</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-danger mr-2 mb-2" (click)="closeUpdateIngresoStock()"></button>
+        <div class="grid p-fluid mt-2">
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Artículo</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <input type="text" pInputText formControlName="nombreArticulo" placeholder="Artículo" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Fecha de Ingreso</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaIngreso" [showIcon]="true"
+                        dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Fecha de Expiración</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar-times"></i></span>
+                    <p-calendar formControlName="fechaVencimiento" [showIcon]="true"
+                        dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Unidades</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-hashtag"></i></span>
+                    <input type="text" pInputText formControlName="unidades" placeholder="0" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Precio de Compra (USD)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="precioCompra" placeholder="0.00" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.83rem;">Precio de Venta (USD)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="precioVenta" placeholder="0.00" />
+                </div>
+            </div>
+
         </div>
-        <div class="grid p-fluid mt-3">
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="nombreArticulo" />
-                        <label for="nombre">Artículo</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaIngreso" formControlName="fechaIngreso" [showIcon]="true"
-                                dateFormat="dd/mm/yy" [appendTo]="'body'">
-                            </p-calendar>
-                            <label for="fechaIngreso">Fecha de Ingreso</label>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaIngreso" formControlName="fechaVencimiento" [showIcon]="true"
-                                dateFormat="dd/mm/yy" [appendTo]="'body'">
-                            </p-calendar>
-                            <label for="fechaVencimiento">Fecha de Expiración</label>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tags"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="unidades" />
-                        <label for="unidades">Unidades</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="precioCompra" />
-                        <label for="precioCompra">Precio Compra</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="precioVenta" />
-                        <label for="precioVenta">Precio Venta</label>
-                    </span>
-                </div>
-            </div>
-
-           
-        </div>
-
-        <br />
-        <p-footer class="flex justify-content-end">
-            <button pButton label="Actualizar" icon="pi pi-save" type="submit"></button>
-        </p-footer>
     </form>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-danger"
+            (click)="closeUpdateIngresoStock()">
+        </button>
+        <button pButton pRipple label="Actualizar" icon="pi pi-save" type="button"
+            class="p-button-warning"
+            (click)="onUpdateIngresoStock()">
+        </button>
+    </ng-template>
+
 </p-dialog>

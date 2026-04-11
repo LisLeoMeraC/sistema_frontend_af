@@ -1,259 +1,292 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px">
-    <h4 style="margin-top: -10px">Ventas de Artículos</h4>
+
+<!-- ===== HEADER PREMIUM COMPACTO ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 6px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-cart-plus text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Ventas de Artículos</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Registro de salidas y facturación</p>
+        </div>
+    </div>
+    <button pButton pRipple label="Historial de Ventas" icon="pi pi-history"
+        class="p-button-warning p-button-outlined p-button-sm border-round-lg"
+        (click)="mostrarComponenteVenta()">
+    </button>
 </div>
 
 <div class="grid">
-    <div class="col-8 md:col-12">
-        <div class="card p-fluid">
-            <h5>Datos Generales</h5>
-            <div class="p-formgrid grid" style="margin-bottom: -2%;">
-                <div class="field col col-12 md:col-3 custom-calendar">
-                    <label htmlFor="fecha">Fecha</label>
-                    <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'"
-                        [(ngModel)]="fecha"></p-calendar>
-                </div>
-                <div class="field col col-12 md:col-4">
-                    <label htmlFor="comprador">Comprador</label>
-                    <input pInputText id="name2" type="text" [(ngModel)]="comprador" autocomplete="off" />
-                </div>
+    <div class="col-12">
+        <!-- SECCIÓN 1: DATOS GENERALES -->
+        <div class="card border-none shadow-2 border-round-xl mb-3 p-3">
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Datos del Cliente</h4>
+            </div>
 
-                <div class="field col col-12 md:col-3 p-d-flex p-jc-end mt-5" style="margin-left: 5%;">
-                    <button pButton type="button" icon="pi pi-tags" label="Revisar Ventas" class="p-button-warning" (click)="mostrarComponenteVenta()"></button>
+            <div class="grid p-fluid">
+                <div class="field col-12 md:col-3 mb-0">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Fecha de Venta</label>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                        <p-calendar [(ngModel)]="fecha" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa"></p-calendar>
+                    </div>
                 </div>
-
+                <div class="field col-12 md:col-6 mb-0">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Nombre del Comprador / Cliente</label>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                        <input pInputText type="text" [(ngModel)]="comprador" placeholder="Ej: Juan Pérez" autocomplete="off" />
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card p-fluid ">
-            <div class="flex justify-content-between align-items-center">
-                <h5>Detalle de la orden de Venta</h5>
-                <div class="flex justify-content-between flex-column sm:flex-row">
-                    <button pButton pRipple label="Agregar Artículo" icon="pi pi-plus" class="mr-2 mb-2"
-                        (click)="openModalDialogArticulos()"></button>
+        <!-- SECCIÓN 2: DETALLE DE LA VENTA -->
+        <div class="card border-none shadow-2 border-round-xl mb-3 p-3">
+            <div class="flex align-items-center justify-content-between mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <div>
+                    <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Detalle de la Orden</h4>
+                    <p class="m-0 text-500" style="font-size: 0.75rem;">Artículos agregados a la transacción</p>
                 </div>
+                <button pButton pRipple label="Agregar Artículo" icon="pi pi-plus"
+                    class="p-button-primary p-button-sm border-round-lg"
+                    (click)="openModalDialogArticulos()">
+                </button>
             </div>
-            <p-table [value]="ventas" [rows]="7" [rowHover]="true" scrollDirection="both" [scrollable]="true"
-                styleClass="p-datatable-gridlines" scrollHeight="400px" responsiveLayout="scroll" [paginator]="true">
+
+            <p-table [value]="ventas" [rows]="5" [rowHover]="true"
+                styleClass="p-datatable-gridlines p-datatable-sm"
+                [paginator]="true" responsiveLayout="scroll">
+
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="text-align: center;">Id Orden</th>
-                        <th style="text-align: center;">Artículo</th>
-                        <th style="text-align: center;">Cantidad</th>
-                        <th style="text-align: center;">Precio Unitario</th>
-                        <th style="text-align: center;">Subtotal</th>
-                        <th style="text-align: center;">Acciones</th>
+                        <th style="width: 100px; text-align: center;">Código</th>
+                        <th>Artículo</th>
+                        <th style="width: 120px; text-align: center;">Cantidad</th>
+                        <th style="width: 150px; text-align: right;">P. Unitario</th>
+                        <th style="width: 150px; text-align: right;">Subtotal</th>
+                        <th style="width: 60px; text-align: center;"></th>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="body" let-venta>
                     <tr>
-                        <td style="text-align: center;">{{ venta.idOrden }}</td>
-                        <td style="text-align: center;">{{ venta.articulo }}</td>
-                        <td style="text-align: center;">
-                            <!-- Campo de cantidad editable -->
+                        <td class="text-center font-medium">{{ venta.idOrden }}</td>
+                        <td>
+                            <div class="flex align-items-center gap-2">
+                                <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                    <i class="pi pi-tag text-primary text-xs"></i>
+                                </div>
+                                <span class="font-medium">{{ venta.articulo }}</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
                             <p-inputNumber [(ngModel)]="venta.cantidad" [min]="0" (onInput)="calcularSubtotal(venta)"
-                                [ngStyle]="{'width': '70px', 'text-align': 'center'}" inputId="cantidad" [step]="1"
-                                [showButtons]="false" [mode]="'decimal'" [disabled]="false">
+                                inputId="cantidad" [showButtons]="false"
+                                class="p-inputtext-sm w-full">
                             </p-inputNumber>
                         </td>
-                        <td style="text-align: center;">
-                            <!-- Campo de precio unitario editable -->
-                            <p-inputNumber [(ngModel)]="venta.precioUnitario" [min]="0"
-                                (onInput)="calcularSubtotal(venta)"
-                                [ngStyle]="{'width': '70px', 'text-align': 'center'}" inputId="precioUnitario"
-                                [step]="0.01" [showButtons]="false" [disabled]="false">
+                        <td class="text-right">
+                            <p-inputNumber [(ngModel)]="venta.precioUnitario" [min]="0" (onInput)="calcularSubtotal(venta)"
+                                [showButtons]="false" mode="currency" currency="USD" locale="en-US"
+                                class="p-inputtext-sm w-full">
                             </p-inputNumber>
                         </td>
-                        <td style="text-align: center;">
-                            <!-- Mostrar el subtotal -->
+                        <td class="text-right font-bold text-primary">
                             {{ venta.subtotal | currency: 'USD' }}
                         </td>
-                        <td style="text-align: center;">
-                            <button pButton pRipple type="button" icon="pi pi-times" class="p-button-danger mb-2 mr-2"
-                                pTooltip="Quitar Artículo" tooltipPosition="top" (click)="eliminarFila(venta)"></button>
-
+                        <td class="text-center">
+                            <button pButton pRipple type="button" icon="pi pi-times"
+                                class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                                (click)="eliminarFila(venta)">
+                            </button>
                         </td>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="8">No existen registros</td>
+                        <td colspan="6" class="text-center text-500 py-4">
+                            <i class="pi pi-shopping-cart text-3xl mb-2 block"></i>
+                            Seleccione artículos para comenzar la venta.
+                        </td>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="loadingbody">
+
+                <ng-template pTemplate="footer">
                     <tr>
-                        <td colspan="8">Loading users data. Please wait.</td>
+                        <td colspan="4" class="text-right font-bold text-900 border-none pt-3">TOTAL A PAGAR:</td>
+                        <td class="text-right font-bold text-2xl text-primary border-none pt-3">
+                            {{ total | currency:'USD' }}
+                        </td>
+                        <td class="border-none pt-3"></td>
                     </tr>
                 </ng-template>
             </p-table>
-
-            <!-- Espacio entre la tabla y el input -->
-            <div style="margin-top: 20px;"></div>
-
-            <!-- Contenedor del input alineado a la derecha -->
-            <div class="flex justify-content-end" style="margin-bottom: -3%;">
-                <div class="field grid col-6 justify-content-end">
-                    <label htmlFor="name3" class="col-2 md:mb-0">Total $</label>
-                    <div class="col-12 md:col-6">
-                        <input pInputText id="name3" [value]="total | currency:'USD'" type="text" disabled />
-                    </div>
-                </div>
-            </div>
-
-
         </div>
 
+        <!-- SECCIÓN 3: INFORMACIÓN DE PAGO -->
+        <div class="card border-none shadow-2 border-round-xl p-3">
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Configuración de Pago</h4>
+            </div>
 
-        <div class="card p-fluid">
-            <h5>Información de Pago</h5>
-            <div class="p-formgrid grid" style="margin-bottom: -2%;">
-                <div class="field col col-12 md:col-3">
-                    <label htmlFor="fecha">Estado de Orden</label>
-                    <div class>
-                        <p-dropdown [(ngModel)]="estadoSelecionado" placeholder="Elija.." optionLabel="nombre"
-                            [options]="opciones" [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}"
-                            (onChange)="onEstadoChange()">
-                        </p-dropdown>
+            <div class="grid p-fluid align-items-end">
+                <div class="field col-12 md:col-3 mb-0">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Estado de Orden</label>
+                    <p-dropdown [(ngModel)]="estadoSelecionado" placeholder="Seleccione estado" optionLabel="nombre"
+                        [options]="opciones" [showClear]="true" [appendTo]="'body'"
+                        (onChange)="onEstadoChange()">
+                    </p-dropdown>
+                </div>
 
+                <div class="field col-12 md:col-2 mb-0" *ngIf="esPorPagar()">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">¿Abona Saldo?</label>
+                    <p-dropdown [(ngModel)]="isAbona" placeholder="Elija.." optionLabel="nombre" [options]="abona"
+                        [showClear]="true" [appendTo]="'body'" (onChange)="onAbonoChange()">
+                    </p-dropdown>
+                </div>
+
+                <div class="field col-12 md:col-3 mb-0" *ngIf="(esPagado() || siAbona())">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Método de Pago</label>
+                    <p-dropdown [(ngModel)]="tipoPagoSeleccionado" placeholder="Seleccione.." optionLabel="nombre"
+                        [options]="tiposDePago" [showClear]="true" [appendTo]="'body'">
+                    </p-dropdown>
+                </div>
+
+                <div class="field col-12 md:col-2 mb-0" *ngIf="siAbona() && siTipoPagoSeleccionado()">
+                    <label class="font-semibold text-700 mb-1 block" style="font-size: 0.82rem;">Monto Abono</label>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                        <input pInputText type="text" [(ngModel)]="monto" placeholder="0.00" />
                     </div>
                 </div>
-                <div class="field col col-12 md:col-2" *ngIf="esPorPagar()">
-                    <label htmlFor="fecha">Abona Saldo?</label>
-                    <p-dropdown [(ngModel)]="isAbona" placeholder="Elija.." optionLabel="nombre" [options]="abona"
-                        [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}"
-                        (onChange)="onAbonoChange()">
-                    </p-dropdown>
-                </div>
 
-                <div class="field col col-12 md:col-3" *ngIf="(esPagado() || siAbona())">
-                    <label htmlFor="tipoPago">Tipo de Pago</label>
-                    <p-dropdown [(ngModel)]="tipoPagoSeleccionado" placeholder="Seleccione.." optionLabel="nombre"
-                        [options]="tiposDePago" [showClear]="true" [appendTo]="'body'" [ngStyle]="{'width': '100%'}">
-                    </p-dropdown>
+                <div class="field col-12 md:col-3 mb-0 ml-auto" *ngIf="puedeRegistrarVenta()">
+                    <button pButton pRipple type="button" label="Completar Registro" icon="pi pi-check-circle"
+                        class="p-button-success border-round-lg shadow-2"
+                        (click)="registrarVenta()">
+                    </button>
                 </div>
-
-                <div class="field col col-12 md:col-2" *ngIf="siAbona() && siTipoPagoSeleccionado()">
-                    <label htmlFor="monto">Monto</label>
-                    <input pInputText id="monto" type="text" [(ngModel)]="monto" />
-                </div>
-
-                <div class="field col col-12 md:col-2 p-d-flex p-jc-end mt-5" *ngIf="puedeRegistrarVenta()">
-                    <button pButton type="button" label="Registrar Venta" class="p-button-success"
-                        (click)="registrarVenta()"></button>
-                </div>
-
             </div>
         </div>
     </div>
 </div>
 
+<!-- ===== DIALOG: SELECCIÓN DE ARTÍCULOS ===== -->
+<p-dialog [(visible)]="displayModalArticulos" [modal]="true" [closable]="false"
+    [style]="{width: '74vw'}" [breakpoints]="{'960px': '90vw', '640px': '100vw'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
 
-<p-dialog [(visible)]="displayModalArticulos" [modal]="true" [closable]="false" [style]="{width: '70vw'}">
-    <form>
-        <h3 style="text-align: center;">Inventario</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeModalDialogArticulos()"
-                class="p-button-danger mr-2 mb-2"></button>
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-box text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Inventario de Artículos</div>
+                <div class="text-500" style="font-size: 0.8rem;">Busque y seleccione el stock a vender</div>
+            </div>
         </div>
-        
-            <p-table [value]="articulos" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll"
-                [paginator]="true" [rows]="5" [(first)]="first">
-                <ng-template pTemplate="caption">
-                    <div class="flex justify-content-between items-center">
-                        <!-- Input de búsqueda alineado a la derecha -->
-                        <div class="flex-1 col-4 " style="text-align: right;">
-                            <span class="p-input-icon-left mb-2">
-                                <i class="pi pi-search"></i>
-                                <input pInputText type="text" placeholder="Nombre del Artículo" [(ngModel)]="searchTermin" class="w-72"
-                                    (input)="onTermInput($event)" />
-                            </span>
+    </ng-template>
+
+    <div class="p-1">
+        <p-table [value]="articulos" dataKey="id" [expandedRowKeys]="expandedRows"
+            styleClass="p-datatable-sm p-datatable-gridlines mt-2"
+            [paginator]="true" [rows]="6" [(first)]="first">
+
+            <ng-template pTemplate="caption">
+                <div class="flex align-items-center justify-content-end">
+                    <span class="p-input-icon-left w-full md:w-20rem">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" placeholder="Buscar por nombre..."
+                            [(ngModel)]="searchTermin" class="w-full border-round-lg"
+                            (input)="onTermInput($event)" />
+                    </span>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem"></th>
+                    <th class="text-center">ID</th>
+                    <th>Artículo</th>
+                    <th>Descripción</th>
+                    <th class="text-center">Estado</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-articulo let-expanded="expanded">
+                <tr>
+                    <td>
+                        <button type="button" pButton pRipple (click)="toggleRow(articulo)"
+                            class="p-button-text p-button-rounded p-button-plain p-button-sm"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    </td>
+                    <td class="text-center font-medium">{{ articulo.id }}</td>
+                    <td class="font-bold">{{ articulo.nombreArticulo }}</td>
+                    <td class="text-500">{{ articulo.descripcion }}</td>
+                    <td class="text-center">
+                        <p-tag [severity]="articulo.estado ? 'success' : 'danger'"
+                            [value]="articulo.estado ? 'En Stock' : 'Sin Stock'"
+                            styleClass="border-round-lg">
+                        </p-tag>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="rowexpansion" let-articulo>
+                <tr>
+                    <td colspan="5" class="bg-gray-50 p-3">
+                        <div class="card p-0 border-none shadow-1 border-round-lg overflow-hidden">
+                            <p-table [value]="articulo.ingresosStock" styleClass="p-datatable-sm">
+                                <ng-template pTemplate="header">
+                                    <tr class="surface-100">
+                                        <th class="text-center">ID Ingreso</th>
+                                        <th class="text-center">Fecha Ingreso</th>
+                                        <th class="text-center">Stock Disp.</th>
+                                        <th class="text-center">P. Venta</th>
+                                        <th class="text-center">Vencimiento</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-ingreso>
+                                    <tr>
+                                        <td class="text-center text-700">{{ ingreso.id }}</td>
+                                        <td class="text-center">{{ ingreso.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+                                        <td class="text-center font-bold">{{ ingreso.unidades }}</td>
+                                        <td class="text-center text-primary font-bold">{{ ingreso.precioVenta | currency: "USD" }}</td>
+                                        <td class="text-center">{{ ingreso.fechaVencimiento | date:'dd/MM/yyyy' }}</td>
+                                        <td class="text-center">
+                                            <button pButton pRipple type="button" icon="pi pi-cart-plus"
+                                                class="p-button-rounded p-button-success p-button-text p-button-sm"
+                                                style="width: 2.2rem; height: 2.2rem;"
+                                                pTooltip="Añadir a la orden" tooltipPosition="left"
+                                                (click)="agregarIngresoVenta(articulo, ingreso)">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-500 py-3">No hay lotes disponibles para este artículo.</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                        <!-- Botón alineado a la derecha -->
-
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width: 2rem"></th>
-                        <th style="text-align: center;">Código</th>
-                        <th style="text-align: center;">Nombre</th>
-                        <th style="text-align: center;">Descripción</th>
-                        <th style="text-align: center;">Estado</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-articulo let-expanded="expanded">
-                    <tr>
-                        <td>
-                            <button type="button" pButton pRipple (click)="toggleRow(articulo)"
-                                class="p-button-text p-button-rounded p-button-plain"
-                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
-                        </td>
-                        <td style="min-width: 12rem; text-align: center;">{{ articulo.id }}</td>
-                        <td style="min-width: 12rem; text-align: center;">{{ articulo.nombreArticulo }}</td>
-                        <td style="min-width: 12rem; text-align: center;">{{ articulo.descripcion }}</td>
-                        <td style="min-width: 12rem; text-align: center;">
-                            <span class="status-label"
-                                [ngClass]="articulo.estado ? 'status-en-stock' : 'status-sin-stock'" >
-                                {{ articulo.estado ? "En Stock" : "No hay stock" }}
-                            </span>
-                        </td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="rowexpansion" let-articulo>
-                    <tr>
-                        <td colspan="5">
-                            <div class="p-3">
-                                <p-table [value]="articulo.ingresosStock" dataKey="id" responsiveLayout="scroll">
-                                    <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="codigo" style="text-align: center;">
-                            Código
-                        </th>
-                        <th pSortableColumn="fechaIngreso" style="text-align: center;">
-                            Fecha de Ingreso
-                        </th>
-                        <th pSortableColumn="unidades" style="text-align: center;">
-                            Unidades
-                        </th>
-                        <th pSortableColumn="precioVenta" style="text-align: center;">
-                            Precio de Venta
-                        </th>
-                        <th pSortableColumn="fechaVencimiento" style="text-align: center;">
-                            Fecha de Vencimiento
-                        </th>
-                        <th pSortableColumn="acciones" style="text-align: center;">
-                            Acciones
-                        </th>
-
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-ingreso>
-                    <tr>
-                        <td style="text-align: center;">{{ ingreso.id}}</td>
-                        <td style="text-align: center;">{{ ingreso.fechaIngreso | date }}</td>
-                        <td style="text-align: center;">{{ ingreso.unidades }}</td>
-                        <td style="text-align: center;">{{ ingreso.precioVenta | currency: "USD" : "code" }}</td>
-                        <td style="text-align: center;">{{ ingreso.fechaVencimiento | date }}</td>
-                        <td style="text-align: center;">
-                            <button pButton pRipple type="button" icon="pi pi-shopping-cart"  pTooltip="Agregar artículo a la orden"
-                            tooltipPosition="top"
-                                class=" p-button-help mr-2 mb-2" (click)="agregarIngresoVenta(articulo, ingreso)">
-                            </button>
-                        </td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="5">
-                            No hay ingresos para este artículo.
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-        </td>
-        </tr>
-        </ng-template>
+                    </td>
+                </tr>
+            </ng-template>
         </p-table>
-    </form>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Finalizar Selección" icon="pi pi-check" type="button"
+            class="p-button-text p-button-primary"
+            (click)="closeModalDialogArticulos()">
+        </button>
+    </ng-template>
 </p-dialog>

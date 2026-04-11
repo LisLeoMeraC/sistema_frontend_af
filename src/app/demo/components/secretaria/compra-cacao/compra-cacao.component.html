@@ -1,277 +1,286 @@
 <p-toast></p-toast>
-<div class="card" style="height: 40px;">
-    <h4 style="margin-top: -10px;">Compras - Cacao</h4>
+<p-confirmDialog key="confirm" border="none"></p-confirmDialog>
+
+<!-- ===== HEADER PREMIUM COMPACTO ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 8px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-shopping-bag text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Compras de Cacao</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Gestión de adquisiciones y stock diario</p>
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
+            class="p-button-primary p-button-sm border-round-lg shadow-2"
+            (click)="showCompraCacaoModalDialog()">
+        </button>
+        <button pButton pRipple label="Historial Completo" icon="pi pi-history"
+            class="p-button-success p-button-outlined p-button-sm border-round-lg"
+            (click)="openDialogTodasCompras()">
+        </button>
+    </div>
 </div>
+
 <div class="grid">
+    <!-- SECCIÓN IZQUIERDA: COMPRAS DEL DÍA -->
     <div class="col-12 xl:col-7">
-        <div class="card">
-            <h5>Compras del Día</h5>
-            <p-table [value]="comprasCacao" [rows]="7" [rowHover]="true" styleClass="p-datatable-gridlines"
-                [paginator]="true" rowSelectable="true">>
-                <ng-template pTemplate="caption">
-                    <div class="flex justify-content-between flex-column sm:flex-row">
+        <div class="card border-none shadow-2 border-round-xl p-3">
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Compras del Día</h4>
+            </div>
 
-                        <button pButton pRipple label="Nueva Compra" icon="pi pi-plus" class="mr-3 mb-2"
-                            (click)="showCompraCacaoModalDialog()"></button>
-                        <button pButton pRipple type="button" label="Más Detalles" icon="pi pi-info-circle"
-                            (click)=" openDialogTodasCompras()" class="p-button-success mr-2 mb-2"></button>
+            <p-table [value]="comprasCacao" [rows]="6" [rowHover]="true"
+                styleClass="p-datatable-sm p-datatable-gridlines"
+                [paginator]="true" responsiveLayout="scroll">
 
-                    </div>
-                </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="text-align: center;">Hora</th>
-                        <th style="text-align: center;">Tipo</th>
-                        <th style="text-align: center;">Libras</th>
-                        <th style="text-align: center;">Total Por Pagar</th>
-                        <th style="text-align: center; width: 10px;">Acción</th>
+                        <th class="text-center" style="width: 80px;">Hora</th>
+                        <th>Tipo de Cacao</th>
+                        <th class="text-center" style="width: 100px;">Libras</th>
+                        <th class="text-right" style="width: 130px;">Total</th>
+                        <th class="text-center" style="width: 60px;"></th>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="body" let-cacao>
                     <tr>
-                        <td style="text-align: center;">{{ cacao.fechaCompra | date:'HH:mm' }}</td>
-                        <td style="text-align: center;">{{cacao.tipoCacao.nombre}}</td>
-                        <td style="text-align: center;">{{cacao.cantidadLibras }}</td>
-                        <td style="text-align: center;">{{ cacao.totalPagado | currency:'USD':'code' }}</td>
-                        <td style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                        <td class="text-center text-700 font-medium">
+                            {{ cacao.fechaCompra | date:'HH:mm' }}
+                        </td>
+                        <td>
+                            <div class="flex align-items-center gap-2">
+                                <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                    <i class="pi pi-tag text-primary text-xs"></i>
+                                </div>
+                                <span class="font-medium text-900">{{ cacao.tipoCacao.nombre }}</span>
+                            </div>
+                        </td>
+                        <td class="text-center font-bold text-700">
+                            {{ cacao.cantidadLibras }} <small class="text-500 font-normal">lb</small>
+                        </td>
+                        <td class="text-right font-bold text-primary">
+                            {{ cacao.totalPagado | currency:'USD' }}
+                        </td>
+                        <td class="text-center">
                             <button pButton pRipple type="button" icon="pi pi-trash"
-                                class="p-button-danger p-button-text mr-2 mb-2"
-                                (click)="confirmDeleteCompra(cacao)"></button>
-
+                                class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                                style="width: 2rem; height: 2rem;"
+                                (click)="confirmDeleteCompra(cacao)">
+                            </button>
                         </td>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="7">No existen registros</td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="loadingbody">
-                    <tr>
-                        <td colspan="7">Loading users data. Please wait.</td>
+                        <td colspan="5" class="text-center text-500 py-4">
+                            <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                            No hay compras registradas hoy.
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
     </div>
+
+    <!-- SECCIÓN DERECHA: RESUMEN Y CAJA -->
     <div class="col-12 xl:col-5">
-        <div class="card">
-            <div class="card">
-                <h6>Total Comprado en el Día</h6>
-                <p-table [value]="totalCacao" [rows]="10" [rowHover]="true" styleClass="p-datatable-gridlines"
-                    [paginator]="true" rowSelectable="true">>
+        <div class="card border-none shadow-2 border-round-xl p-3 h-full flex flex-column">
+            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Consolidado Hoy</h4>
+            </div>
 
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th style="text-align: center;">Tipo De Cacao</th>
-                            <th style="text-align: center;">Total Comprado</th>
+            <p-table [value]="totalCacao" styleClass="p-datatable-sm p-datatable-gridlines mb-3">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Categoría</th>
+                        <th class="text-right">Inversión Total</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-total>
+                    <tr>
+                        <td class="font-medium text-700">{{ total.tipoCacao }}</td>
+                        <td class="text-right font-bold text-green-600">
+                            {{ total.totalDolares | currency:'USD' }}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="2" class="text-center text-500 py-3">Sin datos disponibles.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
 
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-totalCacao>
-                        <tr>
-                            <td>{{totalCacao.tipoCacao}}</td>
-                            <td style="text-align: center;">{{totalCacao.totalDolares | currency:'USD':'code'}}</td>
-
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="emptymessage">
-                        <tr>
-                            <td colspan="5">No existen registros</td>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="loadingbody">
-                        <tr>
-                            <td colspan="5">Loading users data. Please wait.</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-                <div class="flex justify-content-end mt-3">
-                    <button pButton type="button" icon="pi pi-plus" label="Registrar en Caja"
-                        (click)="registrarTransaccionesCaja()"></button>
-                </div>
+            <div class="mt-auto surface-50 p-3 border-round-lg border-1 border-200">
+                <p class="text-500 m-0 mb-3 text-sm line-height-3">
+                    <i class="pi pi-info-circle mr-1"></i>
+                    Al registrar en caja, los montos se descontarán del saldo actual para cuadrar el balance diario.
+                </p>
+                <button pButton pRipple type="button" icon="pi pi-check-square" label="Registrar en Caja"
+                    class="p-button-success w-full shadow-2 border-round-lg font-bold"
+                    (click)="registrarTransaccionesCaja()">
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
-    message="Are you sure you want to proceed?" [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
-    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<!-- ===== DIALOG: NUEVA COMPRA DE CACAO ===== -->
+<p-dialog [(visible)]="displayModalCompraCacao" [modal]="true" [closable]="false"
+    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
 
-
-<p-dialog [(visible)]="displayModalCompraCacao" [modal]="true" [closable]="false" [style]="{width: '42vw'}">
-    <form [formGroup]="registerFormCompraCacao" (ngSubmit)="onSubmitCompraCacao()">
-        <h3 style="text-align: center;">Compra de Cacao</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeModalCompraCacaoDialog()"
-                class="p-button-danger mr-2 mb-2"></button>
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-cart-plus text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Nueva Compra</div>
+                <div class="text-500" style="font-size: 0.8rem;">Ingrese los detalles de la adquisición</div>
+            </div>
         </div>
-        <div class="col-12 md:col-50 full-width-container mr-2 " style="text-align: center;">
+    </ng-template>
+
+    <form [formGroup]="registerFormCompraCacao" (ngSubmit)="onSubmitCompraCacao()" class="p-fluid">
+        <div class="field mb-4">
+            <label class="font-bold text-700 block mb-2">Origen del Cliente</label>
             <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente"
-                class="full-width"></p-selectButton>
+                styleClass="w-full"></p-selectButton>
         </div>
 
-        <div class="grid p-fluid">
-            <!-- Primera columna -->
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup mt-2">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-calendar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <p-calendar id="fechaCompra" formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
-                            dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'">
-                        </p-calendar>
-                        <label for="fechaCompra">Fecha y Hora de Compra</label>
-                    </span>
-                </div>
+        <div class="grid">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Fecha y Hora</label>
+                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
+                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"
+                    styleClass="border-round-lg"></p-calendar>
             </div>
 
-            <!-- Segunda columna -->
-            <div class="col-12 md:col-5">
-                <div class="mt-2">
-                    <span class="p-float-label">
-                        <p-dropdown id="tipoCacao" placeholder="Tipo de Cacao" [options]="tiposCacao"
-                            optionLabel="nombre" formControlName="tipoCacao" [showClear]="true" [appendTo]="'body'"
-                            [ngStyle]="{'width': '100%'}">
-                        </p-dropdown>
-                        <label for="tipoCacao">Tipo de Cacao</label>
-                    </span>
-                </div>
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Tipo de Cacao</label>
+                <p-dropdown [options]="tiposCacao" optionLabel="nombre" formControlName="tipoCacao"
+                    placeholder="Seleccione variedad" [showClear]="true" [appendTo]="'body'"
+                    styleClass="border-round-lg"></p-dropdown>
             </div>
 
-            <div class="col-12 md:col-6">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Cantidad (Libras)</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="cantidadLibras" />
-                        <label for="cantidadLibras">Cantidad en Libras</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <input pInputText formControlName="cantidadLibras" placeholder="0.00" />
                 </div>
             </div>
 
-            <div class="col-12 md:col-6">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Total a Pagar ($)</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="totalPagado" />
-                        <label for="totalPagado">Dinero Total Pagado</label>
-                    </span>
-                </div>
-            </div>
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="pagoEfectivo" />
-                        <label for="pagoEfectivo">Pago en Efectivo</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input pInputText formControlName="totalPagado" placeholder="0.00" />
                 </div>
             </div>
 
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="pagoTransferencia" value=0.00 />
-                        <label for="pagoTransferencia">Pago por Transferencia</label>
-                    </span>
-                </div>
+            <div class="field col-6">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Efectivo</label>
+                <input pInputText formControlName="pagoEfectivo" placeholder="0.00" />
             </div>
 
-
+            <div class="field col-6">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Transferencia</label>
+                <input pInputText formControlName="pagoTransferencia" placeholder="0.00" />
+            </div>
         </div>
 
-        <div class="flex justify-content-end">
-            <button pButton label="Registrar" icon="pi pi-save" type="submit" class="register-button"></button>
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
+            <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+                class="p-button-text p-button-secondary" (click)="closeModalCompraCacaoDialog()">
+            </button>
+            <button pButton pRipple type="submit" label="Guardar Registro" icon="pi pi-save"
+                class="p-button-primary shadow-2 border-round-lg">
+            </button>
         </div>
     </form>
 </p-dialog>
 
+<!-- ===== DIALOG: HISTORIAL DE COMPRAS ===== -->
+<p-dialog [(visible)]="displayModalCompraCacaoTodas" [modal]="true" [closable]="true"
+    [style]="{width: '85vw'}" styleClass="border-round-xl shadow-5">
 
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-green-50">
+                <i class="pi pi-history text-green-600 text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Historial de Compras de Cacao</div>
+                <div class="text-500" style="font-size: 0.8rem;">Filtrado por fecha y auditoría detallada</div>
+            </div>
+        </div>
+    </ng-template>
 
-
-
-<p-dialog [(visible)]="displayModalCompraCacaoTodas" [modal]="true" [closable]="false" [style]="{width: '75vw'}">
-    <div class="dialog-header cancel-button">
-        <button pButton pRipple type="button" icon="pi pi-times" (click)="closeDialogTodasCompras()"
-            class="p-button-danger "></button>
-    </div>
-    <div class="card mt-3">
-        <h4 style="text-align: center;">Registro de todas las compras de Cacao</h4>
-
-        <br>
-        <p-table [value]="comprasCacaoTodas" [rows]="7" [rowHover]="true" styleClass="p-datatable-gridlines"
-            [paginator]="true" rowSelectable="true">>
-            <ng-template pTemplate="caption">
-                <form [formGroup]="searchForm">
-                    <div class="grid p-fluid">
-                        <!-- Primera columna: Fecha Inicio -->
-                        <div class="col-12 md:col-6">
-                            <div class="p-inputgroup">
-                                <span class="p-inputgroup-addon">
-                                    <i class="pi pi-calendar"></i>
-                                </span>
-                                <span class="p-float-label">
-                                    <p-calendar id="fecha" formControlName="fecha" [showIcon]="true"
-                                        dateFormat="dd/mm/yy" [appendTo]="'body'">
-                                    </p-calendar>
-                                    <label for="fecha">Fecha de compras</label>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Tercera columna: Botones -->
-                        <div class="col-12 md:col-3">
-                            <div class="p-inputgroup">
-                                <button pButton type="button" label="Buscar" icon="pi pi-search" (click)="cargarComprasCacaoFecha()" class="mr-2"></button>
-                                <button pButton type="button" label="Limpiar" icon="pi pi-trash" class="p-button-warning" (click)="limpiarForm()"></button>
-                            </div>
-                        </div>
+    <div class="p-1">
+        <div class="surface-50 p-3 border-round-xl border-1 border-200 mb-3">
+            <form [formGroup]="searchForm" class="grid p-fluid align-items-center">
+                <div class="field col-12 md:col-6 mb-0">
+                    <label class="font-bold text-700 mb-1 block">Buscar por Fecha</label>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                        <p-calendar formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'"></p-calendar>
                     </div>
-                </form>
-            </ng-template>
+                </div>
+                <div class="field col-12 md:col-3 mb-0 pt-4">
+                    <button pButton pRipple type="button" label="Consultar" icon="pi pi-search"
+                        class="p-button-primary border-round-lg shadow-1" (click)="cargarComprasCacaoFecha()">
+                    </button>
+                </div>
+                <div class="field col-12 md:col-3 mb-0 pt-4">
+                    <button pButton pRipple type="button" label="Limpiar" icon="pi pi-refresh"
+                        class="p-button-outlined p-button-secondary border-round-lg" (click)="limpiarForm()">
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <p-table [value]="comprasCacaoTodas" [rows]="8" [rowHover]="true"
+            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true">
+
             <ng-template pTemplate="header">
                 <tr>
-                    <th style="text-align: center;">Feha y Hora</th>
-                    <th style="text-align: center;">Tipo Cliente</th>
-                    <th style="text-align: center;">Tipo de Cacao</th>
-                    <th style="text-align: center;">Libras</th>
-                    <th style="text-align: center;">Total Por Pagar</th>
-                    <th style="text-align: center;">Pago Efectivo</th>
-                    <th style="text-align: center;">Transferencia</th>
-                    <th style="text-align: center;">Total Final(%)</th>
+                    <th class="text-center">Fecha y Hora</th>
+                    <th class="text-center">Cliente</th>
+                    <th class="text-center">Variedad</th>
+                    <th class="text-center">Libras</th>
+                    <th class="text-right">Total $</th>
+                    <th class="text-right">Efectivo</th>
+                    <th class="text-right">Transf.</th>
+                    <th class="text-right">Valor Final (%)</th>
                 </tr>
             </ng-template>
+
             <ng-template pTemplate="body" let-cacao>
                 <tr>
-                    <td style="text-align: center;">{{ cacao.fechaCompra | date:'yyyy-MM-dd HH:mm' }}</td>
-                    <td style="text-align: center;">{{cacao.tipoCliente.tipo }}</td>
-                    <td style="text-align: center;">{{cacao.tipoCacao.nombre}}</td>
-                    <td style="text-align: center;">{{cacao.cantidadLibras }}</td>
-                    <td style="text-align: center;">{{ cacao.totalPagado | currency:'USD':'code' }}</td>
-                    <td style="text-align: center;">{{cacao.pagoEfectivo | currency:'USD':'code'}}</td>
-                    <td style="text-align: center;">{{cacao.pagoTransferencia | currency:'USD':'code'}}</td>
-                    <td style="text-align: center;">{{cacao.valorMasDos| currency:'USD':'code' }}</td>
+                    <td class="text-center text-700 font-medium">{{ cacao.fechaCompra | date:'yyyy-MM-dd HH:mm' }}</td>
+                    <td class="text-center">
+                        <p-tag [severity]="cacao.tipoCliente.id === 1 ? 'info' : 'warning'"
+                            [value]="cacao.tipoCliente.tipo" styleClass="border-round-lg"></p-tag>
+                    </td>
+                    <td class="text-center font-bold">{{ cacao.tipoCacao.nombre }}</td>
+                    <td class="text-center font-medium">{{ cacao.cantidadLibras }}</td>
+                    <td class="text-right font-bold text-900">{{ cacao.totalPagado | currency:'USD' }}</td>
+                    <td class="text-right text-500">{{ cacao.pagoEfectivo | currency:'USD' }}</td>
+                    <td class="text-right text-500">{{ cacao.pagoTransferencia | currency:'USD' }}</td>
+                    <td class="text-right font-bold text-primary">{{ cacao.valorMasDos | currency:'USD' }}</td>
                 </tr>
             </ng-template>
+
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="7">No existen registros</td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="loadingbody">
-                <tr>
-                    <td colspan="7">Loading users data. Please wait.</td>
+                    <td colspan="8" class="text-center text-500 py-4">No se encontraron registros para la fecha seleccionada.</td>
                 </tr>
             </ng-template>
         </p-table>

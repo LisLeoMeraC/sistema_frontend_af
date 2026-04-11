@@ -1,123 +1,154 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px;">
-    <h4 style="margin-top: -10px;">Compras de Cacao</h4>
+
+<!-- ===== HEADER PREMIUM COMPACTO ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 8px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-chart-bar text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Reporte de Compras</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Análisis de adquisiciones de cacao por períodos</p>
+        </div>
+    </div>
 </div>
-<div class="card">
-    <p-table [value]="comprasSemanales" [rowHover]="true" scrollDirection="both" [scrollable]="true"
-        scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
-        <ng-template pTemplate="caption">
-            <form [formGroup]="searchForm">
-            <div class="grid p-fluid">
-                <!-- Primera columna: Fecha Inicio -->
-                <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaInicio" formControlName="fechaInicio" [showIcon]="true"
-                                        dateFormat="dd/mm/yy" [appendTo]="'body'">
-                            </p-calendar>
-                            <label for="fechaInicio">Fecha Inicio</label>
-                        </span>
-                    </div>
-                </div>
 
-                <!-- Segunda columna: Fecha Fin -->
-                <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-calendar"></i>
-                        </span>
-                        <span class="p-float-label">
-                            <p-calendar id="fechaFin" formControlName="fechaFin" [showIcon]="true"
-                                        dateFormat="dd/mm/yy" [appendTo]="'body'">
-                            </p-calendar>
-                            <label for="fechaFin">Fecha Fin</label>
-                        </span>
-                    </div>
-                </div>
+<!-- ===== SECCIÓN DE KPIs (INDICADORES CLAVE) ===== -->
+<div class="grid mb-3">
+    <div class="col-12 md:col-4">
+        <div class="card border-none shadow-2 p-3 border-round-xl bg-white flex align-items-center justify-content-between overflow-hidden relative"
+             style="border-left: 4px solid var(--blue-500);">
+            <div>
+                <span class="block text-500 font-medium mb-2 text-sm uppercase tracking-wider">Total Quintales</span>
+                <div class="text-900 font-bold text-3xl">{{ totalQuintales | number:'1.2-2' }} <small class="text-500 text-lg">qq</small></div>
+            </div>
+            <div class="p-3 bg-blue-50 border-round-lg">
+                <i class="pi pi-box text-blue-500 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 md:col-4">
+        <div class="card border-none shadow-2 p-3 border-round-xl bg-white flex align-items-center justify-content-between overflow-hidden relative"
+             style="border-left: 4px solid var(--green-500);">
+            <div>
+                <span class="block text-500 font-medium mb-2 text-sm uppercase tracking-wider">Inversión Total</span>
+                <div class="text-900 font-bold text-3xl">{{ dineroTotal | currency:'USD' }}</div>
+            </div>
+            <div class="p-3 bg-green-50 border-round-lg">
+                <i class="pi pi-dollar text-green-600 text-2xl"></i>
+            </div>
+        </div>
+    </div>
 
-                <div class="col-12 md:col-3" style="text-align: center;">
-                    <p-selectButton [options]="tipoCacao" optionLabel="name" formControlName="tipoCacao" class="full-width"></p-selectButton>
-                </div>
+    <div class="col-12 md:col-4">
+        <div class="card border-none shadow-2 p-3 border-round-xl bg-white flex align-items-center justify-content-between overflow-hidden relative"
+             style="border-left: 4px solid var(--orange-500);">
+            <div>
+                <span class="block text-500 font-medium mb-2 text-sm uppercase tracking-wider">Precio Promedio</span>
+                <div class="text-900 font-bold text-3xl">{{ promedio | currency:'USD' }} <small class="text-500 text-lg">/qq</small></div>
+            </div>
+            <div class="p-3 bg-orange-50 border-round-lg">
+                <i class="pi pi-percentage text-orange-500 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <!-- Tercera columna: Botones -->
-                <div class="col-12 md:col-3">
-                    <div class="p-inputgroup">
-                        <button pButton type="button" label="Buscar" icon="pi pi-search" class="mr-2" (click)="cargarComprasSemanalesporFecha()"></button>
-                        <button pButton type="button" label="Limpiar" icon="pi pi-trash" class="p-button-warning" (click)="limpiarFechas()"></button>
-                    </div>
+<!-- ===== FILTROS DE BÚSQUEDA ===== -->
+<div class="card border-none shadow-2 border-round-xl p-3 mb-3">
+    <form [formGroup]="searchForm">
+        <div class="grid p-fluid align-items-end">
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Fecha Inicio</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaInicio" [showIcon]="false" placeholder="Desde"
+                                dateFormat="dd/mm/yy" [appendTo]="'body'"></p-calendar>
                 </div>
             </div>
-        </form>
-        </ng-template>
+
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Fecha Fin</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaFin" [showIcon]="false" placeholder="Hasta"
+                                dateFormat="dd/mm/yy" [appendTo]="'body'"></p-calendar>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-3">
+                <label class="font-bold text-700 mb-2 block text-sm">Variedad de Cacao</label>
+                <p-selectButton [options]="tipoCacao" optionLabel="name" formControlName="tipoCacao" 
+                                styleClass="w-full"></p-selectButton>
+            </div>
+
+            <div class="col-12 md:col-3 flex gap-2">
+                <button pButton pRipple type="button" label="Consultar" icon="pi pi-search" 
+                        class="p-button-primary border-round-lg shadow-2 flex-1" 
+                        (click)="cargarComprasSemanalesporFecha()">
+                </button>
+                <button pButton pRipple type="button" icon="pi pi-refresh" 
+                        class="p-button-outlined p-button-secondary border-round-lg" 
+                        (click)="limpiarFechas()">
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- ===== TABLA DE RESULTADOS ===== -->
+<div class="card border-none shadow-2 border-round-xl p-3">
+    <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+        <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Detalle de Resultados</h4>
+    </div>
+
+    <p-table [value]="comprasSemanales" [rowHover]="true" 
+        styleClass="p-datatable-sm p-datatable-gridlines" responsiveLayout="scroll">
+        
         <ng-template pTemplate="header">
             <tr>
-                <th style="text-align: center;">Fecha</th>
-                <th style="text-align: center;">Categoría de Cacao</th>
-                <th style="text-align: center;">Cantidad en Libras</th>
-                <th style="text-align: center;">Dinero Total</th>
+                <th class="text-center" style="width: 150px;">Fecha</th>
+                <th class="text-center">Categoría de Cacao</th>
+                <th class="text-center">Cant. Libras</th>
+                <th class="text-right" style="width: 200px;">Subtotal (Dólares)</th>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-semanal>
             <tr>
-                <td style="text-align: center;">{{ semanal.fecha | date: 'yyyy-MM-dd' }}</td>
-                <td style="text-align: center;">{{semanal.tipoCacao}}</td>
-                <td style="text-align: center;">{{semanal.sumaCantidadLibra}}</td>
-                <td style="text-align: center;">{{semanal.sumaValorMasDos | currency:'USD':'code'}}</td>
+                <td class="text-center text-700 font-medium">
+                    <i class="pi pi-calendar-minus mr-2 text-500"></i>
+                    {{ semanal.fecha | date: 'dd-MM-yyyy' }}
+                </td>
+                <td class="text-center font-bold">
+                    <span [class]="'px-2 py-1 border-round text-sm ' + (semanal.tipoCacao === 'En Baba' ? 'bg-orange-50 text-orange-700' : 'bg-blue-50 text-blue-700')">
+                        {{ semanal.tipoCacao }}
+                    </span>
+                </td>
+                <td class="text-center font-medium">
+                    {{ semanal.sumaCantidadLibra | number:'1.2-2' }} <small class="text-500">lb</small>
+                </td>
+                <td class="text-right font-bold text-primary">
+                    {{ semanal.sumaValorMasDos | currency:'USD' }}
+                </td>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="4">No existen registros</td>
+                <td colspan="4" class="text-center text-500 py-5">
+                    <i class="pi pi-filter-slash text-4xl mb-3 block"></i>
+                    No se encontraron registros para los criterios seleccionados.
+                </td>
             </tr>
         </ng-template>
+        
         <ng-template pTemplate="loadingbody">
             <tr>
-                <td colspan="4">Loading users data. Please wait.</td>
+                <td colspan="4" class="text-center py-5">Cargando datos...</td>
             </tr>
         </ng-template>
     </p-table>
-</div>
-
-<div class="grid p-fluid justify-content-end">
-    <!-- Primera columna -->
-    <div class="col-12 md:col-3">
-        <div class="p-inputgroup mt-2">
-            <span class="p-inputgroup-addon">
-                <i class="pi pi-plus"></i>
-            </span>
-            <span class="p-float-label">
-                <input type="text" pInputText [value]="totalQuintales | number:'1.2-2'" disabled  class="red-text"/>
-                <label for="totalQuintales">Total Quintales</label>
-            </span>
-        </div>
-    </div>
-
-    <!-- Segunda columna -->
-    <div class="col-12 md:col-3">
-        <div class="p-inputgroup mt-2">
-            <span class="p-inputgroup-addon">
-                <i class="pi pi-plus"></i>
-            </span>
-            <span class="p-float-label">
-                <input type="text" pInputText [value]="dineroTotal | currency:'USD':'code'" disabled class="red-text" />
-                <label for="dineroTotal">Dinero Total</label>
-            </span>
-        </div>
-    </div>
-
-    <!-- Tercera columna -->
-    <div class="col-12 md:col-3">
-        <div class="p-inputgroup mt-2">
-            <span class="p-inputgroup-addon">
-                <i class="pi pi-percentage"></i>
-            </span>
-            <span class="p-float-label">
-                <input type="text" pInputText [value]="promedio | currency:'USD':'code'" disabled class="red-text"/>
-                <label for="promedio">Promedio Precio</label>
-            </span>
-        </div>
-    </div>
 </div>

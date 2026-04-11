@@ -1,375 +1,370 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px;">
-    <h4 style="margin-top: -10px;">Compras de Productos Agrícolas</h4>
+
+<!-- ===== HEADER PREMIUM COMPACTO ===== -->
+<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
+    style="border-left: 8px solid var(--primary-color);">
+    <div class="flex align-items-center">
+        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
+            <i class="pi pi-truck text-primary text-2xl"></i>
+        </div>
+        <div>
+            <h3 class="m-0 font-bold text-900 line-height-2">Productos Agrícolas</h3>
+            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Gestión de compras y ventas de insumos y cosechas</p>
+        </div>
+    </div>
+    <div class="flex gap-2">
+        <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
+            class="p-button-primary p-button-sm border-round-lg shadow-2"
+            (click)="openCompraDialog()">
+        </button>
+        <button pButton pRipple label="Nueva Venta" icon="pi pi-cart-plus"
+            class="p-button-success p-button-sm border-round-lg shadow-2"
+            (click)="openVentaDialog()">
+        </button>
+    </div>
 </div>
+
 <div class="grid">
+    <!-- COLUMNA IZQUIERDA: DETALLES DE OPERACIONES -->
     <div class="col-12 xl:col-8">
-        <div class="card">
-            <p-tabView orientation="left">
-                <p-tabPanel header="Compras" class="line-height-3 m-0">
-                    <h5>Compras del Día</h5>
-                    <p-table [value]="compras" [rows]="7" [rowHover]="true" styleClass="p-datatable-gridlines"
-                        [paginator]="true" rowSelectable="true">>
-                        <ng-template pTemplate="caption">
-                            <div class="flex justify-content-between flex-column sm:flex-row">
-
-                                <button pButton pRipple label="Nueva Compra" icon="pi pi-plus" class="mr-3 mb-2"
-                                    (click)="openCompraDialog()"></button>
-
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th style="text-align: center;">Fecha y Hora</th>
-                                <th style="text-align: center;">Producto</th>
-                                <th style="text-align: center;">Cant</th>
-                                <th style="text-align: center;">Total Pagado</th>
-                                <th style="text-align: center;">Total Compra(2%)</th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-compra>
-                            <tr>
-                                <td style="text-align: center;">{{ compra.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
-                                <td style="text-align: center;">{{compra.producto.nombre}}</td>
-                                <td style="text-align: center;">{{compra.cantidad}} {{compra.producto.unidad_medida}}
-                                </td>
-                                <td style="text-align: center;">{{ compra.totalPagado | currency:'USD':'code' }}</td>
-                                <td style="text-align: center;">{{ compra.valorMasDos | currency:'USD':'code' }}</td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="5">No existen registros</td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="loadingbody">
-                            <tr>
-                                <td colspan="5">Loading users data. Please wait.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
+        <div class="card border-none shadow-2 border-round-xl p-0 overflow-hidden">
+            <p-tabView styleClass="custom-tabs">
+                <!-- PESTAÑA COMPRAS -->
+                <p-tabPanel header="Compras Realizadas">
+                    <div class="p-3">
+                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                            <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Compras de Hoy</h4>
+                        </div>
+                        
+                        <p-table [value]="compras" [rows]="6" [rowHover]="true"
+                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center" style="width: 140px;">Fecha y Hora</th>
+                                    <th>Producto</th>
+                                    <th class="text-center" style="width: 100px;">Cantidad</th>
+                                    <th class="text-right" style="width: 130px;">Pagado</th>
+                                    <th class="text-right" style="width: 130px;">Total (2%)</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-compra>
+                                <tr>
+                                    <td class="text-center text-700">{{ compra.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
+                                    <td>
+                                        <div class="flex align-items-center gap-2">
+                                            <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                                <i class="pi pi-tag text-primary text-xs"></i>
+                                            </div>
+                                            <span class="font-medium">{{ compra.producto.nombre }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center font-bold">
+                                        {{ compra.cantidad }} <small class="text-500">{{ compra.producto.unidad_medida }}</small>
+                                    </td>
+                                    <td class="text-right font-medium">{{ compra.totalPagado | currency:'USD' }}</td>
+                                    <td class="text-right font-bold text-primary">{{ compra.valorMasDos | currency:'USD' }}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="5" class="text-center text-500 py-4">No hay compras registradas hoy.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
                 </p-tabPanel>
-                <p-tabPanel header="Ventas" class="line-height-3 m-0">
-                    <h5>Ventas del Día</h5>
-                    <p-table [value]="ventas" [rows]="7" [rowHover]="true" styleClass="p-datatable-gridlines"
-                        [paginator]="true" rowSelectable="true">
-                        <ng-template pTemplate="caption">
-                            <div class="flex justify-content-between flex-column sm:flex-row">
-                                <button pButton pRipple label="Nueva Venta" icon="pi pi-plus" class="mr-3 mb-2"
-                                    (click)="openVentaDialog()"></button>
 
-                            </div>
-                        </ng-template>
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th style="text-align: center;">Fecha y Hora</th>
-                                <th style="text-align: center;">Producto</th>
-                                <th style="text-align: center;">Cant</th>
-                                <th style="text-align: center;">Total Recibido</th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-venta>
-                            <tr>
-                                <td style="text-align: center;">{{ venta.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
-                                <td style="text-align: center;">{{venta.producto.nombre}}</td>
-                                <td style="text-align: center;">{{venta.cantidad}} {{venta.producto.unidad_medida}}
-                                </td>
-                                <td style="text-align: center;">{{ venta.totalPagado | currency:'USD':'code' }}</td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="5">No existen registros</td>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="loadingbody">
-                            <tr>
-                                <td colspan="5">Loading users data. Please wait.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
+                <!-- PESTAÑA VENTAS -->
+                <p-tabPanel header="Ventas Realizadas">
+                    <div class="p-3">
+                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+                            <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Ventas de Hoy</h4>
+                        </div>
+
+                        <p-table [value]="ventas" [rows]="6" [rowHover]="true"
+                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th class="text-center" style="width: 140px;">Fecha y Hora</th>
+                                    <th>Producto</th>
+                                    <th class="text-center" style="width: 100px;">Cantidad</th>
+                                    <th class="text-right" style="width: 130px;">Recibido</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-venta>
+                                <tr>
+                                    <td class="text-center text-700">{{ venta.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
+                                    <td>
+                                        <div class="flex align-items-center gap-2">
+                                            <div class="flex align-items-center justify-content-center border-round bg-green-50" style="width: 24px; height: 24px;">
+                                                <i class="pi pi-box text-green-600 text-xs"></i>
+                                            </div>
+                                            <span class="font-medium">{{ venta.producto.nombre }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center font-bold">
+                                        {{ venta.cantidad }} <small class="text-500">{{ venta.producto.unidad_medida }}</small>
+                                    </td>
+                                    <td class="text-right font-bold text-green-600">{{ venta.totalPagado | currency:'USD' }}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="4" class="text-center text-500 py-4">No hay ventas registradas hoy.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
                 </p-tabPanel>
             </p-tabView>
         </div>
     </div>
+
+    <!-- COLUMNA DERECHA: CONSOLIDADOS Y CAJA -->
     <div class="col-12 xl:col-4">
-        <div class="card">
-            <p-tabView orientation="left">
-                <p-tabPanel header="Compras" class="line-height-3 m-0">
-                    <h6>Total Comprado en el Día</h6>
-                    <p-table [value]="totalCompras" [rows]="10" [rowHover]="true" styleClass="p-datatable-gridlines"
-                        [paginator]="true" rowSelectable="true">
+        <div class="card border-none shadow-2 border-round-xl p-0 overflow-hidden h-full flex flex-column">
+            <p-tabView styleClass="custom-tabs-summary h-full">
+                <!-- RESUMEN COMPRAS -->
+                <p-tabPanel header="Compras">
+                    <div class="p-3 h-full flex flex-column">
+                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                            <h5 class="m-0 font-bold text-900">Total Comprado Hoy</h5>
+                        </div>
+                        
+                        <p-table [value]="totalCompras" styleClass="p-datatable-sm p-datatable-gridlines mb-3">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th class="text-right">Inversión</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-total>
+                                <tr>
+                                    <td class="font-medium text-700">{{ total.producto }}</td>
+                                    <td class="text-right font-bold text-primary">{{ total.totalDolares | currency: 'USD' }}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr><td colspan="2" class="text-center text-500 py-2">Sin datos.</td></tr>
+                            </ng-template>
+                        </p-table>
 
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th style="text-align: center;">Producto</th>
-                                <th style="text-align: center;">Total Comprado</th>
-                            </tr>
-                        </ng-template>
-
-                        <ng-template pTemplate="body" let-totalCompras>
-                            <tr>
-                                <td>{{ totalCompras.producto }}</td>
-                                <td style="text-align: center;">{{ totalCompras.totalDolares | currency: 'USD':'code' }}
-                                </td>
-                            </tr>
-                        </ng-template>
-
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="2">No existen registros</td>
-                            </tr>
-                        </ng-template>
-
-                        <ng-template pTemplate="loadingbody">
-                            <tr>
-                                <td colspan="2">Loading users data. Please wait.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-
-                    <div class="flex justify-content-end mt-3">
-                        <button pButton type="button" icon="pi pi-plus" label="Registrar en Caja"
-                            (click)="registrarTransaccionesCaja()"></button>
+                        <div class="mt-auto pt-3">
+                            <button pButton type="button" icon="pi pi-check-circle" label="Sincronizar Compras con Caja"
+                                class="p-button-primary w-full shadow-2 border-round-lg"
+                                (click)="registrarTransaccionesCaja()">
+                            </button>
+                        </div>
                     </div>
                 </p-tabPanel>
 
-                <p-tabPanel header="Ventas" class="line-height-3 m-0">
-                    <h6>Total Vendido en el Día</h6>
-                    <p-table [value]="totalVentas" [rows]="10" [rowHover]="true" styleClass="p-datatable-gridlines"
-                        [paginator]="true" rowSelectable="true">
+                <!-- RESUMEN VENTAS -->
+                <p-tabPanel header="Ventas">
+                    <div class="p-3 h-full flex flex-column">
+                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+                            <h5 class="m-0 font-bold text-900">Total Vendido Hoy</h5>
+                        </div>
 
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th style="text-align: center;">Producto</th>
-                                <th style="text-align: center;">Total Comprado</th>
-                            </tr>
-                        </ng-template>
+                        <p-table [value]="totalVentas" styleClass="p-datatable-sm p-datatable-gridlines mb-3">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th class="text-right">Recaudación</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-total>
+                                <tr>
+                                    <td class="font-medium text-700">{{ total.producto }}</td>
+                                    <td class="text-right font-bold text-green-600">{{ total.totalDolares | currency: 'USD' }}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr><td colspan="2" class="text-center text-500 py-2">Sin datos.</td></tr>
+                            </ng-template>
+                        </p-table>
 
-                        <ng-template pTemplate="body" let-totalCompras>
-                            <tr>
-                                <td>{{ totalCompras.producto }}</td>
-                                <td style="text-align: center;">{{ totalCompras.totalDolares | currency: 'USD':'code' }}
-                                </td>
-                            </tr>
-                        </ng-template>
-
-                        <ng-template pTemplate="emptymessage">
-                            <tr>
-                                <td colspan="2">No existen registros</td>
-                            </tr>
-                        </ng-template>
-
-                        <ng-template pTemplate="loadingbody">
-                            <tr>
-                                <td colspan="2">Loading users data. Please wait.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-
-                    <div class="flex justify-content-end mt-3">
-                        <button pButton type="button" icon="pi pi-plus" label="Registrar en Caja"
-                            (click)="registrarVentasCaja()"></button>
+                        <div class="mt-auto pt-3">
+                            <button pButton type="button" icon="pi pi-check-circle" label="Sincronizar Ventas con Caja"
+                                class="p-button-success w-full shadow-2 border-round-lg"
+                                (click)="registrarVentasCaja()">
+                            </button>
+                        </div>
                     </div>
                 </p-tabPanel>
             </p-tabView>
-
-
         </div>
     </div>
 </div>
 
-
-<p-dialog [(visible)]="compraCacaoModal" [modal]="true" [closable]="false" [style]="{width: '42vw'}">
-    <form [formGroup]="registerCompra" (ngSubmit)="onSubmitCompra()">
-        <h3 style="text-align: center;">Compra de Productos</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeCompraDialog()"
-                class="p-button-danger mr-2 mb-2"></button>
+<!-- ===== DIALOG: REGISTRO DE COMPRA ===== -->
+<p-dialog [(visible)]="compraCacaoModal" [modal]="true" [closable]="false"
+    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-shopping-cart text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Nueva Compra de Producto</div>
+                <div class="text-500" style="font-size: 0.8rem;">Ingrese los detalles de la adquisición</div>
+            </div>
         </div>
-        <div class="col-12 md:col-50 full-width-container mr-2 " style="text-align: center;">
-            <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente"
-                class="full-width"></p-selectButton>
+    </ng-template>
+
+    <form [formGroup]="registerCompra" (ngSubmit)="onSubmitCompra()" class="p-fluid">
+        <div class="field mb-4">
+            <label class="font-bold text-700 block mb-2">Origen del Cliente</label>
+            <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente" styleClass="w-full"></p-selectButton>
         </div>
 
-        <div class="grid p-fluid">
-            <!-- Primera columna -->
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup mt-2">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-calendar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <p-calendar id="fechaCompra" formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
-                            dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'">
-                        </p-calendar>
-                        <label for="fechaCompra">Fecha y Hora de Compra</label>
-                    </span>
+        <div class="grid">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Fecha y Hora</label>
+                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
+                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"></p-calendar>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Seleccionar Producto</label>
+                <div class="flex gap-2">
+                    <p-dropdown [options]="productos" optionLabel="nombre" formControlName="producto"
+                        placeholder="Elija un producto" [showClear]="true" [appendTo]="'body'" class="flex-1"></p-dropdown>
+                    <button pButton pRipple type="button" icon="pi pi-plus"
+                        class="p-button-outlined p-button-secondary" (click)="OpenProductoModalDialog()">
+                    </button>
                 </div>
             </div>
 
-            <!-- Segunda columna -->
-            <div class="col-12 md:col-6">
-                <div class="mt-2">
-                    <span class="p-float-label">
-                        <p-dropdown id="tipoCacao" placeholder="Producto" [options]="productos" optionLabel="nombre"
-                            formControlName="producto" [showClear]="true" [appendTo]="'body'"
-                            [ngStyle]="{'width': '100%'}">
-                        </p-dropdown>
-                        <label for="Producto">Producto</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-12 md:col-6">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Cantidad ({{ unidadMedidaSeleccionada || '---' }})</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="cantidad" />
-                        <label for="cantidad">Cantidad ({{ unidadMedidaSeleccionada }})</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <input type="text" pInputText formControlName="cantidad" placeholder="0.00" />
                 </div>
             </div>
 
-            <div class="col-12 md:col-6">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Total Pagado ($)</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="totalPagado" />
-                        <label for="totalPagado">Dinero Total Pagado</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="totalPagado" placeholder="0.00" />
                 </div>
             </div>
-
-
         </div>
-        <div class="buttons-container">
-            <div class="flex justify-content-between mr-2">
-                <button pButton pRipple type="button" (click)="OpenProductoModalDialog()" icon="pi pi-plus"
-                    label="Nuevo Producto" class="p-button-secondary"></button>
-            </div>
 
-            <div class="flex justify-content-end">
-                <button pButton label="Registrar" icon="pi pi-save" type="submit" class="register-button"></button>
-            </div>
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
+            <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+                class="p-button-text p-button-secondary" (click)="closeCompraDialog()">
+            </button>
+            <button pButton pRipple type="submit" label="Registrar Compra" icon="pi pi-save"
+                class="p-button-primary shadow-2 border-round-lg">
+            </button>
         </div>
     </form>
 </p-dialog>
 
-
-
-<p-dialog [(visible)]="productoModal" [modal]="true" [closable]="false" [style]="{ width: '25vw' }">
-    <form [formGroup]="registerFormProducto" (ngSubmit)="onSubmitProducto()"
-        style="display: flex; flex-direction: column; height: 100%;">
-        <h3 style="text-align: center; margin-bottom: 10px;">Nuevo Producto</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeProductoModalDialog()"
-                class="p-button-danger mr-2 mb-2"></button>
+<!-- ===== DIALOG: REGISTRO DE VENTA ===== -->
+<p-dialog [(visible)]="ventaModal" [modal]="true" [closable]="false"
+    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-green-50">
+                <i class="pi pi-cart-plus text-green-600 text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Nueva Venta de Producto</div>
+                <div class="text-500" style="font-size: 0.8rem;">Registre la salida de mercadería</div>
+            </div>
         </div>
-        <div class="grid p-fluid" style="flex-grow: 1;">
-            <div class="field col-12" style="margin-bottom: 10px;">
+    </ng-template>
+
+    <form [formGroup]="registerVenta" (ngSubmit)="onSubmitVenta()" class="p-fluid">
+        <div class="field mb-4">
+            <label class="font-bold text-700 block mb-2">Canal de Venta</label>
+            <p-selectButton [options]="tipo" optionLabel="name" formControlName="tipo" styleClass="w-full"></p-selectButton>
+        </div>
+
+        <div class="grid">
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-2">Fecha y Hora</label>
+                <p-calendar formControlName="fechaVenta" [showIcon]="true" [showTime]="true"
+                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"></p-calendar>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Producto</label>
+                <p-dropdown [options]="productos" optionLabel="nombre" formControlName="nombreProducto"
+                    placeholder="Seleccione el producto" [showClear]="true" [appendTo]="'body'"></p-dropdown>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Cantidad a Vender ({{ unidadMedidaSeleccionada || '---' }})</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="nombreProducto" />
-                        <label for="nombreProducto">Nombre del Producto</label>
-                    </span>
+                    <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <input type="text" pInputText formControlName="cantVenta" placeholder="0.00" />
                 </div>
             </div>
-            <div class="field col-12" style="margin-bottom: 10px;">
-                <span class="p-float-label">
-                    <p-dropdown id="unidadesMedida" placeholder="Unidad de Medida" [options]="unidadesMedida"
-                        optionLabel="label" formControlName="unidadMedida" [showClear]="true" [appendTo]="'body'"
-                        [ngStyle]="{ 'width': '100%' }">
-                    </p-dropdown>
-                    <label for="unidadesMedida">Unidad de Medida</label>
-                </span>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Total Cobrado ($)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="totalCobrado" placeholder="0.00" />
+                </div>
             </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; padding: 10px 16px 0; margin-top: auto;">
-            <button pButton pRipple label="Registrar" type="submit" icon="pi pi-save"></button>
+
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
+            <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+                class="p-button-text p-button-secondary" (click)="closeVentaDialog()">
+            </button>
+            <button pButton pRipple type="submit" label="Registrar Venta" icon="pi pi-save"
+                class="p-button-success shadow-2 border-round-lg">
+            </button>
         </div>
     </form>
 </p-dialog>
 
-
-
-
-<p-dialog [(visible)]="ventaModal" [modal]="true" [closable]="false" [style]="{width: '42vw'}">
-    <form [formGroup]="registerVenta" (ngSubmit)="onSubmitVenta()">
-        <h3 style="text-align: center;">Venta de Productos</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple type="button" icon="pi pi-times" (click)="closeVentaDialog()"
-                class="p-button-danger mr-2 mb-2"></button>
+<!-- ===== DIALOG: NUEVO PRODUCTO ===== -->
+<p-dialog [(visible)]="productoModal" [modal]="true" [closable]="false"
+    [style]="{ width: '350px' }" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-plus text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Crear Producto</div>
+                <div class="text-500" style="font-size: 0.8rem;">Categorizar nuevo ítem agrícola</div>
+            </div>
         </div>
-        <div class="col-12 md:col-50 full-width-container mr-2 " style="text-align: center;">
-            <p-selectButton [options]="tipo" optionLabel="name" formControlName="tipo"
-                class="full-width"></p-selectButton>
+    </ng-template>
+
+    <form [formGroup]="registerFormProducto" (ngSubmit)="onSubmitProducto()" class="p-fluid">
+        <div class="field mb-4">
+            <label class="font-semibold text-700 block mb-1">Nombre Comercial</label>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                <input type="text" pInputText formControlName="nombreProducto" placeholder="Nombre del producto" />
+            </div>
+        </div>
+        
+        <div class="field mb-4">
+            <label class="font-semibold text-700 block mb-1">Unidad de Medida</label>
+            <p-dropdown [options]="unidadesMedida" optionLabel="label" formControlName="unidadMedida"
+                placeholder="Seleccione unidad" [showClear]="true" [appendTo]="'body'"></p-dropdown>
         </div>
 
-        <div class="grid p-fluid">
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup mt-2">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-calendar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <p-calendar id="fechaVenta" formControlName="fechaVenta" [showIcon]="true" [showTime]="true"
-                            dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'">
-                        </p-calendar>
-                        <label for="fechaVenta">Fecha y Hora de Venta</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-                <div class="mt-2">
-                    <span class="p-float-label">
-                        <p-dropdown id="nombreProducto" placeholder="Producto" [options]="productos"
-                            optionLabel="nombre" formControlName="nombreProducto" [showClear]="true" [appendTo]="'body'"
-                            [ngStyle]="{'width': '100%'}">
-                        </p-dropdown>
-                        <label for="Producto">Producto</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-tag"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="cantVenta" />
-                        <label for="cantVenta">Cantidad Vendida ({{ unidadMedidaSeleccionada }})</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="totalCobrado" />
-                        <label for="totalCobrado">Total Cobrado</label>
-                    </span>
-                </div>
-            </div>
-
-
-        </div>
-        <div class="buttons-container">
-            <div class="flex justify-content-end">
-                <button pButton label="Registrar" icon="pi pi-save" type="submit" class="register-button"></button>
-            </div>
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
+            <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+                class="p-button-text p-button-secondary" (click)="closeProductoModalDialog()">
+            </button>
+            <button pButton pRipple type="submit" label="Crear Producto" icon="pi pi-check"
+                class="p-button-primary shadow-2 border-round-lg">
+            </button>
         </div>
     </form>
 </p-dialog>

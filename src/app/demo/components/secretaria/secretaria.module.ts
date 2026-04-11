@@ -29,6 +29,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { CalendarModule } from 'primeng/calendar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
 
 
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -85,7 +86,8 @@ import { ViewVentasComponent } from './view-ventas/view-ventas.component';
     TooltipModule,
     TabViewModule,
     CheckboxModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TagModule
   ],
   providers: [
   ]
