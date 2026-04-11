@@ -161,16 +161,15 @@ export class ClientesComponent implements OnInit {
     //Metodo para llamar al servicio y actualizar el certificado
     onCertificadoConfirmed(cliente: Cliente, currentState: boolean) {
         if (cliente) {
-            const updatedCliente = {
-                ...cliente,
-                certificado: !currentState,
-            };
             this.clienteService
-                .actualizarClienteCeritificado(cliente.id, updatedCliente)
+                .actualizarClienteCertificado(cliente.id)
                 .subscribe(
                     () => {
+                        // Actualizar el estado localmente para feedback inmediato
+                        cliente.certificado = !currentState;
+                        
                         if (this.isSingleClientSearch) {
-                            this.clientes = [updatedCliente];
+                            this.clientes = [{...cliente}];
                         } else {
                             this.cargarClientesPaginados(
                                 this.currentPage,

@@ -112,24 +112,14 @@ export class ComprasComponent implements OnInit {
         }
 
         const formValue = this.registerCompra.value;
-        const fechaCompraLocal = new Date(formValue.fechaCompra);
-        const fechaCompraUTC = new Date(
-            Date.UTC(
-                fechaCompraLocal.getFullYear(),
-                fechaCompraLocal.getMonth(),
-                fechaCompraLocal.getDate(),
-                fechaCompraLocal.getHours(),
-                fechaCompraLocal.getMinutes(),
-                fechaCompraLocal.getSeconds()
-            )
-        );
+        const fechaCompra = new Date(formValue.fechaCompra);
 
         const compra = {
             tipoCliente: {
                 id: this.registerCompra.value.tipoCliente.value,
             }, // Asegurarse de enviar solo el ID
             producto: { id: this.registerCompra.value.producto.id },
-            fechaCompra: fechaCompraUTC.toISOString(),
+            fechaCompra: fechaCompra.toISOString(),
             cantidad: parseFloat(this.registerCompra.value.cantidad), // Convertir a número
             totalPagado: parseFloat(this.registerCompra.value.totalPagado),
             tipo:'C'
@@ -170,22 +160,12 @@ export class ComprasComponent implements OnInit {
         }
 
         const formValue = this.registerVenta.value;
-        const fechaVentaLocal = new Date(formValue.fechaVenta);
-        const fechaVentaUTC = new Date(
-            Date.UTC(
-                fechaVentaLocal.getFullYear(),
-                fechaVentaLocal.getMonth(),
-                fechaVentaLocal.getDate(),
-                fechaVentaLocal.getHours(),
-                fechaVentaLocal.getMinutes(),
-                fechaVentaLocal.getSeconds()
-            )
-        );
+        const fechaVenta = new Date(formValue.fechaVenta);
 
         const venta = {
             
             producto: { id: this.registerVenta.value.nombreProducto.id },
-            fechaCompra: fechaVentaUTC.toISOString(),
+            fechaCompra: fechaVenta.toISOString(),
             cantidad: parseFloat(this.registerVenta.value.cantVenta), // Convertir a número
             totalPagado: parseFloat(this.registerVenta.value.totalCobrado),
             tipo: formValue.tipo.value

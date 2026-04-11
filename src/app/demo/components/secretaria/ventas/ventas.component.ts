@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { error } from 'console';
 import { MessageService } from 'primeng/api';
 import { LocaleSettings } from 'primeng/calendar';
 import { catchError, Observable, of, tap } from 'rxjs';

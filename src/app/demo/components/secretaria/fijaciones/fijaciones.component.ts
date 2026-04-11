@@ -2,7 +2,6 @@ import { FixedSizeVirtualScrollStrategy } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { group } from 'console';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { FijacionesService } from 'src/app/demo/service/fijaciones.service';

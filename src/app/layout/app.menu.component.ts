@@ -9,7 +9,7 @@ import { NavigationEnd, Router } from '@angular/router';
     templateUrl: './app.menu.component.html',
 })
 export class AppMenuComponent implements OnInit {
-    
+
 
     model: any[] = [];
 
@@ -17,14 +17,14 @@ export class AppMenuComponent implements OnInit {
         public layoutService: LayoutService,
         private loginService: LoginService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         const userRole = this.loginService.getUserRole();
         if (userRole === 'Gerente') {
             this.model = [
                 {
-                    
+
                     items: [
                         {
                             label: 'Inicio',
@@ -34,7 +34,7 @@ export class AppMenuComponent implements OnInit {
                     ],
                 },
                 {
-                    
+
                     label: 'Administración',
                     items: [
                         {
@@ -47,7 +47,7 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-fw pi-users',
                             routerLink: ['/administrador/clientes'],
                         },
-                        
+
                     ]
                 },
 
@@ -65,7 +65,7 @@ export class AppMenuComponent implements OnInit {
                             routerLink: ['/administrador/consulta-cacao'],
                         }
                     ],
-                    
+
                 },
 
                 {
@@ -88,13 +88,13 @@ export class AppMenuComponent implements OnInit {
                         },
 
                     ],
-                    
+
                 },
                 {
                     label: 'Transacciones',
-                    items:[
+                    items: [
                         {
-                            label:'Prestamos',
+                            label: 'Prestamos',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/prestamos'],
                         },
@@ -104,31 +104,31 @@ export class AppMenuComponent implements OnInit {
                             routerLink: ['/secretaria/ventas'],
                         },
                         {
-                            label:'Fijaciones',
+                            label: 'Fijaciones',
                             icon: 'pi pi-file-edit',
                             routerLink: ['/administrador/fijaciones'],
                         },
                         {
-                            label:'Balance Comercial',
+                            label: 'Balance Comercial',
                             icon: 'pi pi-chart-line',
                             routerLink: ['/administrador/balance-comercial'],
                         },
                         {
-                            label:'Control RA',
+                            label: 'Control RA',
                             icon: 'pi pi-shield',
                             routerLink: ['/administrador/control-ra'],
                         },
-                        
+
 
                     ]
                 },
-                
-                
+
+
             ];
         } else if (userRole === 'Secretario/a') {
             this.model = [
                 {
-                    
+
                     items: [
                         {
                             label: 'Inicio',
@@ -138,8 +138,8 @@ export class AppMenuComponent implements OnInit {
                     ],
                 },
                 {
-                    
-                    
+
+
                     label: 'Gestión',
                     items: [
                         {
@@ -153,10 +153,15 @@ export class AppMenuComponent implements OnInit {
                             routerLink: ['/secretaria/caja'],
                         },
                         {
-                            label:'Prestamos',
+                            label: 'Prestamos',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/prestamos'],
                         },
+                        {
+                            label: 'Registro de Facturas',
+                            icon: 'pi pi-fw pi-file',
+                            routerLink: ['/asistente-factura/ingreso-factura'],
+                        }
 
                     ],
                 },
@@ -175,19 +180,19 @@ export class AppMenuComponent implements OnInit {
                         },
                     ],
                 },
-                
-                
+
+
                 {
                     label: 'Compras - Ventas',
-                    items:[
-                       
+                    items: [
+
                         {
-                            label:'Cacao',
+                            label: 'Cacao',
                             icon: 'pi pi-cart-plus',
                             routerLink: ['/secretaria/compras-cacao'],
                         },
                         {
-                            label:'Otros Productos',
+                            label: 'Otros Productos',
                             icon: 'pi pi-cart-plus',
                             routerLink: ['/secretaria/otras-compras'],
                         }
@@ -195,14 +200,14 @@ export class AppMenuComponent implements OnInit {
                 },
                 {
                     label: 'Consultas',
-                    items:[
+                    items: [
                         {
-                            label:'Compras de Cacao',
+                            label: 'Compras de Cacao',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/compras-semanales'],
                         },
                         {
-                            label:'Otras Compras',
+                            label: 'Otras Compras',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/view-otras-compras'],
                         },
@@ -211,7 +216,7 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-user-edit',
                             routerLink: ['/administrador/consulta-cacao'],
                         }
-                        
+
                     ]
                 },
             ];
@@ -240,18 +245,18 @@ export class AppMenuComponent implements OnInit {
                 },
             ];
         }
-      /*  this.router.events.subscribe(event => {
-            if (event instanceof NavigationEnd) {
-                const rutasParaOcultarSidebar = [
-                    '/asistente-factura/ingreso-factura',
-                    '/asistente-factura/view-facturas'
-                ];
-                
-                if (rutasParaOcultarSidebar.includes(event.urlAfterRedirects)) {
-                    // Ocultar el sidebar
-                    this.layoutService.onMenuToggle();
-                }
-            }
-        });*/
+        /*  this.router.events.subscribe(event => {
+              if (event instanceof NavigationEnd) {
+                  const rutasParaOcultarSidebar = [
+                      '/asistente-factura/ingreso-factura',
+                      '/asistente-factura/view-facturas'
+                  ];
+                  
+                  if (rutasParaOcultarSidebar.includes(event.urlAfterRedirects)) {
+                      // Ocultar el sidebar
+                      this.layoutService.onMenuToggle();
+                  }
+              }
+          });*/
     }
 }

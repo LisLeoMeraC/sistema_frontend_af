@@ -1,264 +1,357 @@
-<div class="card" style="height: 30px;">
-    <h4 style="margin-top: -10px;">Registro de Prestamos y Pagos</h4>
+<p-toast></p-toast>
+
+<!-- ===== HEADER PREMIUM ===== -->
+<div class="card p-4 border-none shadow-2 mb-4 relative overflow-hidden flex align-items-center justify-content-between"
+    style="border-left: 8px solid var(--primary-color);">
+    <div class="flex align-items-center z-1">
+        <div class="p-3 border-round-xl bg-primary-50 mr-4 shadow-1">
+            <i class="pi pi-dollar text-primary text-3xl"></i>
+        </div>
+        <div>
+            <h2 class="m-0 font-bold text-900 line-height-2">Registro de Préstamos y Pagos</h2>
+            <p class="m-0 text-500 font-medium">Control de anticipos y cuotas a productores</p>
+        </div>
+    </div>
 </div>
-<div class="card">
-    <p-toast></p-toast>
-    <p-table [value]="prestamos" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll"
-        [paginator]="true" [rows]="5">
+
+<!-- ===== MAIN TABLE CARD ===== -->
+<div class="card border-none shadow-2 border-round-xl overflow-hidden">
+
+    <p-table [value]="prestamos" dataKey="id" [expandedRowKeys]="expandedRows"
+        responsiveLayout="scroll" [paginator]="true" [rows]="8"
+        styleClass="p-datatable-gridlines">
+
+        <!-- CAPTION -->
         <ng-template pTemplate="caption">
-            <div class="flex align-items-center justify-content-between mb-2">
-                <div class="button-group mr-2">
-                    <button pButton pRipple label="Nuevo Prestamo" icon="pi pi-plus" class="mr-2"
-                        (click)="abrirModalRegistro()"></button>
-                </div>
-                <div class="flex">
-                    <span class="p-input-icon-left mr-2">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" placeholder="Nombre - Apellido - Cédula"  (input)="onTermInput($event)"/>
-                    </span>
-                   
-                </div>
+            <div class="flex align-items-center justify-content-between flex-wrap gap-2 pb-2">
+
+                <button pButton pRipple label="Nuevo Préstamo" icon="pi pi-plus"
+                    class="p-button-primary p-button-sm border-round-lg"
+                    (click)="abrirModalRegistro()">
+                </button>
+
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" placeholder="Buscar por nombre, apellido o cédula..."
+                        class="border-round-lg" style="min-width: 280px;"
+                        (input)="onTermInput($event)" />
+                </span>
+
             </div>
-            <div class="flex table-header"></div>
         </ng-template>
+
+        <!-- HEADER -->
         <ng-template pTemplate="header">
             <tr>
-                <th style="width: 2rem"></th>
-                <th style="min-width: 1rem;" pSortableColumn="prestamista">Prestamista<p-sortIcon
-                        field="prestamista"></p-sortIcon></th>
-                <th style="min-width: 10rem;" pSortableColumn="cedula">Nro. Cédula<p-sortIcon
-                        field="cedula"></p-sortIcon></th>
-                <th style="min-width: 10rem;" pSortableColumn="contacto">Contacto<p-sortIcon
-                        field="contacto"></p-sortIcon></th>
-                <th style="min-width: 10rem;" pSortableColumn="fechaPrestamo">Fecha del Prestamo<p-sortIcon
-                        field="fechaPrestamo"></p-sortIcon></th>
-                <th style="min-width: 10rem;" pSortableColumn="montoPrestamo">Monto Prestado<p-sortIcon
-                        field="montoPrestamo"></p-sortIcon></th>
-
-                <th>
+                <th style="width: 3rem;"></th>
+                <th pSortableColumn="prestamista" style="min-width: 12rem;">
+                    Prestamista <p-sortIcon field="prestamista"></p-sortIcon>
+                </th>
+                <th pSortableColumn="cedula" style="min-width: 9rem;">
+                    Nro. Cédula <p-sortIcon field="cedula"></p-sortIcon>
+                </th>
+                <th pSortableColumn="contacto" style="min-width: 9rem;">
+                    Contacto <p-sortIcon field="contacto"></p-sortIcon>
+                </th>
+                <th pSortableColumn="fechaPrestamo" style="min-width: 10rem;">
+                    Fecha del Préstamo <p-sortIcon field="fechaPrestamo"></p-sortIcon>
+                </th>
+                <th pSortableColumn="montoPrestamo" style="min-width: 10rem;">
+                    Monto Prestado <p-sortIcon field="montoPrestamo"></p-sortIcon>
+                </th>
+                <th style="min-width: 8rem;">
                     <div class="flex justify-content-between align-items-center">
                         Estado
                         <p-columnFilter field="estado" matchMode="equals" display="menu">
                             <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                <p-dropdown [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
-                                    placeholder="Any" [style]="{'min-width': '12rem'}">
+                                <p-dropdown [ngModel]="value" [options]="statuses"
+                                    (onChange)="filter($event.value)" placeholder="Todos"
+                                    [style]="{'min-width': '10rem'}">
                                     <ng-template let-option pTemplate="item">
-                                        <span [class]="'customer-badge status-' + option.value">{{option.label}}</span>
+                                        <span>{{ option.label }}</span>
                                     </ng-template>
                                 </p-dropdown>
                             </ng-template>
                         </p-columnFilter>
                     </div>
                 </th>
-                <th style="min-width: 10rem;">Acciones</th>
+                <th style="min-width: 9rem; text-align: center;">Acciones</th>
             </tr>
         </ng-template>
+
+        <!-- BODY -->
         <ng-template pTemplate="body" let-prestamo let-expanded="expanded">
             <tr>
+                <!-- Expand toggle -->
                 <td>
                     <button type="button" pButton pRipple (click)="toggleRow(prestamo)"
                         class="p-button-text p-button-rounded p-button-plain"
-                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'">
+                    </button>
                 </td>
-                <td style="min-width: 10rem;">{{ prestamo.nombre + ' ' + prestamo.apellidos }}</td>
-                <td style="min-width: 1rem;">{{ prestamo.cedula }}</td>
-                <td style="min-width: -10rem;">{{ prestamo.contacto }}</td>
-                <td style="min-width: 7rem;">{{ prestamo.fechaPrestamo | date }}</td>
-                <td style="min-width: 5rem;">{{ prestamo.montoPrestamo | currency:'USD':'code' }}</td>
 
+                <!-- Prestamista -->
                 <td>
-                    <span [ngClass]="{
-                'status-label': true,
-                'status-activo': prestamo.estado === 'activo',
-                'status-pagado': prestamo.estado === 'pagado'
-              }">
-                        {{ prestamo.estado | titlecase }}
-                    </span>
+                    <div class="flex align-items-center gap-2">
+                        <div class="flex align-items-center justify-content-center border-round-full bg-primary-50"
+                            style="width: 32px; height: 32px; min-width: 32px;">
+                            <i class="pi pi-user text-primary" style="font-size: 0.75rem;"></i>
+                        </div>
+                        <span class="font-medium text-900">{{ prestamo.nombre + ' ' + prestamo.apellidos }}</span>
+                    </div>
                 </td>
+
+                <td>{{ prestamo.cedula }}</td>
+                <td>{{ prestamo.contacto }}</td>
+                <td>{{ prestamo.fechaPrestamo | date:'dd/MM/yyyy' }}</td>
+
+                <!-- Monto -->
                 <td>
-                    <button *ngIf="prestamo.estado === 'activo'" pButton pRipple label="Registrar Pago"
-                        style="width: 145px;" icon="pi pi-plus" (click)="showPagoDialog(prestamo)"></button>
+                    <span class="font-semibold text-900">{{ prestamo.montoPrestamo | currency:'USD':'symbol':'1.2-2' }}</span>
+                </td>
+
+                <!-- Estado -->
+                <td>
+                    <p-tag
+                        [severity]="prestamo.estado === 'activo' ? 'warning' : 'success'"
+                        [value]="prestamo.estado | titlecase"
+                        [rounded]="true">
+                    </p-tag>
+                </td>
+
+                <!-- Acciones -->
+                <td style="text-align: center;">
+                    <button *ngIf="prestamo.estado === 'activo'" pButton pRipple
+                        icon="pi pi-plus" pTooltip="Registrar Pago" tooltipPosition="top"
+                        class="p-button-rounded p-button-success p-button-text"
+                        (click)="showPagoDialog(prestamo)">
+                    </button>
                 </td>
             </tr>
         </ng-template>
+
+        <!-- ROW EXPANSION — Pagos -->
         <ng-template pTemplate="rowexpansion" let-prestamo>
             <tr>
-                <td colspan="7">
-                    <div class="p-3">
-                        <p-table [value]="prestamo.pagos" dataKey="id" responsiveLayout="scroll">
+                <td colspan="8" class="p-0">
+                    <div class="p-3 surface-50">
+
+                        <div class="flex align-items-center mb-3 gap-2">
+                            <div class="p-2 border-round-lg bg-primary-50">
+                                <i class="pi pi-list text-primary" style="font-size: 0.85rem;"></i>
+                            </div>
+                            <span class="font-bold text-700" style="font-size: 0.88rem;">
+                                Historial de Pagos — {{ prestamo.nombre }} {{ prestamo.apellidos }}
+                            </span>
+                        </div>
+
+                        <p-table [value]="prestamo.pagos" dataKey="id"
+                            responsiveLayout="scroll"
+                            styleClass="p-datatable-sm p-datatable-striped">
                             <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="fechaPago">Fecha de Pago <p-sortIcon field="fechaPago"></p-sortIcon></th>
-                <th pSortableColumn="montoPagado">Monto Pagado <p-sortIcon field="montoPagado"></p-sortIcon></th>
-                <th pSortableColumn="saldoRestante">Saldo Restante <p-sortIcon field="saldoRestante"></p-sortIcon>
-                </th>
+                                <tr>
+                                    <th pSortableColumn="fechaPago">
+                                        Fecha de Pago <p-sortIcon field="fechaPago"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="montoPagado">
+                                        Monto Pagado <p-sortIcon field="montoPagado"></p-sortIcon>
+                                    </th>
+                                    <th pSortableColumn="saldoRestante">
+                                        Saldo Restante <p-sortIcon field="saldoRestante"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-pago>
+                                <tr>
+                                    <td>{{ pago.fechaPago | date:'dd/MM/yyyy' }}</td>
+                                    <td>
+                                        <span class="font-medium text-green-600">
+                                            {{ pago.montoPagado | currency:'USD':'symbol':'1.2-2' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="font-medium"
+                                            [ngClass]="pago.saldoRestante > 0 ? 'text-orange-500' : 'text-green-600'">
+                                            {{ pago.saldoRestante | currency:'USD':'symbol':'1.2-2' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="3" class="text-center text-500 py-4">
+                                        <i class="pi pi-inbox mr-2"></i> No hay pagos registrados para este préstamo.
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                    </div>
+                </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-pago>
-            <tr>
-                <td>{{ pago.fechaPago | date }}</td>
-                <td>{{ pago.montoPagado | currency:'USD':'code' }}</td>
-                <td>{{ pago.saldoRestante | currency:'USD':'code' }}</td>
-            </tr>
-        </ng-template>
+
+        <!-- EMPTY MESSAGE -->
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="3">No hay pagos para este préstamo.</td>
+                <td colspan="8" class="text-center text-500 py-5">
+                    <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                    No se encontraron préstamos registrados.
+                </td>
             </tr>
         </ng-template>
+
     </p-table>
 </div>
-</td>
-</tr>
-</ng-template>
-</p-table>
 
 
+<!-- ===== DIALOG: NUEVO PRÉSTAMO ===== -->
+<p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="false"
+    [style]="{width: '48vw'}" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+    styleClass="border-round-xl overflow-hidden shadow-5">
 
-<p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '45vw'}">
+    <!-- Dialog header -->
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3 w-full">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-dollar text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Nuevo Préstamo</div>
+                <div class="text-500" style="font-size: 0.8rem;">Complete los datos del prestamista</div>
+            </div>
+        </div>
+    </ng-template>
+
     <form [formGroup]="nuevoPrestamoForm" (ngSubmit)="createLoan()">
-        <h3 style="text-align: center;">Nuevo Prestamo</h3>
-        <div class="dialog-header cancel-button">
-            <button pButton pRipple  type="button" icon="pi pi-times" (click)="closeModalDialog()"
-                    class="p-button-danger mr-2"></button>
+        <div class="grid p-fluid mt-2">
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Nombres</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="nombre" placeholder="Nombres" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Apellidos</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="apellidos" placeholder="Apellidos" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Nº de Cédula</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-id-card"></i></span>
+                    <input type="text" pInputText formControlName="cedula" placeholder="0000000000" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Nº de Contacto</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-phone"></i></span>
+                    <input type="text" pInputText formControlName="contacto" placeholder="09XXXXXXXX" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Fecha del Préstamo</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaPrestamo" [appendTo]="'body'"
+                        placeholder="Seleccionar fecha" dateFormat="dd/mm/yy">
+                    </p-calendar>
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Monto Prestado (USD)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="montoPrestamo" placeholder="0.00" />
+                </div>
+            </div>
+
         </div>
-        <div class="grid p-fluid mt-3">
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-user"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="nombre" />
-                        <label for="nombre">Nombres</label>
-                    </span>
-
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-user"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="apellidos" />
-                        <label for="apellidos">Apellidos</label>
-                    </span>
-
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-id-card"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="cedula" />
-                        <label for="cedula">Nº de Cédula</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-phone"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="contacto" />
-                        <label for="contacto">Nº de Contacto</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-calendar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <p-calendar id="fecha" formControlName="fechaPrestamo"  [appendTo]="'body'"></p-calendar>
-                        <label for="fecha">Fecha del Préstamo</label>
-                    </span>
-                </div>
-            </div>
-
-            <div class="field col-12 md:col-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="montoPrestamo" />
-                        <label for="monto">Monto Prestado</label>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="flex flex-column" style="height: 100%;">
-
-            <div class="flex justify-content-end mt-auto">
-                <button pButton label="Registrar" icon="pi pi-save" type="submit"></button>
-            </div>
-        </div>
-
-        
     </form>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-danger"
+            (click)="closeModalDialog()">
+        </button>
+        <button pButton pRipple label="Registrar Préstamo" icon="pi pi-save" type="button"
+            class="p-button-primary"
+            (click)="createLoan()">
+        </button>
+    </ng-template>
+
 </p-dialog>
 
 
+<!-- ===== DIALOG: REGISTRAR PAGO ===== -->
+<p-dialog [(visible)]="displayDialogPago" [modal]="true" [closable]="false"
+    [style]="{width: '36vw'}" [breakpoints]="{'960px': '60vw', '640px': '100vw'}"
+    styleClass="border-round-xl overflow-hidden shadow-5">
 
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3 w-full">
+            <div class="p-2 border-round-lg" style="background: #d1fae5;">
+                <i class="pi pi-check-circle text-xl" style="color: #10b981;"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Registrar Pago</div>
+                <div class="text-500" style="font-size: 0.8rem;">Ingresa los datos del abono al préstamo</div>
+            </div>
+        </div>
+    </ng-template>
 
-
-<p-dialog [(visible)]="displayDialogPago" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
     <form [formGroup]="nuevoPagoForm" (ngSubmit)="registrarPago()">
-        <h3 style="text-align: center;" class="mt-3">Registro de Pagos de Prestamos</h3>
-        <div class="dialog-header cancel-button ">
-            <button pButton pRipple  type="button" icon="pi pi-times" (click)="closePagoDialog()"
-                    class="p-button-danger mr-2 "></button>
-        </div>
-        <div class="grid p-fluid">
-            <div class="field col-12 ">
-                <div class="p-inputgroup ">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-code"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="codigoPrestamo" />
-                        <label for="codigoPrestamo">Código del Prestamo</label>
-                    </span>
+        <div class="grid p-fluid mt-2">
 
-                </div>
-
-                <div class="p-inputgroup mt-4">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-calendar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <p-calendar id="fechaPago" formControlName="fechaPago" [showIcon]="false" [showOnFocus]="false"
-                            (onInput)="handleInput($event)" dateFormat="dd/mm/yy" [placeholder]="fechaPlaceholder">
-                        </p-calendar>
-                        <label for="fechaPago">Fecha del pago</label>
-                    </span>
-                </div>
-
-                <div class="p-inputgroup mt-4">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-dollar"></i>
-                    </span>
-                    <span class="p-float-label">
-                        <input type="text" pInputText formControlName="montoPagado" />
-                        <label for="montoPagado">Monto de Pago</label>
-                    </span>
+            <div class="field col-12">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Código del Préstamo</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-code"></i></span>
+                    <input type="text" pInputText formControlName="codigoPrestamo" placeholder="Código" />
                 </div>
             </div>
-        </div>
-        <div class="flex flex-column" style="height: 100%;">
-            <div class="flex justify-content-end mt-auto">
-                <button pButton label="Registrar" icon="pi pi-save" type="submit"></button>
+
+            <div class="field col-12">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Fecha del Pago</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaPago" [showIcon]="false" [showOnFocus]="false"
+                        (onInput)="handleInput($event)" dateFormat="dd/mm/yy"
+                        [placeholder]="fechaPlaceholder">
+                    </p-calendar>
+                </div>
             </div>
+
+            <div class="field col-12">
+                <label class="font-semibold text-700 mb-2 block" style="font-size: 0.84rem;">Monto del Pago (USD)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="montoPagado" placeholder="0.00" />
+                </div>
+            </div>
+
         </div>
     </form>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-danger"
+            (click)="closePagoDialog()">
+        </button>
+        <button pButton pRipple label="Registrar Pago" icon="pi pi-save" type="button"
+            class="p-button-success"
+            (click)="registrarPago()">
+        </button>
+    </ng-template>
+
 </p-dialog>

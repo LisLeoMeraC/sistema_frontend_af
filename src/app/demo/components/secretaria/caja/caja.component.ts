@@ -14,7 +14,7 @@ export class CajaComponent implements OnInit {
     menuItems!: MenuItem[];
 
     //para abrir caja;
-    openCajaModal: Boolean = false;
+    openCajaModal: boolean = false;
     openCajaForm: FormGroup;
     timeInterval: any;
 

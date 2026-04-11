@@ -18,8 +18,8 @@ export class ClienteService {
         return this.http.put<any>(`${baseUrl}/clientes/${id}`, cliente);
     }
 
-    actualizarClienteCeritificado(id: number, cliente: any): Observable<any> {
-        return this.http.put<any>(`${baseUrl}/clientes/certificado/${id}`, cliente);
+    actualizarClienteCertificado(id: number): Observable<any> {
+        return this.http.put<any>(`${baseUrl}/clientes/certificado/${id}`, {});
     }
 
     actualizarClienteYEliminarFacturas(
