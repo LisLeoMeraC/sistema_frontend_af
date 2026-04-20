@@ -90,8 +90,6 @@
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
                             style="width: 120px;">Programas</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
-                            style="width: 140px;">Certificado</th>
-                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
                             style="width: 80px;">Acción</th>
                     </tr>
                 </ng-template>
@@ -122,12 +120,6 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <p-tag [severity]="cliente.certificado ? 'info' : 'danger'"
-                                [value]="cliente.certificado ? 'Si' : 'No'" [rounded]="true"
-                                class="cursor-pointer shadow-1" (click)="confirmCertificadoChange(cliente)">
-                            </p-tag>
-                        </td>
-                        <td class="text-center">
                             <button pButton pRipple type="button" icon="pi pi-pencil"
                                 class="p-button-rounded p-button-warning p-button-text"
                                 (click)="showEditModalDialog(cliente)" pTooltip="Editar información"></button>
@@ -137,7 +129,7 @@
 
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="10" class="text-center py-8">
+                        <td colspan="9" class="text-center py-8">
                             <div class="flex flex-column align-items-center">
                                 <i class="pi pi-search-minus text-400 text-6xl mb-3"></i>
                                 <span class="text-600 text-xl font-medium">No se encontraron resultados</span>
