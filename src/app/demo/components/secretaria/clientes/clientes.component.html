@@ -3,15 +3,16 @@
 <div class="grid">
     <div class="col-12">
         <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
-        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
-             style="border-radius: 1.25rem;">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
             <div class="flex align-items-center relative z-1">
                 <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
                     <i class="pi pi-users text-orange-600 text-3xl"></i>
                 </div>
                 <div>
                     <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Gestión de Clientes</h2>
-                    <p class="m-0 text-600 font-medium opacity-70">Panel de administración de productores registrados</p>
+                    <p class="m-0 text-600 font-medium opacity-70">Panel de administración de productores registrados
+                    </p>
                 </div>
             </div>
             <div class="hidden md:flex align-items-center gap-3 relative z-1">
@@ -21,10 +22,12 @@
                 </div>
                 <div class="surface-border border-left-1 h-3rem opacity-20"></div>
                 <button pButton pRipple label="Nuevo Registro" icon="pi pi-user-plus"
-                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="showModalDialog()"></button>
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="showModalDialog()"></button>
             </div>
             <!-- Elemento decorativo de fondo -->
-            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
         </div>
     </div>
 
@@ -97,15 +100,15 @@
                 <ng-template pTemplate="body" let-cliente>
                     <tr class="hover:surface-50 transition-colors transition-duration-150">
                         <td class="text-center font-medium">{{cliente.id}}</td>
-                        <td>{{cliente.nombres}}</td>
-                        <td>{{cliente.apellidos}}</td>
+                        <td class="text-center">{{cliente.nombres}}</td>
+                        <td class="text-center">{{cliente.apellidos}}</td>
                         <td class="text-center">
                             <span
                                 class="font-semibold text-primary-600 bg-primary-50 px-2 py-1 border-round">{{cliente.cedula}}</span>
                         </td>
                         <td class="text-center text-700">{{cliente.telefono}}</td>
-                        <td>
-                            <div class="flex align-items-center">
+                        <td class="text-center">
+                            <div class="flex align-items-center justify-content-center">
                                 <div class="w-8px h-8px border-circle mr-2" style="background: var(--blue-400)"></div>
                                 <span>{{cliente.recinto.nombreRecinto}}</span>
                             </div>
@@ -113,10 +116,14 @@
                         <td class="text-center">{{cliente.hectareas}} <small class="text-500">ha</small></td>
                         <td class="text-center">
                             <div class="flex justify-content-center gap-1">
-                                <p-tag *ngIf="cliente.rainforest" value="R" severity="success" pTooltip="Rainforest" [rounded]="true"></p-tag>
-                                <p-tag *ngIf="cliente.nestle" value="N" severity="warning" pTooltip="Nestlé" [rounded]="true"></p-tag>
-                                <p-tag *ngIf="cliente.olam" value="O" severity="info" pTooltip="Olam" [rounded]="true"></p-tag>
-                                <span *ngIf="!cliente.rainforest && !cliente.nestle && !cliente.olam" class="text-400 text-xs">-</span>
+                                <p-tag *ngIf="cliente.rainforest" value="R" severity="success" pTooltip="Rainforest"
+                                    [rounded]="true"></p-tag>
+                                <p-tag *ngIf="cliente.nestle" value="N" severity="warning" pTooltip="Nestlé"
+                                    [rounded]="true"></p-tag>
+                                <p-tag *ngIf="cliente.olam" value="O" severity="info" pTooltip="Olam"
+                                    [rounded]="true"></p-tag>
+                                <span *ngIf="!cliente.rainforest && !cliente.nestle && !cliente.olam"
+                                    class="text-400 text-xs">-</span>
                             </div>
                         </td>
                         <td class="text-center">
@@ -156,9 +163,9 @@
 </p-confirmDialog>
 
 <!-- Modal: Registro de Nuevo Recinto -->
-<p-dialog [(visible)]="displayRecintoModal" [modal]="true" [closable]="false"
-    [style]="{width: '400px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="displayRecintoModal" [modal]="true" [closable]="false" [style]="{width: '400px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-primary-50">
@@ -178,7 +185,8 @@
                 <span class="p-inputgroup-addon"><i class="pi pi-map-marker"></i></span>
                 <input type="text" pInputText placeholder="Ej: Recinto San Luis" formControlName="nombreRecinto" />
             </div>
-            <small *ngIf="registerFormRecinto.get('nombreRecinto')?.invalid && (registerFormRecinto.get('nombreRecinto')?.dirty || registerFormRecinto.get('nombreRecinto')?.touched)"
+            <small
+                *ngIf="registerFormRecinto.get('nombreRecinto')?.invalid && (registerFormRecinto.get('nombreRecinto')?.dirty || registerFormRecinto.get('nombreRecinto')?.touched)"
                 class="p-error block mt-1"><i class="pi pi-info-circle mr-1"></i>Requerido</small>
         </div>
         <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
@@ -190,9 +198,9 @@
     </form>
 </p-dialog>
 
-<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false"
-    [style]="{width: '600px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false" [style]="{width: '600px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-primary-50">
@@ -263,31 +271,30 @@
                 <label class="font-semibold text-700 block mb-2">Programas de Certificación</label>
                 <div class="flex flex-column sm:flex-row gap-3">
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="registerForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="registerForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="rainforest" inputId="rainforest_reg"></p-inputSwitch>
                         <label for="rainforest_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="registerForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
+                            [ngClass]="registerForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
                     </div>
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="registerForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="registerForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="nestle" inputId="nestle_reg"></p-inputSwitch>
                         <label for="nestle_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="registerForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
+                            [ngClass]="registerForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
                     </div>
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="registerForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="registerForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="olam" inputId="olam_reg"></p-inputSwitch>
                         <label for="olam_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="registerForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
+                            [ngClass]="registerForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
-            <button pButton pRipple label="Cancelar" icon="pi pi-times"
-                class="p-button-text p-button-secondary" (click)="CloseModalDialog()"
-                type="button"></button>
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
+                (click)="CloseModalDialog()" type="button"></button>
             <button pButton pRipple label="Finalizar Registro" icon="pi pi-save"
                 class="p-button-primary shadow-2 border-round-lg" type="submit"></button>
         </div>
@@ -295,9 +302,9 @@
 </p-dialog>
 
 <!-- Modal: Editar Cliente -->
-<p-dialog [(visible)]="displayEditModal" [modal]="true" [closable]="false"
-    [style]="{width: '600px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="displayEditModal" [modal]="true" [closable]="false" [style]="{width: '600px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-warning-50">
@@ -363,28 +370,29 @@
                 <label class="font-bold text-700 block mb-2">Programas de Certificación</label>
                 <div class="flex flex-column sm:flex-row gap-3">
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="editForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="editForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="rainforest" inputId="rainforest_edit"></p-inputSwitch>
                         <label for="rainforest_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="editForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
+                            [ngClass]="editForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
                     </div>
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="editForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="editForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="nestle" inputId="nestle_edit"></p-inputSwitch>
                         <label for="nestle_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="editForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
+                            [ngClass]="editForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
                     </div>
                     <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
-                         [ngClass]="editForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
+                        [ngClass]="editForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
                         <p-inputSwitch formControlName="olam" inputId="olam_edit"></p-inputSwitch>
                         <label for="olam_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
-                               [ngClass]="editForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
+                            [ngClass]="editForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-column sm:flex-row justify-content-between items-center gap-3 mt-4 pt-3 border-top-1 surface-border">
+        <div
+            class="flex flex-column sm:flex-row justify-content-between items-center gap-3 mt-4 pt-3 border-top-1 surface-border">
             <button pButton label="Descartar" icon="pi pi-times" class="p-button-text p-button-danger border-round-lg"
                 (click)="CloseEditModalDialog()" type="button"></button>
             <div class="flex gap-2 w-full sm:w-auto">
