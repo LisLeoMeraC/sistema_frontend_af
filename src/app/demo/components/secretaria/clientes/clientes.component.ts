@@ -525,7 +525,8 @@ export class ClientesComponent implements OnInit {
                     detail: 'Recinto registrado exitosamente.',
                 });
                 this.CloseRecintoModalDialog();
-                this.recintos.push(data);
+                // Actualizar la referencia del arreglo para que PrimeNG detecte el cambio
+                this.recintos = [...this.recintos, data];
                 this.filteredRecintos = [...this.recintos];
             },
             (error) => {
