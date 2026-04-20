@@ -3,10 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { DatePipe } from '@angular/common';
+
 @Component({
     selector: 'app-compras',
     templateUrl: './compras.component.html',
     styleUrls: ['./compras.component.scss'],
+    providers: [DatePipe]
 })
 export class ComprasComponent implements OnInit {
     registerCompra: FormGroup;
@@ -36,7 +41,8 @@ export class ComprasComponent implements OnInit {
     constructor(
         private messageService: MessageService,
         private fb: FormBuilder,
-        private compraservice: ComprasService
+        private compraservice: ComprasService,
+        private datePipe: DatePipe
     ) {
         this.registerCompra = this.fb.group({
             tipoCliente: [null, Validators.required],
@@ -336,6 +342,148 @@ export class ComprasComponent implements OnInit {
     closeVentaDialog() {
         this.ventaModal = false;
         this.registerVenta.reset();
+    }
+
+    generarReportePDF() {
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const primaryColor: [number, number, number] = [27, 94, 32];
+        const salesColor: [number, number, number] = [46, 125, 50];
+        const dateNow = this.datePipe.transform(new Date(), 'dd/MM/yyyy HH:mm:ss');
+        const fileNameDate = this.datePipe.transform(new Date(), 'yyyyMMdd');
+
+        // --- ENCABEZADO MINIMALISTA ELEGANTE ---
+        doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.rect(0, 0, 210, 3, 'F');
+
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setFontSize(32); doc.setFont('times', 'bold');
+        doc.text('AGROFRANCO', 15, 20);
+        
+        doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setLineWidth(0.8);
+        doc.line(15, 23, 60, 23);
+
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(80, 80, 80);
+        doc.text('CENTRO DE ACOPIO Y COMERCIALIZACIÓN DE CACAO', 15, 30);
+        
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(11); doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text('REPORTE DIARIO DE OTRAS COMPRAS Y VENTAS', 15, 36);
+
+        // Caja de Info Sutil
+        doc.setDrawColor(220); doc.setLineWidth(0.2); doc.roundedRect(125, 10, 70, 28, 2, 2, 'S');
+        doc.setFontSize(8); doc.setTextColor(100);
+        
+        doc.setFont('helvetica', 'normal'); doc.text(`CATEGORÍA:`, 128, 16);
+        doc.setFont('helvetica', 'bold'); doc.text(`PRODUCTOS VARIOS`, 155, 16);
+        
+        doc.setFont('helvetica', 'normal'); doc.text(`FECHA EMISIÓN:`, 128, 22);
+        doc.text(`${dateNow}`, 155, 22);
+
+        doc.setFont('helvetica', 'normal'); doc.text(`ESTADO:`, 128, 28);
+        doc.setFont('helvetica', 'bold'); doc.setTextColor(salesColor[0], salesColor[1], salesColor[2]);
+        doc.text(`CONSOLIDADO`, 155, 28);
+
+        // --- DASHBOARD DE TOTALES (KPIs) ---
+        const totalInv = this.totalCompras.reduce((acc, curr) => acc + curr.totalDolares, 0);
+        const totalRec = this.totalVentas.reduce((acc, curr) => acc + curr.totalDolares, 0);
+        const balance = totalRec - totalInv;
+
+        doc.setFillColor(252, 252, 252);
+        doc.roundedRect(15, 45, 180, 22, 1, 1, 'F');
+        doc.setDrawColor(240); doc.rect(15, 45, 180, 22, 'S');
+
+        // Inversión
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(120);
+        doc.text('INVERSIÓN EN COMPRAS', 25, 53);
+        doc.setFontSize(14); doc.setTextColor(31, 119, 180);
+        doc.text(`$ ${totalInv.toFixed(2)}`, 25, 60);
+
+        // Recaudación
+        doc.setFontSize(8); doc.setTextColor(120);
+        doc.text('RECAUDACIÓN EN VENTAS', 85, 53);
+        doc.setFontSize(14); doc.setTextColor(46, 125, 50);
+        doc.text(`$ ${totalRec.toFixed(2)}`, 85, 60);
+
+        // Balance
+        doc.setFontSize(8); doc.setTextColor(120);
+        doc.text('BALANCE NETO', 145, 53);
+        doc.setFontSize(14); doc.setTextColor(balance >= 0 ? primaryColor[0] : 183, balance >= 0 ? primaryColor[1] : 28, balance >= 0 ? primaryColor[2] : 28);
+        doc.text(`$ ${balance.toFixed(2)}`, 145, 60);
+
+        // --- TABLA DE COMPRAS ---
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text('1. DETALLE DE COMPRAS REALIZADAS', 15, 75);
+
+        const detailCompras = this.compras.map(item => [
+            this.datePipe.transform(item.fechaCompra, 'HH:mm'),
+            item.producto.nombre.toUpperCase(),
+            `${item.cantidad} ${item.producto.unidad_medida}`,
+            `$ ${item.totalPagado.toFixed(2)}`,
+            `$ ${item.valorMasDos.toFixed(2)}`
+        ]);
+
+        autoTable(doc, {
+            startY: 78,
+            head: [['Hora', 'Ítem de Compra', 'Cant.', 'Pagado', 'Total (2%)']],
+            body: detailCompras,
+            theme: 'striped',
+            headStyles: { 
+                fillColor: [245, 245, 245], 
+                textColor: primaryColor, 
+                fontSize: 8, 
+                halign: 'center',
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { halign: 'center' },
+                2: { halign: 'center' },
+                3: { halign: 'right' },
+                4: { halign: 'right', fontStyle: 'bold', textColor: [31, 119, 180] }
+            },
+            margin: { left: 15, right: 15 }
+        });
+
+        // --- TABLA DE VENTAS ---
+        const finalYCompras = (doc as any).lastAutoTable.finalY + 12;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text('2. DETALLE DE VENTAS REALIZADAS', 15, finalYCompras);
+
+        const detailVentas = this.ventas.map(item => [
+            this.datePipe.transform(item.fechaCompra, 'HH:mm'),
+            item.producto.nombre.toUpperCase(),
+            `${item.cantidad} ${item.producto.unidad_medida}`,
+            `$ ${item.totalPagado.toFixed(2)}`
+        ]);
+
+        autoTable(doc, {
+            startY: finalYCompras + 3,
+            head: [['Hora', 'Ítem de Venta', 'Cant.', 'Recaudación']],
+            body: detailVentas,
+            theme: 'striped',
+            headStyles: { 
+                fillColor: [245, 245, 245], 
+                textColor: primaryColor, 
+                fontSize: 8, 
+                halign: 'center',
+                fontStyle: 'bold'
+            },
+            columnStyles: {
+                0: { halign: 'center' },
+                2: { halign: 'center' },
+                3: { halign: 'right', fontStyle: 'bold', textColor: [46, 125, 50] }
+            },
+            margin: { left: 15, right: 15 }
+        });
+
+        // Pie de página
+        const pageCount = (doc as any).internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(7); doc.setTextColor(150);
+            doc.text(`AgroFranco | Gestión de Productos Varios | Página ${i} de ${pageCount}`, 15, 285);
+        }
+
+        doc.save(`Reporte_Operaciones_${fileNameDate}.pdf`);
     }
 
     registrarVentasCaja(){

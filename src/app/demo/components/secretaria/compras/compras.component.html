@@ -1,33 +1,37 @@
 <p-toast></p-toast>
 
-<!-- ===== HEADER PREMIUM COMPACTO ===== -->
-<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
-    style="border-left: 8px solid var(--primary-color);">
-    <div class="flex align-items-center">
-        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
-            <i class="pi pi-truck text-primary text-2xl"></i>
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12 p-0">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-box text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Otras Compras y Ventas</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de insumos agrícolas y productos varios · AgroFranco</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="openCompraDialog()">
+                </button>
+                <button pButton pRipple label="Nueva Venta" icon="pi pi-cart-plus"
+                    class="p-button-success px-4 py-2 border-round-xl shadow-md font-bold" (click)="openVentaDialog()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
-        <div>
-            <h3 class="m-0 font-bold text-900 line-height-2">Productos Agrícolas</h3>
-            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Gestión de compras y ventas de insumos y cosechas</p>
-        </div>
-    </div>
-    <div class="flex gap-2">
-        <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
-            class="p-button-primary p-button-sm border-round-lg shadow-2"
-            (click)="openCompraDialog()">
-        </button>
-        <button pButton pRipple label="Nueva Venta" icon="pi pi-cart-plus"
-            class="p-button-success p-button-sm border-round-lg shadow-2"
-            (click)="openVentaDialog()">
-        </button>
     </div>
 </div>
 
 <div class="grid">
     <!-- COLUMNA IZQUIERDA: DETALLES DE OPERACIONES -->
     <div class="col-12 xl:col-8">
-        <div class="card border-none shadow-2 border-round-xl p-0 overflow-hidden">
+        <div class="card border-none shadow-premium border-round-xl p-0 overflow-hidden">
             <p-tabView styleClass="custom-tabs">
                 <!-- PESTAÑA COMPRAS -->
                 <p-tabPanel header="Compras Realizadas">
@@ -122,7 +126,7 @@
 
     <!-- COLUMNA DERECHA: CONSOLIDADOS Y CAJA -->
     <div class="col-12 xl:col-4">
-        <div class="card border-none shadow-2 border-round-xl p-0 overflow-hidden h-full flex flex-column">
+        <div class="card border-none shadow-premium border-round-xl p-0 overflow-hidden h-full flex flex-column">
             <p-tabView styleClass="custom-tabs-summary h-full">
                 <!-- RESUMEN COMPRAS -->
                 <p-tabPanel header="Compras">
@@ -150,9 +154,9 @@
                         </p-table>
 
                         <div class="mt-auto pt-3">
-                            <button pButton type="button" icon="pi pi-check-circle" label="Sincronizar Compras con Caja"
-                                class="p-button-primary w-full shadow-2 border-round-lg"
-                                (click)="registrarTransaccionesCaja()">
+                            <button pButton type="button" icon="pi pi-file-pdf" label="Generar Reporte PDF"
+                                class="p-button-danger w-full shadow-2 border-round-lg font-bold"
+                                (click)="generarReportePDF()">
                             </button>
                         </div>
                     </div>
@@ -184,9 +188,9 @@
                         </p-table>
 
                         <div class="mt-auto pt-3">
-                            <button pButton type="button" icon="pi pi-check-circle" label="Sincronizar Ventas con Caja"
-                                class="p-button-success w-full shadow-2 border-round-lg"
-                                (click)="registrarVentasCaja()">
+                            <button pButton type="button" icon="pi pi-file-pdf" label="Generar Reporte PDF"
+                                class="p-button-danger w-full shadow-2 border-round-lg font-bold"
+                                (click)="generarReportePDF()">
                             </button>
                         </div>
                     </div>

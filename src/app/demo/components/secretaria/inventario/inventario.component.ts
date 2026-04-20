@@ -88,6 +88,7 @@ export class InventarioComponent implements OnInit {
         this.registerFormArticulo = this.fb.group({
             nombreArticulo: ['', Validators.required],
             descripcion: [''],
+            permiteFracciones: [false]
         });
     }
     onClear() {
@@ -111,6 +112,7 @@ export class InventarioComponent implements OnInit {
         this.registerFormArticulo.patchValue({
             nombreArticulo: articulo.nombreArticulo,
             descripcion: articulo.descripcion,
+            permiteFracciones: articulo.permiteFracciones || false
         });
 
         this.displayModal = true;

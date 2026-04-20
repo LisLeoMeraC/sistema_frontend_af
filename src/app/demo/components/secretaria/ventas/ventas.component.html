@@ -1,21 +1,28 @@
 <p-toast></p-toast>
 
-<!-- ===== HEADER PREMIUM COMPACTO ===== -->
-<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
-    style="border-left: 6px solid var(--primary-color);">
-    <div class="flex align-items-center">
-        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
-            <i class="pi pi-cart-plus text-primary text-2xl"></i>
-        </div>
-        <div>
-            <h3 class="m-0 font-bold text-900 line-height-2">Ventas de Artículos</h3>
-            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Registro de salidas y facturación</p>
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12 p-0">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-cart-plus text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Ventas de Insumos</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Registro de salidas, facturación y control de ventas · AgroFranco</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Historial de Ventas" icon="pi pi-history"
+                    class="p-button-warning px-4 py-2 border-round-xl shadow-md font-bold" (click)="mostrarComponenteVenta()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
     </div>
-    <button pButton pRipple label="Historial de Ventas" icon="pi pi-history"
-        class="p-button-warning p-button-outlined p-button-sm border-round-lg"
-        (click)="mostrarComponenteVenta()">
-    </button>
 </div>
 
 <div class="grid">
@@ -63,42 +70,58 @@
 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th style="width: 100px; text-align: center;">Código</th>
-                        <th>Artículo</th>
-                        <th style="width: 120px; text-align: center;">Cantidad</th>
-                        <th style="width: 150px; text-align: right;">P. Unitario</th>
-                        <th style="width: 150px; text-align: right;">Subtotal</th>
-                        <th style="width: 60px; text-align: center;"></th>
+                        <th style="width: 60px; text-align: center; padding: 0.4rem;">Cód</th>
+                        <th style="width: 22%; padding: 0.4rem;">Artículo</th>
+                        <th style="text-align: center; padding: 0.4rem;">Detalle de Cantidad</th>
+                        <th style="width: 100px; text-align: right; padding: 0.4rem;">P. Unit</th>
+                        <th style="width: 100px; text-align: right; padding: 0.4rem;">Subtotal</th>
+                        <th style="width: 40px; text-align: center; padding: 0.4rem;"></th>
                     </tr>
                 </ng-template>
 
                 <ng-template pTemplate="body" let-venta>
                     <tr>
-                        <td class="text-center font-medium">{{ venta.idOrden }}</td>
-                        <td>
+                        <td class="text-center font-medium" style="padding: 0.4rem;">{{ venta.idOrden }}</td>
+                        <td style="padding: 0.4rem;">
                             <div class="flex align-items-center gap-2">
-                                <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px; min-width: 24px;">
                                     <i class="pi pi-tag text-primary text-xs"></i>
                                 </div>
-                                <span class="font-medium">{{ venta.articulo }}</span>
+                                <div class="flex flex-column">
+                                    <span class="font-bold text-sm" style="line-height: 1.2;">{{ venta.articulo }}</span>
+                                    <span class="text-500" style="font-size: 0.70rem; line-height: 1;">{{ venta.descripcion || 'Sin descripción' }}</span>
+                                </div>
                             </div>
                         </td>
-                        <td class="text-center">
-                            <p-inputNumber [(ngModel)]="venta.cantidad" [min]="0" (onInput)="calcularSubtotal(venta)"
-                                inputId="cantidad" [showButtons]="false"
-                                class="p-inputtext-sm w-full">
-                            </p-inputNumber>
+                        <td class="text-left" style="padding: 0.4rem;">
+                            <div class="flex align-items-center gap-2 w-full justify-content-center flex-wrap">
+                                <p-dropdown [(ngModel)]="venta.unidadMedida" [options]="unidadesMedidas" 
+                                    optionLabel="label" optionValue="value" (onChange)="calcularSubtotal(venta)"
+                                    [disabled]="!venta.permiteFracciones" appendTo="body" styleClass="p-dropdown-sm" [style]="{'width': '135px', 'min-width': '135px'}"></p-dropdown>
+                                
+                                <input pInputText type="number" [step]="(venta.unidadMedida === 'UNIDAD' || !venta.permiteFracciones) ? '1' : '0.01'" min="0" 
+                                    [(ngModel)]="venta.cantidad" (ngModelChange)="calcularSubtotal(venta)" 
+                                    (keydown)="(venta.unidadMedida === 'UNIDAD' || !venta.permiteFracciones) && ($event.key === '.' || $event.key === ',') ? $event.preventDefault() : null"
+                                    class="p-inputtext-sm text-center font-bold" style="width: 80px;" placeholder="Cant." />
+
+                                <div class="p-inputgroup" *ngIf="venta.permiteFracciones" style="width: 110px; min-width: 110px;" pTooltip="Calcular por Monto" tooltipPosition="bottom">
+                                    <span class="p-inputgroup-addon py-0 px-2 text-xs" style="background-color: var(--green-50); color: var(--green-700); border-color: var(--green-300);"><i class="pi pi-dollar"></i></span>
+                                    <input pInputText type="number" step="0.01" min="0" 
+                                        [(ngModel)]="venta.montoCobro" (ngModelChange)="calcularCantidadPorMonto(venta)" 
+                                        class="p-inputtext-sm text-green-700 font-bold text-center py-1 w-full" style="background-color: #f0fdf4; border-color: var(--green-300); padding-left: 0.3rem; padding-right: 0.3rem;" placeholder="Monto" />
+                                </div>
+                            </div>
                         </td>
-                        <td class="text-right">
+                        <td class="text-right" style="padding: 0.4rem;">
                             <p-inputNumber [(ngModel)]="venta.precioUnitario" [min]="0" (onInput)="calcularSubtotal(venta)"
                                 [showButtons]="false" mode="currency" currency="USD" locale="en-US"
                                 class="p-inputtext-sm w-full">
                             </p-inputNumber>
                         </td>
-                        <td class="text-right font-bold text-primary">
+                        <td class="text-right font-bold text-primary" style="padding: 0.4rem;">
                             {{ venta.subtotal | currency: 'USD' }}
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="padding: 0.4rem;">
                             <button pButton pRipple type="button" icon="pi pi-times"
                                 class="p-button-rounded p-button-danger p-button-text p-button-sm"
                                 (click)="eliminarFila(venta)">

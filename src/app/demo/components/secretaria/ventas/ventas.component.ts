@@ -62,6 +62,11 @@ export class VentasComponent implements OnInit {
     loading: boolean = true;
     first: number = 0;
 
+    unidadesMedidas = [
+        { label: 'UNIDAD', value: 'UNIDAD' },
+        { label: 'LIBRAS', value: 'LIBRAS' }
+    ];
+
     statuses: any[] = [
         { label: 'Bajo', value: 'bajo' },
         { label: 'Normal', value: 'normal' },
@@ -308,11 +313,14 @@ export class VentasComponent implements OnInit {
     agregarDetallesOrden() {
         // Creamos un array con los detalles usando la tabla de ventas
         const detalles = this.ventas.map(venta => {
+            const factor = this.obtenerFactorConversion(venta.unidadMedida);
+            const precioReal = parseFloat(venta.precioUnitario) * factor;
             return {
                 ordenVenta: { id: this.idOrdenCreada },  // Usamos el id de la orden creada
                 ingresoStock: { id: venta.idOrden },  // Tomamos el id de ingresoStock
-                cantidad: venta.cantidad,
-                precioUnitario: venta.precioUnitario
+                cantidad: parseFloat(venta.cantidad), // Preparado para decimales
+                precioUnitario: precioReal, // Pasa el precio convertido según la unidad
+                unidadMedida: venta.unidadMedida
             };
         });
 
@@ -322,6 +330,7 @@ export class VentasComponent implements OnInit {
         this.ventasService.registrarDetalleOrdenVenta(detalles).subscribe(
             (response) => {
                 this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Orden de Venta registrada con éxito' });
+                this.imprimirReciboTicket(this.comprador, this.total, this.ventas);
                 this.limpiarCampos();
             },
             (error) => {
@@ -335,6 +344,92 @@ export class VentasComponent implements OnInit {
         );
     }
 
+    imprimirReciboTicket(comprador: string, total: number, ventas: any[]): void {
+        const printWindow = window.open('', '_blank', 'width=400,height=600');
+        if (!printWindow) {
+            this.messageService.add({ severity: 'warn', summary: 'Popup Bloqueado', detail: 'Habilita las ventanas emergentes para imprimir recibos.' });
+            return;
+        }
+
+        const dateStr = new Date().toLocaleDateString('es-EC');
+        const timeStr = new Date().toLocaleTimeString('es-EC');
+
+        const html = `
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>Recibo de Venta</title>
+                    <style>
+                        body {
+                            font-family: 'Courier New', Courier, monospace;
+                            width: 300px;
+                            margin: 0 auto;
+                            font-size: 13px;
+                            color: #000;
+                        }
+                        .header { text-align: center; margin-bottom: 15px; }
+                        .header h2 { margin: 0; font-size: 18px; margin-bottom: 5px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                        th, td { text-align: left; padding: 4px 2px; border-bottom: 1px dashed #ccc; font-size: 12px; }
+                        .text-right { text-align: right; }
+                        .total-row { font-weight: bold; font-size: 16px; margin-top: 10px; border-top: 1px solid #000; padding-top: 5px; }
+                        .footer { text-align: center; margin-top: 25px; font-size: 10px; }
+                        @media print {
+                            body { width: 80mm; margin: 0; padding: 10px; }
+                            @page { margin: 0; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>SISTEMA COCOA</h2>
+                        <div>TICKET DE VENTA</div>
+                        <div style="margin-top: 10px; text-align: left; font-size: 12px;">
+                            <div><strong>Fech:</strong> ${dateStr} ${timeStr}</div>
+                            <div><strong>Clte:</strong> ${comprador || 'Consumidor Final'}</div>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cant</th>
+                                <th>Venta</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ventas.map(d => `
+                                <tr>
+                                    <td>${d.cantidad} ${d.unidadMedida === 'UNIDAD' ? 'U' : 'L'}</td>
+                                    <td>${d.articulo}</td>
+                                    <td class="text-right">$${d.subtotal.toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="text-right total-row">
+                        TOTAL: $${total.toFixed(2)}
+                    </div>
+                    <div class="footer">
+                        <p>¡Gracias por su compra!</p>
+                        <p>Este documento no tiene validez tributaria.</p>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                window.close();
+                            }, 500);
+                        }
+                    </script>
+                </body>
+            </html>
+        `;
+
+        printWindow.document.open();
+        printWindow.document.write(html);
+        printWindow.document.close();
+    }
 
     esPorPagar(): boolean {
         return this.estadoSelecionado && this.estadoSelecionado.valor === false;
@@ -372,20 +467,52 @@ export class VentasComponent implements OnInit {
         const venta = {
             idOrden: ingreso.id,
             articulo: articulo.nombreArticulo,
+            descripcion: articulo.descripcion,
             cantidadOriginal: ingreso.unidades,
             cantidad: 0,
-            precioUnitario: ingreso.precioVenta || 0,  // Asegúrate de que tenga un valor predeterminado
-            subtotal: 0
+            precioUnitario: ingreso.precioVenta || 0,
+            subtotal: 0,
+            unidadMedida: articulo.permiteFracciones ? 'LIBRAS' : 'UNIDAD',
+            montoCobro: null,
+            permiteFracciones: articulo.permiteFracciones
         };
 
         this.ventas.push(venta);
         this.closeModalDialogArticulos();
     }
 
+    obtenerFactorConversion(unidad: string): number {
+        if (unidad === 'LIBRAS') return 0.01;
+        if (unidad === 'QUINTALES') return 1;
+        if (unidad === 'SACOS DE 25LB') return 0.25;
+        return 1; // UNIDAD o cualquiera por defecto
+    }
+
     calcularSubtotal(venta: any): void {
-        if (venta.cantidad && venta.precioUnitario) {
-            venta.subtotal = venta.cantidad * venta.precioUnitario;
+        const cant = parseFloat(venta.cantidad) || 0;
+        const precio = parseFloat(venta.precioUnitario) || 0;
+        const factor = this.obtenerFactorConversion(venta.unidadMedida);
+
+        const montoCalculado = cant * (precio * factor);
+        venta.subtotal = montoCalculado;
+        
+        if (venta.montoCobro !== montoCalculado) {
+            venta.montoCobro = null;
+        }
+        this.calcularTotal();
+    }
+
+    calcularCantidadPorMonto(venta: any): void {
+        const monto = parseFloat(venta.montoCobro) || 0;
+        const precio = parseFloat(venta.precioUnitario) || 0;
+        const factor = this.obtenerFactorConversion(venta.unidadMedida);
+        const precioPorUnidadSeleccionada = precio * factor;
+
+        if (precioPorUnidadSeleccionada > 0) {
+            venta.cantidad = Number((monto / precioPorUnidadSeleccionada).toFixed(4));
+            venta.subtotal = monto;
         } else {
+            venta.cantidad = 0;
             venta.subtotal = 0;
         }
         this.calcularTotal();

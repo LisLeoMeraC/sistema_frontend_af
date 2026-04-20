@@ -2,33 +2,33 @@
 
 <div class="grid">
     <div class="col-12">
-        <!-- Nuevo Encabezado Rediseñado -->
-        <div class="card p-4 border-none shadow-2 mb-4 relative overflow-hidden flex align-items-center justify-content-between"
-            style="background: var(--surface-card); border-left: 8px solid var(--primary-color); border-radius: 20px;">
+        <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
             <div class="flex align-items-center relative z-1">
-                <div class="p-3 border-round-xl mr-4"
-                    style="background: color-mix(in srgb, var(--primary-color), transparent 85%);">
-                    <i class="pi pi-users text-primary text-4xl"></i>
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-users text-orange-600 text-3xl"></i>
                 </div>
                 <div>
-                    <h1 class="m-0 text-900 font-bold text-3xl tracking-tight">Gestión de Clientes</h1>
-                    <p class="m-0 text-600 font-medium">Panel de administración de clientes</p>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Gestión de Clientes</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Panel de administración de productores registrados</p>
                 </div>
             </div>
-            <div class="hidden md:flex align-items-center gap-4 relative z-1">
-                <div class="text-right">
-                    <div class="text-900 font-bold text-2xl">{{totalRecords}}</div>
-                    <div class="text-500 text-sm">Total Clientes</div>
+            <div class="hidden md:flex align-items-center gap-3 relative z-1">
+                <div class="text-right px-3 py-2 border-round-xl bg-surface-50 shadow-sm">
+                    <div class="text-900 font-bold text-2xl line-height-1">{{totalRecords}}</div>
+                    <div class="text-500 font-medium text-xs uppercase tracking-wider mt-1">Total Clientes</div>
                 </div>
-                <div class="surface-border border-left-1 h-3rem"></div>
+                <div class="surface-border border-left-1 h-3rem opacity-20"></div>
                 <button pButton pRipple label="Nuevo Registro" icon="pi pi-user-plus"
-                    class="p-button-raised border-round-xl px-4 py-2" (click)="showModalDialog()"></button>
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="showModalDialog()"></button>
             </div>
-            <!-- Decoración sutil de fondo -->
-            <div class="absolute"
-                style="top: -20px; right: -20px; width: 150px; height: 150px; background: color-mix(in srgb, var(--primary-color), transparent 95%); border-radius: 50%;">
-            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
+    </div>
+
+    <div class="col-12">
 
         <div class="card shadow-2 border-round-xl overflow-hidden p-0">
             <p-table #dt [value]="clientes" [lazy]="true" (onLazyLoad)="onLazyLoad($event)"
@@ -88,6 +88,8 @@
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Hectáreas
                         </th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
+                            style="width: 120px;">Programas</th>
+                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
                             style="width: 140px;">Certificado</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
                             style="width: 80px;">Acción</th>
@@ -112,6 +114,14 @@
                         </td>
                         <td class="text-center">{{cliente.hectareas}} <small class="text-500">ha</small></td>
                         <td class="text-center">
+                            <div class="flex justify-content-center gap-1">
+                                <p-tag *ngIf="cliente.rainforest" value="R" severity="success" pTooltip="Rainforest" [rounded]="true"></p-tag>
+                                <p-tag *ngIf="cliente.nestle" value="N" severity="warning" pTooltip="Nestlé" [rounded]="true"></p-tag>
+                                <p-tag *ngIf="cliente.olam" value="O" severity="info" pTooltip="Olam" [rounded]="true"></p-tag>
+                                <span *ngIf="!cliente.rainforest && !cliente.nestle && !cliente.olam" class="text-400 text-xs">-</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
                             <p-tag [severity]="cliente.certificado ? 'info' : 'danger'"
                                 [value]="cliente.certificado ? 'Si' : 'No'" [rounded]="true"
                                 class="cursor-pointer shadow-1" (click)="confirmCertificadoChange(cliente)">
@@ -127,7 +137,7 @@
 
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="9" class="text-center py-8">
+                        <td colspan="10" class="text-center py-8">
                             <div class="flex flex-column align-items-center">
                                 <i class="pi pi-search-minus text-400 text-6xl mb-3"></i>
                                 <span class="text-600 text-xl font-medium">No se encontraron resultados</span>
@@ -154,22 +164,32 @@
 </p-confirmDialog>
 
 <!-- Modal: Registro de Nuevo Recinto -->
-<p-dialog [(visible)]="displayRecintoModal" [modal]="true" [closable]="true" [header]="'Nuevo Recinto'"
-    [style]="{width: '400px'}" styleClass="p-fluid border-round-xl shadow-lg">
-    <form [formGroup]="registerFormRecinto" (ngSubmit)="onSubmitRecinto()" class="p-2">
-        <div class="field mb-4">
-            <label class="font-semibold text-900 mb-2 block">Nombre de la Ubicación</label>
-            <div class="p-inputgroup shadow-1 border-round-lg overflow-hidden">
-                <span class="p-inputgroup-addon bg-primary-50 text-primary border-none"><i
-                        class="pi pi-map-marker"></i></span>
-                <input type="text" pInputText placeholder="Ej: Recinto San Luis" formControlName="nombreRecinto"
-                    class="border-none" />
+<p-dialog [(visible)]="displayRecintoModal" [modal]="true" [closable]="false"
+    [style]="{width: '400px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-map-marker text-primary text-xl"></i>
             </div>
-            <small
-                *ngIf="registerFormRecinto.get('nombreRecinto')?.invalid && (registerFormRecinto.get('nombreRecinto')?.dirty || registerFormRecinto.get('nombreRecinto')?.touched)"
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Nuevo Recinto</div>
+                <div class="text-500" style="font-size: 0.8rem;">Añadir ubicación de clientes</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <form [formGroup]="registerFormRecinto" (ngSubmit)="onSubmitRecinto()" class="p-fluid">
+        <div class="field mb-4">
+            <label class="font-semibold text-700 block mb-1">Nombre de la Ubicación</label>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"><i class="pi pi-map-marker"></i></span>
+                <input type="text" pInputText placeholder="Ej: Recinto San Luis" formControlName="nombreRecinto" />
+            </div>
+            <small *ngIf="registerFormRecinto.get('nombreRecinto')?.invalid && (registerFormRecinto.get('nombreRecinto')?.dirty || registerFormRecinto.get('nombreRecinto')?.touched)"
                 class="p-error block mt-1"><i class="pi pi-info-circle mr-1"></i>Requerido</small>
         </div>
-        <div class="flex justify-content-end gap-2 mt-4">
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
             <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
                 (click)="CloseRecintoModalDialog()" type="button"></button>
             <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary shadow-2 border-round-lg"
@@ -178,144 +198,208 @@
     </form>
 </p-dialog>
 
-<!-- Modal: Nuevo Cliente -->
-<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="true" [header]="'Ficha de Registro Cliente'"
-    [style]="{width: '600px'}" styleClass="p-fluid border-round-2xl shadow-2xl">
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="p-3">
+<p-dialog [(visible)]="displayModal" [modal]="true" [closable]="false"
+    [style]="{width: '600px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-user-plus text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Ficha de Registro Cliente</div>
+                <div class="text-500" style="font-size: 0.8rem;">Ingresa los datos del nuevo cliente</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="p-fluid">
         <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Nombres Completos</label>
-                <div class="p-inputgroup shadow-sm">
-                    <span class="p-inputgroup-addon bg-primary-50 border-none"><i class="pi pi-user"></i></span>
-                    <input type="text" pInputText formControlName="nombre" placeholder="..." class="border-none" />
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Nombres Completos</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="nombre" placeholder="..." />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Apellidos</label>
-                <div class="p-inputgroup shadow-sm">
-                    <span class="p-inputgroup-addon bg-primary-50 border-none"><i class="pi pi-user"></i></span>
-                    <input type="text" pInputText formControlName="apellido" placeholder="..." class="border-none" />
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Apellidos</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="apellido" placeholder="..." />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Cédula</label>
-                <div class="p-inputgroup shadow-sm">
-                    <span class="p-inputgroup-addon bg-primary-50 border-none"><i class="pi pi-id-card"></i></span>
-                    <input type="text" pInputText formControlName="cedula" maxlength="10" placeholder="10 dígitos"
-                        class="border-none" />
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Cédula</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-id-card"></i></span>
+                    <input type="text" pInputText formControlName="cedula" maxlength="10" placeholder="10 dígitos" />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Ubicación (Recinto)</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Ubicación (Recinto)</label>
                 <div class="flex gap-2">
                     <p-dropdown [options]="recintos" optionLabel="nombreRecinto" formControlName="recinto"
                         [showClear]="true" [filter]="true" placeholder="Selección..." [appendTo]="'body'"
-                        class="flex-grow-1 border-round-lg shadow-sm">
+                        class="flex-1">
                     </p-dropdown>
-                    <button pButton icon="pi pi-plus" class="p-button-success p-button-outlined shadow-sm"
+                    <button pButton icon="pi pi-plus" class="p-button-success p-button-outlined"
                         (click)="showRecintoModalDialog()" type="button" pTooltip="Nuevo Recinto"></button>
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Línea Telefónica</label>
-                <div class="p-inputgroup shadow-sm">
-                    <span class="p-inputgroup-addon bg-primary-50 border-none"><i class="pi pi-phone"></i></span>
-                    <input type="text" pInputText formControlName="telefono" placeholder="Ej: 09..."
-                        class="border-none" />
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Línea Telefónica</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-phone"></i></span>
+                    <input type="text" pInputText formControlName="telefono" placeholder="Ej: 09..." />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-semibold text-700">Área Producción (Ha)</label>
-                <div class="p-inputgroup shadow-sm">
-                    <span class="p-inputgroup-addon bg-primary-50 border-none"><i class="pi pi-globe"></i></span>
-                    <input type="text" pInputText formControlName="hectareas" placeholder="0.00" class="border-none" />
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Área Producción (Ha)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-globe"></i></span>
+                    <input type="text" pInputText formControlName="hectareas" placeholder="0.00" />
+                </div>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-2">Programas de Certificación</label>
+                <div class="flex flex-column sm:flex-row gap-3">
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="registerForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="rainforest" inputId="rainforest_reg"></p-inputSwitch>
+                        <label for="rainforest_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="registerForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
+                    </div>
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="registerForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="nestle" inputId="nestle_reg"></p-inputSwitch>
+                        <label for="nestle_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="registerForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
+                    </div>
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="registerForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="olam" inputId="olam_reg"></p-inputSwitch>
+                        <label for="olam_reg" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="registerForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Botones de Acción dentro del Formulario -->
-        <div class="flex justify-content-end gap-2 mt-5 border-top-1 surface-border pt-4">
+        <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
             <button pButton pRipple label="Cancelar" icon="pi pi-times"
-                class="p-button-text p-button-secondary border-round-lg" (click)="CloseModalDialog()"
+                class="p-button-text p-button-secondary" (click)="CloseModalDialog()"
                 type="button"></button>
             <button pButton pRipple label="Finalizar Registro" icon="pi pi-save"
-                class="p-button-primary shadow-2 px-5 border-round-lg" type="submit"></button>
+                class="p-button-primary shadow-2 border-round-lg" type="submit"></button>
         </div>
     </form>
 </p-dialog>
 
 <!-- Modal: Editar Cliente -->
-<p-dialog [(visible)]="displayEditModal" [modal]="true" [closable]="true" [header]="'Actualización de Expediente'"
-    [style]="{width: '600px'}" styleClass="p-fluid">
-    <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()" class="p-3 mt-2">
+<p-dialog [(visible)]="displayEditModal" [modal]="true" [closable]="false"
+    [style]="{width: '600px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+    
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-warning-50">
+                <i class="pi pi-user-edit text-warning-600 text-xl" style="color: var(--orange-500);"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Actualización de Expediente</div>
+                <div class="text-500" style="font-size: 0.8rem;">Modifica los datos del cliente</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()" class="p-fluid">
         <div class="grid">
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Nombres</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Nombres</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
-                            class="pi pi-user text-xs"></i></span>
-                    <input type="text" pInputText formControlName="nombre" class="border-none shadow-sm" />
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="nombre" />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Apellidos</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Apellidos</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
-                            class="pi pi-user text-xs"></i></span>
-                    <input type="text" pInputText formControlName="apellido" class="border-none shadow-sm" />
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText formControlName="apellido" />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Documento Identidad</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Documento Identidad</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
-                            class="pi pi-id-card text-xs"></i></span>
-                    <input type="text" pInputText formControlName="cedula" class="border-none shadow-sm" />
+                    <span class="p-inputgroup-addon"><i class="pi pi-id-card"></i></span>
+                    <input type="text" pInputText formControlName="cedula" maxlength="10" />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Lugar de Residencia</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Lugar de Residencia</label>
                 <p-dropdown [options]="recintos" optionLabel="nombreRecinto" formControlName="recinto"
-                    [showClear]="true" [filter]="true" [appendTo]="'body'" class="shadow-sm">
+                    [showClear]="true" [filter]="true" [appendTo]="'body'">
                 </p-dropdown>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Contacto</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Contacto</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
-                            class="pi pi-phone text-xs"></i></span>
-                    <input type="text" pInputText formControlName="telefono" class="border-none shadow-sm" />
+                    <span class="p-inputgroup-addon"><i class="pi pi-phone"></i></span>
+                    <input type="text" pInputText formControlName="telefono" />
                 </div>
             </div>
 
-            <div class="field col-12 md:col-6">
-                <label class="font-bold text-700">Extensión Terreno</label>
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-bold text-700 block mb-1">Extensión Terreno (Ha)</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
-                            class="pi pi-globe text-xs"></i></span>
-                    <input type="text" pInputText formControlName="hectareas" class="border-none shadow-sm" />
+                    <span class="p-inputgroup-addon"><i class="pi pi-globe"></i></span>
+                    <input type="text" pInputText formControlName="hectareas" />
+                </div>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-bold text-700 block mb-2">Programas de Certificación</label>
+                <div class="flex flex-column sm:flex-row gap-3">
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="editForm.get('rainforest')?.value ? 'bg-green-50 border-green-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="rainforest" inputId="rainforest_edit"></p-inputSwitch>
+                        <label for="rainforest_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="editForm.get('rainforest')?.value ? 'text-green-700' : 'text-700'">Rainforest</label>
+                    </div>
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="editForm.get('nestle')?.value ? 'bg-orange-50 border-orange-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="nestle" inputId="nestle_edit"></p-inputSwitch>
+                        <label for="nestle_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="editForm.get('nestle')?.value ? 'text-orange-700' : 'text-700'">Nestlé</label>
+                    </div>
+                    <div class="flex align-items-center p-2 border-round-lg border-1 flex-1 gap-2 transition-colors cursor-pointer"
+                         [ngClass]="editForm.get('olam')?.value ? 'bg-blue-50 border-blue-500' : 'surface-50 surface-border hover:surface-100'">
+                        <p-inputSwitch formControlName="olam" inputId="olam_edit"></p-inputSwitch>
+                        <label for="olam_edit" class="text-sm font-medium cursor-pointer w-full transition-colors"
+                               [ngClass]="editForm.get('olam')?.value ? 'text-blue-700' : 'text-700'">Olam</label>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div
-            class="flex flex-column sm:flex-row justify-content-between items-center gap-3 mt-5 pt-4 border-top-1 surface-border">
+        <div class="flex flex-column sm:flex-row justify-content-between items-center gap-3 mt-4 pt-3 border-top-1 surface-border">
             <button pButton label="Descartar" icon="pi pi-times" class="p-button-text p-button-danger border-round-lg"
                 (click)="CloseEditModalDialog()" type="button"></button>
             <div class="flex gap-2 w-full sm:w-auto">
                 <button pButton label="Nueva Operación" icon="pi pi-sync" (click)="onEditDeleteSubmit()"
-                    class="p-button-secondary p-button-outlined border-round-lg shadow-sm w-full"></button>
+                    class="p-button-secondary p-button-outlined border-round-lg w-full"></button>
                 <button pButton label="Guardar Cambios" icon="pi pi-save" type="submit"
-                    class="p-button-primary shadow-2 border-round-lg w-full px-4"></button>
+                    class="p-button-warning shadow-2 border-round-lg w-full px-4"></button>
             </div>
         </div>
     </form>

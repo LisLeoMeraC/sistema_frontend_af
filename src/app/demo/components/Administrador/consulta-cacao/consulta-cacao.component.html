@@ -1,21 +1,23 @@
 <p-toast></p-toast>
 
-<!-- ===== HEADER PREMIUM COMPACTO ===== -->
-<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
-    style="border-left: 8px solid var(--primary-color);">
-    <div class="flex align-items-center">
-        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
-            <i class="pi pi-search-plus text-primary text-2xl"></i>
+<!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+<div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+     style="border-radius: 1.25rem;">
+    <div class="flex align-items-center relative z-1">
+        <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+            <i class="pi pi-search-plus text-orange-600 text-3xl"></i>
         </div>
         <div>
-            <h3 class="m-0 font-bold text-900 line-height-2">Consulta por Cliente</h3>
-            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Historial detallado de compras de cacao por productor</p>
+            <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Consulta por Cliente</h2>
+            <p class="m-0 text-600 font-medium opacity-70">Historial detallado de compras de cacao por productor · AgroFranco</p>
         </div>
     </div>
+    <!-- Elemento decorativo de fondo -->
+    <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
 </div>
 
 <!-- ===== PANEL DE FILTROS (REDISEÑADO) ===== -->
-<div class="card border-none shadow-2 border-round-xl p-3 mb-3">
+<div class="card border-none shadow-premium mb-4" style="border-radius: 1.25rem;">
     <form [formGroup]="registerForm" (ngSubmit)="consultar()">
         <div class="grid p-fluid align-items-end">
             <div class="col-12 md:col-3">
@@ -71,8 +73,9 @@
 <div class="grid mt-2">
     <!-- Tabla de resultados -->
     <div class="col-12 lg:col-9">
-        <div class="card border-none shadow-2 border-round-xl p-3 relative" [ngClass]="{'opacity-60': loadings}">
-            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+        <div class="card border-none shadow-premium relative p-4" style="border-radius: 1.25rem;" [ngClass]="{'opacity-60': loadings}">
+            <div class="flex align-items-center mb-3">
+                <i class="pi pi-list text-primary mr-2 text-xl"></i>
                 <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Transacciones</h4>
             </div>
 
@@ -120,7 +123,8 @@
 
     <!-- KPI del Total -->
     <div class="col-12 lg:col-3">
-        <div class="card border-none shadow-3 p-4 border-round-xl bg-primary flex flex-column align-items-center justify-content-center text-center">
+        <div class="card border-none shadow-premium p-4 flex flex-column align-items-center justify-content-center text-center bg-primary" 
+             style="border-radius: 1.25rem;">
             <div class="p-3 bg-white-alpha-20 border-round-circle mb-3 shadow-2">
                 <i class="pi pi-box text-white text-3xl"></i>
             </div>

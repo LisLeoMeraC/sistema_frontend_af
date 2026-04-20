@@ -1,27 +1,31 @@
 <p-toast></p-toast>
 <p-confirmDialog key="confirm" border="none"></p-confirmDialog>
 
-<!-- ===== HEADER PREMIUM COMPACTO ===== -->
-<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
-    style="border-left: 8px solid var(--primary-color);">
-    <div class="flex align-items-center">
-        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
-            <i class="pi pi-shopping-bag text-primary text-2xl"></i>
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-shopping-bag text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Compras de Cacao</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de adquisiciones y stock diario · AgroFranco</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="showCompraCacaoModalDialog()">
+                </button>
+                <button pButton pRipple label="Historial Completo" icon="pi pi-history"
+                    class="p-button-warning px-4 py-2 border-round-xl shadow-md font-bold" (click)="openDialogTodasCompras()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
-        <div>
-            <h3 class="m-0 font-bold text-900 line-height-2">Compras de Cacao</h3>
-            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Gestión de adquisiciones y stock diario</p>
-        </div>
-    </div>
-    <div class="flex gap-2">
-        <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
-            class="p-button-primary p-button-sm border-round-lg shadow-2"
-            (click)="showCompraCacaoModalDialog()">
-        </button>
-        <button pButton pRipple label="Historial Completo" icon="pi pi-history"
-            class="p-button-success p-button-outlined p-button-sm border-round-lg"
-            (click)="openDialogTodasCompras()">
-        </button>
     </div>
 </div>
 
@@ -29,17 +33,18 @@
     <!-- SECCIÓN IZQUIERDA: COMPRAS DEL DÍA -->
     <div class="col-12 xl:col-7">
         <div class="card border-none shadow-2 border-round-xl p-3">
-            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+            <div class="flex align-items-center mb-3"
+                style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
                 <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Compras del Día</h4>
             </div>
 
             <p-table [value]="comprasCacao" [rows]="6" [rowHover]="true"
-                styleClass="p-datatable-sm p-datatable-gridlines"
-                [paginator]="true" responsiveLayout="scroll">
+                styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
 
                 <ng-template pTemplate="header">
                     <tr>
                         <th class="text-center" style="width: 80px;">Hora</th>
+                        <th>Cliente</th>
                         <th>Tipo de Cacao</th>
                         <th class="text-center" style="width: 100px;">Libras</th>
                         <th class="text-right" style="width: 130px;">Total</th>
@@ -53,8 +58,19 @@
                             {{ cacao.fechaCompra | date:'HH:mm' }}
                         </td>
                         <td>
+                            <div class="flex flex-column">
+                                <span class="font-bold text-900" style="font-size: 0.9rem;">
+                                    {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' + cacao.cliente?.apellidos) : 'Consumidor Final' }}
+                                </span>
+                                <small class="text-500" *ngIf="cacao.cliente?.cedula || cacao.cedula">
+                                    CI: {{ cacao.cliente?.cedula || cacao.cedula }}
+                                </small>
+                            </div>
+                        </td>
+                        <td>
                             <div class="flex align-items-center gap-2">
-                                <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                <div class="flex align-items-center justify-content-center border-round bg-primary-50"
+                                    style="width: 24px; height: 24px;">
                                     <i class="pi pi-tag text-primary text-xs"></i>
                                 </div>
                                 <span class="font-medium text-900">{{ cacao.tipoCacao.nombre }}</span>
@@ -69,8 +85,7 @@
                         <td class="text-center">
                             <button pButton pRipple type="button" icon="pi pi-trash"
                                 class="p-button-rounded p-button-danger p-button-text p-button-sm"
-                                style="width: 2rem; height: 2rem;"
-                                (click)="confirmDeleteCompra(cacao)">
+                                style="width: 2rem; height: 2rem;" (click)="confirmDeleteCompra(cacao)">
                             </button>
                         </td>
                     </tr>
@@ -78,7 +93,7 @@
 
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="5" class="text-center text-500 py-4">
+                        <td colspan="6" class="text-center text-500 py-4">
                             <i class="pi pi-inbox text-3xl mb-2 block"></i>
                             No hay compras registradas hoy.
                         </td>
@@ -91,7 +106,8 @@
     <!-- SECCIÓN DERECHA: RESUMEN Y CAJA -->
     <div class="col-12 xl:col-5">
         <div class="card border-none shadow-2 border-round-xl p-3 h-full flex flex-column">
-            <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+            <div class="flex align-items-center mb-3"
+                style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
                 <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Consolidado Hoy</h4>
             </div>
 
@@ -119,12 +135,12 @@
 
             <div class="mt-auto surface-50 p-3 border-round-lg border-1 border-200">
                 <p class="text-500 m-0 mb-3 text-sm line-height-3">
-                    <i class="pi pi-info-circle mr-1"></i>
-                    Al registrar en caja, los montos se descontarán del saldo actual para cuadrar el balance diario.
+                    <i class="pi pi-file-pdf mr-1"></i>
+                    Genere un reporte detallado en PDF de las adquisiciones del día, consolidado por categoría para el control de inventario de AGROFRANCO.
                 </p>
-                <button pButton pRipple type="button" icon="pi pi-check-square" label="Registrar en Caja"
-                    class="p-button-success w-full shadow-2 border-round-lg font-bold"
-                    (click)="registrarTransaccionesCaja()">
+                <button pButton pRipple type="button" icon="pi pi-file-pdf" label="Generar Reporte PDF"
+                    class="p-button-danger w-full shadow-2 border-round-lg font-bold"
+                    (click)="generarReportePDF()">
                 </button>
             </div>
         </div>
@@ -132,8 +148,8 @@
 </div>
 
 <!-- ===== DIALOG: NUEVA COMPRA DE CACAO ===== -->
-<p-dialog [(visible)]="displayModalCompraCacao" [modal]="true" [closable]="false"
-    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+<p-dialog [(visible)]="displayModalCompraCacao" [modal]="true" [closable]="false" [style]="{width: '450px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
 
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
@@ -151,15 +167,29 @@
         <div class="field mb-4">
             <label class="font-bold text-700 block mb-2">Origen del Cliente</label>
             <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente"
-                styleClass="w-full"></p-selectButton>
+                styleClass="w-full" (onChange)="onTipoClienteChange($event)"></p-selectButton>
+
+            <!-- Banner de cliente seleccionado -->
+            <div *ngIf="clienteSeleccionado" class="mt-2 p-2 border-round-lg surface-100 border-1 border-primary flex align-items-center justify-content-between">
+                <div class="flex align-items-center gap-2">
+                    <i class="pi pi-user text-primary"></i>
+                    <span class="font-semibold text-800">
+                        {{ clienteSeleccionado.nombres }} {{ clienteSeleccionado.apellidos }}
+                    </span>
+                    <small class="text-500">CI: {{ clienteSeleccionado.cedula }}</small>
+                </div>
+                <button pButton pRipple type="button" icon="pi pi-pencil" label="Cambiar"
+                    class="p-button-text p-button-sm p-button-primary"
+                    (click)="displayClienteSearchDialog = true">
+                </button>
+            </div>
         </div>
 
         <div class="grid">
             <div class="field col-12 mb-3">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Fecha y Hora</label>
-                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
-                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"
-                    styleClass="border-round-lg"></p-calendar>
+                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true" dateFormat="dd/mm/yy"
+                    hourFormat="24" [appendTo]="'body'" styleClass="border-round-lg"></p-calendar>
             </div>
 
             <div class="field col-12 mb-3">
@@ -208,8 +238,8 @@
 </p-dialog>
 
 <!-- ===== DIALOG: HISTORIAL DE COMPRAS ===== -->
-<p-dialog [(visible)]="displayModalCompraCacaoTodas" [modal]="true" [closable]="true"
-    [style]="{width: '85vw'}" styleClass="border-round-xl shadow-5">
+<p-dialog [(visible)]="displayModalCompraCacaoTodas" [modal]="true" [closable]="true" [style]="{width: '85vw'}"
+    styleClass="border-round-xl shadow-5">
 
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
@@ -230,7 +260,8 @@
                     <label class="font-bold text-700 mb-1 block">Buscar por Fecha</label>
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
-                        <p-calendar formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'"></p-calendar>
+                        <p-calendar formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                            [appendTo]="'body'"></p-calendar>
                     </div>
                 </div>
                 <div class="field col-12 md:col-3 mb-0 pt-4">
@@ -266,8 +297,9 @@
                 <tr>
                     <td class="text-center text-700 font-medium">{{ cacao.fechaCompra | date:'yyyy-MM-dd HH:mm' }}</td>
                     <td class="text-center">
-                        <p-tag [severity]="cacao.tipoCliente.id === 1 ? 'info' : 'warning'"
-                            [value]="cacao.tipoCliente.tipo" styleClass="border-round-lg"></p-tag>
+                        <span class="font-bold text-700">
+                            {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' + cacao.cliente?.apellidos) : 'Consumidor Final' }}
+                        </span>
                     </td>
                     <td class="text-center font-bold">{{ cacao.tipoCacao.nombre }}</td>
                     <td class="text-center font-medium">{{ cacao.cantidadLibras }}</td>
@@ -280,9 +312,68 @@
 
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="8" class="text-center text-500 py-4">No se encontraron registros para la fecha seleccionada.</td>
+                    <td colspan="8" class="text-center text-500 py-4">No se encontraron registros para la fecha
+                        seleccionada.</td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
+</p-dialog>
+
+<!-- ===== DIALOG: BUSCAR CLIENTE REGISTRADO ===== -->
+<p-dialog [(visible)]="displayClienteSearchDialog" [modal]="true" [closable]="false"
+    [style]="{width: '520px'}" styleClass="border-round-xl shadow-5">
+
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-blue-50">
+                <i class="pi pi-users text-blue-600 text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Seleccionar Cliente</div>
+                <div class="text-500" style="font-size: 0.8rem;">Busque por nombre, apellido o cédula</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="p-fluid">
+        <!-- Buscador -->
+        <div class="p-inputgroup mb-3">
+            <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+            <input pInputText [(ngModel)]="terminoBusqueda" (input)="onTerminoChange()"
+                placeholder="Nombre, apellido o cédula..." />
+            <span class="p-inputgroup-addon" *ngIf="buscandoCliente">
+                <i class="pi pi-spin pi-spinner"></i>
+            </span>
+        </div>
+
+        <!-- Resultados -->
+        <div *ngIf="clientesBuscados.length > 0" style="max-height: 280px; overflow-y: auto;">
+            <div *ngFor="let c of clientesBuscados"
+                class="flex align-items-center justify-content-between p-2 mb-1 border-round-lg border-1 border-200 cursor-pointer hover:surface-100"
+                (click)="seleccionarCliente(c)" style="transition: background 0.15s;">
+                <div>
+                    <div class="font-semibold text-900">{{ c.nombres }} {{ c.apellidos }}</div>
+                    <div class="text-500 text-sm">CI: {{ c.cedula }} &nbsp;·&nbsp; {{ c.recinto?.nombreRecinto }}</div>
+                </div>
+                <i class="pi pi-chevron-right text-primary"></i>
+            </div>
+        </div>
+
+        <div *ngIf="terminoBusqueda.length >= 2 && !buscandoCliente && clientesBuscados.length === 0"
+            class="text-center text-500 py-3">
+            <i class="pi pi-search mb-2 text-2xl block"></i>
+            No se encontraron clientes con ese criterio.
+        </div>
+
+        <div *ngIf="terminoBusqueda.length < 2" class="text-center text-400 py-3 text-sm">
+            Escriba al menos 2 caracteres para buscar.
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
+            class="p-button-text p-button-secondary" (click)="cancelarSeleccionCliente()">
+        </button>
+    </ng-template>
 </p-dialog>

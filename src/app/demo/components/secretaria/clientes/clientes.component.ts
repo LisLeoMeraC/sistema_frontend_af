@@ -60,6 +60,9 @@ export class ClientesComponent implements OnInit {
             telefono: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
             hectareas: ['', [Validators.pattern(/^\d*\.?\d*$/)]],
             recinto: [null, Validators.required],
+            rainforest: [false],
+            nestle: [false],
+            olam: [false],
         });
 
         this.editForm = this.fb.group({
@@ -70,6 +73,9 @@ export class ClientesComponent implements OnInit {
             telefono: ['', Validators.required],
             hectareas: ['', [Validators.pattern(/^\d*\.?\d*$/)]],
             recinto: [null, Validators.required],
+            rainforest: [false],
+            nestle: [false],
+            olam: [false],
         });
 
         this.registerFormRecinto = this.fb.group({
@@ -318,6 +324,9 @@ export class ClientesComponent implements OnInit {
             telefono: cliente.telefono,
             hectareas: cliente.hectareas,
             recinto: this.selectedRecinto,
+            rainforest: cliente.rainforest,
+            nestle: cliente.nestle,
+            olam: cliente.olam,
         });
         this.displayEditModal = true;
     }
@@ -346,6 +355,9 @@ export class ClientesComponent implements OnInit {
             telefono: this.editForm.get('telefono')?.value,
             hectareas: parseFloat(this.editForm.get('hectareas')?.value),
             recinto: this.editForm.get('recinto')?.value,
+            rainforest: this.editForm.get('rainforest')?.value,
+            nestle: this.editForm.get('nestle')?.value,
+            olam: this.editForm.get('olam')?.value,
         };
 
         // Actualizar cliente existente
@@ -395,6 +407,9 @@ export class ClientesComponent implements OnInit {
             telefono: this.editForm.get('telefono')?.value,
             hectareas: parseFloat(this.editForm.get('hectareas')?.value),
             recinto: this.editForm.get('recinto')?.value,
+            rainforest: this.editForm.get('rainforest')?.value,
+            nestle: this.editForm.get('nestle')?.value,
+            olam: this.editForm.get('olam')?.value,
         };
 
         // Nuevo método para actualizar cliente y eliminar facturas
@@ -456,6 +471,9 @@ export class ClientesComponent implements OnInit {
             telefono: this.registerForm.get('telefono')?.value,
             hectareas: parseFloat(this.registerForm.get('hectareas')?.value),
             recinto: this.registerForm.get('recinto')?.value,
+            rainforest: this.registerForm.get('rainforest')?.value,
+            nestle: this.registerForm.get('nestle')?.value,
+            olam: this.registerForm.get('olam')?.value,
         };
 
         console.log('Datos del cliente enviado:', cliente);

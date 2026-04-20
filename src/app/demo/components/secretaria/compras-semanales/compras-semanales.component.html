@@ -1,15 +1,27 @@
 <p-toast></p-toast>
 
-<!-- ===== HEADER PREMIUM COMPACTO ===== -->
-<div class="card p-3 border-none shadow-2 mb-3 flex align-items-center justify-content-between"
-    style="border-left: 8px solid var(--primary-color);">
-    <div class="flex align-items-center">
-        <div class="p-2 border-round-lg bg-primary-50 mr-3 shadow-1">
-            <i class="pi pi-chart-bar text-primary text-2xl"></i>
-        </div>
-        <div>
-            <h3 class="m-0 font-bold text-900 line-height-2">Reporte de Compras</h3>
-            <p class="m-0 text-500 font-medium" style="font-size: 0.8rem;">Análisis de adquisiciones de cacao por períodos</p>
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12 p-0">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-chart-bar text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Reporte de Compras</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Análisis de adquisiciones de cacao por períodos · AgroFranco</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple type="button" label="Generar Reporte PDF" 
+                        icon="pi pi-file-pdf" class="p-button-danger px-4 py-2 border-round-xl shadow-lg hover:shadow-xl transition-all font-bold"
+                        (click)="generarReportePDF()" [disabled]="comprasSemanales.length === 0">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
     </div>
 </div>

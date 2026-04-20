@@ -5,4 +5,6 @@ export interface Articulo {
     nombreArticulo: string;
     descripcion: string;
     ingresosStock?: IngresoStock[];
+    permiteFracciones?: boolean;
+    estado?: boolean;
   }

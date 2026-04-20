@@ -86,7 +86,11 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-cart-plus',
                             routerLink: ['/administrador/view-otras-compras'],
                         },
-
+                        {
+                            label: 'Reporte Mensual de Ventas',
+                            icon: 'pi pi-fw pi-calendar-plus',
+                            routerLink: ['/secretaria/reporte-mensual-clientes'],
+                        },
                     ],
 
                 },
@@ -156,11 +160,6 @@ export class AppMenuComponent implements OnInit {
                             label: 'Prestamos',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/prestamos'],
-                        },
-                        {
-                            label: 'Registro de Facturas',
-                            icon: 'pi pi-fw pi-file',
-                            routerLink: ['/asistente-factura/ingreso-factura'],
                         }
 
                     ],
@@ -215,8 +214,12 @@ export class AppMenuComponent implements OnInit {
                             label: 'Facturas Ingresadas',
                             icon: 'pi pi-user-edit',
                             routerLink: ['/administrador/consulta-cacao'],
+                        },
+                        {
+                            label: 'Reporte Mensual de Ventas',
+                            icon: 'pi pi-fw pi-calendar-plus',
+                            routerLink: ['/secretaria/reporte-mensual-clientes'],
                         }
-
                     ]
                 },
             ];
@@ -225,11 +228,6 @@ export class AppMenuComponent implements OnInit {
                 {
                     label: 'Operaciones',
                     items: [
-                        {
-                            label: 'Registro de Facturas',
-                            icon: 'pi pi-fw pi-file',
-                            routerLink: ['/asistente-factura/ingreso-factura'],
-                        },
                         {
                             label: 'Facturas Ingresadas',
                             icon: 'pi pi-fw pi-list',

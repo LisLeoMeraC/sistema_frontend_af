@@ -1,0 +1,130 @@
+<div class="grid p-fluid">
+    <div class="col-12">
+        <!-- HEADER PREMIUM -->
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-chart-bar text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Reporte Mensual de Ventas por Productor</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Análisis detallado de productividad y programas de certificación</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Generar Reporte PDF" icon="pi pi-file-pdf"
+                    class="p-button-danger px-4 py-2 border-round-xl shadow-lg hover:shadow-xl transition-all font-bold" 
+                    (click)="generarReportePDF()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="card border-none shadow-sm p-4 mb-4 bg-white border-round-xl">
+            <h5 class="m-0 mb-4 font-bold text-800 flex align-items-center">
+                <i class="pi pi-filter mr-2 text-orange-500"></i> Parámetros de Filtrado
+            </h5>
+            <div class="grid align-items-end">
+                <div class="col-12 md:col-3">
+                    <label class="block mb-2 font-semibold text-700 ml-1">Fecha de Inicio</label>
+                    <p-calendar [(ngModel)]="fechaInicio" view="month" dateFormat="mm/yy" [showIcon]="true"
+                        placeholder="Mes Inicio" styleClass="w-full border-round-lg shadow-none"></p-calendar>
+                </div>
+                <div class="col-12 md:col-3">
+                    <label class="block mb-2 font-semibold text-700 ml-1">Fecha de Fin</label>
+                    <p-calendar [(ngModel)]="fechaFin" view="month" dateFormat="mm/yy" [showIcon]="true"
+                        placeholder="Mes Fin" styleClass="w-full border-round-lg shadow-none"></p-calendar>
+                </div>
+                <div class="col-12 md:col-3">
+                    <label class="block mb-2 font-semibold text-700 ml-1">Programa / Certificación</label>
+                    <p-dropdown [options]="programas" [(ngModel)]="programaSeleccionado" optionLabel="label" optionValue="value"
+                        placeholder="Seleccione Programa" styleClass="w-full border-round-lg shadow-none"></p-dropdown>
+                </div>
+                <div class="col-12 md:col-3 flex gap-2">
+                    <button pButton pRipple label="Consultar Datos" icon="pi pi-search"
+                        class="p-button-primary border-round-lg shadow-md flex-1 font-bold py-2" (click)="cargarReporte()">
+                    </button>
+                    <button pButton pRipple icon="pi pi-refresh"
+                        class="p-button-outlined p-button-secondary border-round-lg shadow-sm" (click)="limpiarFiltros()">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA DE RESULTADOS -->
+        <div class="card border-none shadow-premium p-0 overflow-hidden bg-white" style="border-radius: 1.25rem;">
+            <p-table [value]="reporteData" [loading]="loading" [rows]="rows" [paginator]="true"
+                [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [totalRecords]="totalRecords"
+                styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped custom-report-table"
+                [scrollable]="true" scrollHeight="calc(100vh - 450px)" responsiveLayout="scroll">
+                
+                <ng-template pTemplate="header">
+                    <tr class="surface-50">
+                        <th colspan="5" class="text-center font-bold text-800 bg-orange-50 border-orange-100 py-3">Datos Generales del Productor</th>
+                        <th colspan="12" class="text-center font-bold text-800 bg-blue-50 border-blue-100 py-3">Producción Mensual (Quintales)</th>
+                        <th class="text-center font-bold text-white bg-green-600 border-green-700 py-3">Consolidado</th>
+                    </tr>
+                    <tr class="surface-ground">
+                        <th style="min-width: 150px;" class="font-bold text-700">Nombre</th>
+                        <th style="min-width: 150px;" class="font-bold text-700">Apellidos</th>
+                        <th style="min-width: 120px;" class="text-center font-bold text-700">Cédula</th>
+                        <th style="min-width: 130px;" class="font-bold text-700">Recinto</th>
+                        <th style="min-width: 100px;" class="text-center font-bold text-700">Has.</th>
+                        
+                        <!-- Meses -->
+                        <th *ngFor="let m of mesesLabels" class="text-center font-semibold text-600" style="min-width: 80px;">{{ m }}</th>
+                        
+                        <th style="min-width: 110px;" class="text-right font-bold text-green-700 bg-green-50">Total QQ</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-item>
+                    <tr class="hover:bg-orange-50 transition-colors">
+                        <td class="font-medium text-900">{{ item.nombres }}</td>
+                        <td class="font-medium text-900">{{ item.apellidos }}</td>
+                        <td class="text-center text-700 font-mono text-sm">{{ item.cedula }}</td>
+                        <td class="text-600">{{ item.recinto }}</td>
+                        <td class="text-center font-bold text-800">{{ item.hectareas | number:'1.2-2' }}</td>
+                        
+                        <!-- Meses (Dinámicos) -->
+                        <td *ngFor="let val of item.meses" class="text-center" [ngClass]="{'text-blue-600 font-bold': val > 0, 'text-400': val === 0}">
+                            {{ val > 0 ? (val | number:'1.2-2') : '-' }}
+                        </td>
+                        
+                        <td class="text-right font-bold text-green-700 bg-green-50">
+                            {{ item.totalQuintales | number:'1.2-2' }}
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="18" class="text-center p-8">
+                            <div class="flex flex-column align-items-center">
+                                <i class="pi pi-search-minus text-500 text-6xl mb-4"></i>
+                                <span class="text-xl font-bold text-700">No se encontraron datos para el reporte</span>
+                                <p class="text-500 mt-2">Ajuste los filtros de búsqueda para visualizar resultados.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-premium {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 8px rgba(0, 0, 0, 0.02) !important;
+    }
+    .custom-report-table .p-datatable-thead > tr > th {
+        border-bottom: 2px solid #edf2f7;
+        padding: 1rem 0.5rem;
+    }
+    .custom-report-table .p-datatable-tbody > tr > td {
+        padding: 0.75rem 0.5rem;
+    }
+</style>

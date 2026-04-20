@@ -9,4 +9,7 @@ export interface Cliente {
     hectareas: number;
     recinto: Recinto;
     certificado: boolean;
-  }
+    rainforest: boolean;
+    nestle: boolean;
+    olam: boolean;
+}

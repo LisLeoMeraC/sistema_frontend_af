@@ -2,26 +2,24 @@
 
 <div class="grid">
     <div class="col-12">
-        <!-- Encabezado Premium -->
-        <div class="card p-4 border-none shadow-2 mb-4 relative overflow-hidden flex align-items-center justify-content-between"
-            style="background: surface-card; border-left: 8px solid var(--primary-color);">
-            <div class="flex align-items-center z-1">
-                <div class="p-3 border-round-xl bg-primary-50 mr-4 shadow-sm">
-                    <i class="pi pi-wallet text-primary text-3xl"></i>
+        <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+             style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-wallet text-orange-600 text-3xl"></i>
                 </div>
                 <div>
-                    <h2 class="m-0 font-bold text-900 line-height-2">Administración de Caja</h2>
-                    <p class="m-0 text-500 font-medium">Control transaccional y flujo de efectivo</p>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Administración de Caja</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Control transaccional y flujo de efectivo · AgroFranco</p>
                 </div>
             </div>
-            <div class="hidden md:flex flex-column align-items-end z-1">
+            <div class="flex gap-3 relative z-1">
                 <button pButton pRipple label="Abrir Nueva Caja" icon="pi pi-plus"
-                    class="p-button-primary shadow-2 px-4 border-round-lg" (click)="openCajaDialog()"></button>
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="openCajaDialog()"></button>
             </div>
-            <!-- Decoración de fondo -->
-            <div class="absolute" style="top: -20px; right: -20px; opacity: 0.03;">
-                <i class="pi pi-wallet" style="font-size: 15rem;"></i>
-            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
         </div>
 
         <div class="card shadow-2 border-round-xl overflow-hidden">

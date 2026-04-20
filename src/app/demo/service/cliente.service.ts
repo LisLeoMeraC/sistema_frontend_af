@@ -76,4 +76,14 @@ export class ClienteService {
         );
     }
 
+    obtenerReporteVentas(inicio: string, fin: string, programa: string, page: number, size: number): Observable<any> {
+        let params = new HttpParams()
+            .set('inicio', inicio)
+            .set('fin', fin)
+            .set('programa', programa)
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        return this.http.get<any>(`${baseUrl}/clientes/reporte-ventas`, { params });
+    }
 }

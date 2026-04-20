@@ -12,6 +12,7 @@ import { CompraCacaoComponent } from './compra-cacao/compra-cacao.component';
 import { ComprasComponent } from './compras/compras.component';
 import { ComprasSemanalesComponent } from './compras-semanales/compras-semanales.component';
 import { ViewComprasOtrosProductosComponent } from './view-compras-otros-productos/view-compras-otros-productos.component';
+import { ReporteMensualClientesComponent } from './reporte-mensual-clientes/reporte-mensual-clientes.component';
 
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -30,6 +31,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { CalendarModule } from 'primeng/calendar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -56,7 +58,8 @@ import { ViewVentasComponent } from './view-ventas/view-ventas.component';
     ComprasComponent,
     ComprasSemanalesComponent,
     ViewComprasOtrosProductosComponent,
-    ViewVentasComponent
+    ViewVentasComponent,
+    ReporteMensualClientesComponent
   ],
   imports: [
     CommonModule,
@@ -87,7 +90,8 @@ import { ViewVentasComponent } from './view-ventas/view-ventas.component';
     TabViewModule,
     CheckboxModule,
     ProgressSpinnerModule,
-    TagModule
+    TagModule,
+    InputSwitchModule
   ],
   providers: [
   ]

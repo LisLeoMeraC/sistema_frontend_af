@@ -1,8 +1,20 @@
 <p-toast></p-toast>
-<div class="card" style="height: 30px">
-    <h4 style="margin-top: -10px">Mis Fijaciones</h4>
+<!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+<div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
+     style="border-radius: 1.25rem;">
+    <div class="flex align-items-center relative z-1">
+        <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+            <i class="pi pi-money-bill text-orange-600 text-3xl"></i>
+        </div>
+        <div>
+            <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Fijaciones de Cacao</h2>
+            <p class="m-0 text-600 font-medium opacity-70">Control de precios pactados y liquidaciones · AgroFranco</p>
+        </div>
+    </div>
+    <!-- Elemento decorativo de fondo -->
+    <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
 </div>
-<div class="card">
+<div class="card border-none shadow-premium border-round-xl overflow-hidden">
     
     <p-table [value]="fijaciones" dataKey="id" [expandedRowKeys]="expandedRows" responsiveLayout="scroll">
         <ng-template pTemplate="caption">
