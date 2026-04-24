@@ -2,8 +2,9 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { CompraCacao } from 'src/app/models/compraCacao.model';
 import { ClienteService } from 'src/app/demo/service/cliente.service';
 import { CompraCacaoService } from 'src/app/demo/service/compra-cacao.service';
 import { jsPDF } from 'jspdf';
@@ -22,8 +23,8 @@ export class CompraCacaoComponent implements OnInit {
     displayClienteSearchDialog: boolean = false;
     tipoClientes: any[] = [];
     tiposCacao: any[] = [];
-    comprasCacao: any[] = [];
-    comprasCacaoTodas: any[] = [];
+    comprasCacao: CompraCacao[] = [];
+    comprasCacaoTodas: CompraCacao[] = [];
     totalCacao: any[] = [];
 
     // Cliente seleccionado cuando es "Cliente Registrado"
@@ -49,6 +50,7 @@ export class CompraCacaoComponent implements OnInit {
             tipoCacao: [null, Validators.required],
             fechaCompra: [new Date(), Validators.required],
             cantidadLibras: [null, Validators.required],
+            precioPorQuintal: [null, Validators.required],
             totalPagado: [null, Validators.required],
             pagoEfectivo: [null, Validators.required],
             pagoTransferencia: [null, Validators.required],
@@ -67,6 +69,7 @@ export class CompraCacaoComponent implements OnInit {
         this.obtenerComprasCacaoToday();
         this.obtenerTotalTipoCacaoToday();
         this.onTotalPagadoChange();
+        this.onCalcularTotalChange();
 
         // Debounce para búsqueda de clientes
         this.searchSubject.pipe(debounceTime(350)).subscribe(term => {
@@ -189,11 +192,12 @@ export class CompraCacaoComponent implements OnInit {
 
         const fechaCompra = new Date(formValue.fechaCompra);
 
-        const compraCacao = {
+        const compraCacao: CompraCacao = {
             tipoCliente: { id: formValue.tipoCliente.value },
             tipoCacao: { id: formValue.tipoCacao.id },
             fechaCompra: this.formatearFechaLocal(fechaCompra),
             cantidadLibras: parseFloat(formValue.cantidadLibras),
+            precioPorQuintal: parseFloat(formValue.precioPorQuintal),
             totalPagado: parseFloat(formValue.totalPagado),
             pagoEfectivo: parseFloat(formValue.pagoEfectivo),
             pagoTransferencia: parseFloat(formValue.pagoTransferencia),
@@ -254,6 +258,27 @@ export class CompraCacaoComponent implements OnInit {
                     { pagoEfectivo: value || 0, pagoTransferencia: 0.0 },
                     { emitEvent: false }
                 );
+            });
+        }
+    }
+
+    onCalcularTotalChange(): void {
+        const libras = this.registerFormCompraCacao.get('cantidadLibras');
+        const precio = this.registerFormCompraCacao.get('precioPorQuintal');
+        
+        if (libras && precio) {
+            merge(libras.valueChanges, precio.valueChanges).subscribe(() => {
+                const qLibras = parseFloat(libras.value) || 0;
+                const qPrecio = parseFloat(precio.value) || 0;
+                
+                // Conversión: 100 lb = 1 QQ
+                const total = (qLibras / 100) * qPrecio;
+                
+                if (total > 0) {
+                    this.registerFormCompraCacao.patchValue({
+                        totalPagado: total.toFixed(2)
+                    }, { emitEvent: true });
+                }
             });
         }
     }
@@ -384,9 +409,9 @@ export class CompraCacaoComponent implements OnInit {
         });
 
         const summaryData = Array.from(resumenMap.entries()).map(([nombre, data]) => [
-            nombre,
+            nombre || '',
             `${data.libras.toFixed(2)} lb`,
-            `${(data.libras / 100).toFixed(2)} QQ`, // Conversión: 100 lb = 1 QQ
+            `${(data.libras / 100).toFixed(2)} QQ`,
             `$ ${data.dolares.toFixed(2)}`
         ]);
 
@@ -415,9 +440,9 @@ export class CompraCacaoComponent implements OnInit {
                 : 'Consumidor Final';
 
             return [
-                this.datePipe.transform(item.fechaCompra, 'HH:mm'),
-                nombreCliente,
-                item.tipoCacao.nombre,
+                this.datePipe.transform(item.fechaCompra, 'HH:mm') || '',
+                nombreCliente || '',
+                item.tipoCacao.nombre || '',
                 `${item.cantidadLibras} lb`,
                 `${(item.cantidadLibras / 100).toFixed(2)} QQ`,
                 `$ ${item.totalPagado.toFixed(2)}`

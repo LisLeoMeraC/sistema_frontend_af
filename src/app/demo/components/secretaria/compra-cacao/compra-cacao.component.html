@@ -4,27 +4,31 @@
 <div class="grid">
     <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
     <div class="col-12">
-        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
-             style="border-radius: 1.25rem;">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
             <div class="flex align-items-center relative z-1">
                 <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
                     <i class="pi pi-shopping-bag text-orange-600 text-3xl"></i>
                 </div>
                 <div>
                     <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Compras de Cacao</h2>
-                    <p class="m-0 text-600 font-medium opacity-70">Gestión de adquisiciones y stock diario · AgroFranco</p>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de adquisiciones y stock diario · AgroFranco
+                    </p>
                 </div>
             </div>
             <div class="flex gap-3 relative z-1">
                 <button pButton pRipple label="Nueva Compra" icon="pi pi-plus"
-                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold" (click)="showCompraCacaoModalDialog()">
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="showCompraCacaoModalDialog()">
                 </button>
                 <button pButton pRipple label="Historial Completo" icon="pi pi-history"
-                    class="p-button-warning px-4 py-2 border-round-xl shadow-md font-bold" (click)="openDialogTodasCompras()">
+                    class="p-button-warning px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="openDialogTodasCompras()">
                 </button>
             </div>
             <!-- Elemento decorativo de fondo -->
-            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
         </div>
     </div>
 </div>
@@ -60,7 +64,8 @@
                         <td>
                             <div class="flex flex-column">
                                 <span class="font-bold text-900" style="font-size: 0.9rem;">
-                                    {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' + cacao.cliente?.apellidos) : 'Consumidor Final' }}
+                                    {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' +
+                                    cacao.cliente?.apellidos) : 'Consumidor Final' }}
                                 </span>
                                 <small class="text-500" *ngIf="cacao.cliente?.cedula || cacao.cedula">
                                     CI: {{ cacao.cliente?.cedula || cacao.cedula }}
@@ -136,11 +141,11 @@
             <div class="mt-auto surface-50 p-3 border-round-lg border-1 border-200">
                 <p class="text-500 m-0 mb-3 text-sm line-height-3">
                     <i class="pi pi-file-pdf mr-1"></i>
-                    Genere un reporte detallado en PDF de las adquisiciones del día, consolidado por categoría para el control de inventario de AGROFRANCO.
+                    Genere un reporte detallado en PDF de las adquisiciones del día, consolidado por categoría para el
+                    control de inventario de AGROFRANCO.
                 </p>
                 <button pButton pRipple type="button" icon="pi pi-file-pdf" label="Generar Reporte PDF"
-                    class="p-button-danger w-full shadow-2 border-round-lg font-bold"
-                    (click)="generarReportePDF()">
+                    class="p-button-danger w-full shadow-2 border-round-lg font-bold" (click)="generarReportePDF()">
                 </button>
             </div>
         </div>
@@ -170,7 +175,8 @@
                 styleClass="w-full" (onChange)="onTipoClienteChange($event)"></p-selectButton>
 
             <!-- Banner de cliente seleccionado -->
-            <div *ngIf="clienteSeleccionado" class="mt-2 p-2 border-round-lg surface-100 border-1 border-primary flex align-items-center justify-content-between">
+            <div *ngIf="clienteSeleccionado"
+                class="mt-2 p-2 border-round-lg surface-100 border-1 border-primary flex align-items-center justify-content-between">
                 <div class="flex align-items-center gap-2">
                     <i class="pi pi-user text-primary"></i>
                     <span class="font-semibold text-800">
@@ -179,48 +185,56 @@
                     <small class="text-500">CI: {{ clienteSeleccionado.cedula }}</small>
                 </div>
                 <button pButton pRipple type="button" icon="pi pi-pencil" label="Cambiar"
-                    class="p-button-text p-button-sm p-button-primary"
-                    (click)="displayClienteSearchDialog = true">
+                    class="p-button-text p-button-sm p-button-primary" (click)="displayClienteSearchDialog = true">
                 </button>
             </div>
         </div>
 
         <div class="grid">
-            <div class="field col-12 mb-3">
+            <div class="field col-12 md:col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Fecha y Hora</label>
                 <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true" dateFormat="dd/mm/yy"
                     hourFormat="24" [appendTo]="'body'" styleClass="border-round-lg"></p-calendar>
             </div>
 
-            <div class="field col-12 mb-3">
+            <div class="field col-12 md:col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Tipo de Cacao</label>
                 <p-dropdown [options]="tiposCacao" optionLabel="nombre" formControlName="tipoCacao"
-                    placeholder="Seleccione variedad" [showClear]="true" [appendTo]="'body'"
+                    placeholder="Variedad..." [showClear]="true" [appendTo]="'body'"
                     styleClass="border-round-lg"></p-dropdown>
             </div>
 
-            <div class="field col-12 mb-3">
+            <div class="field col-12 md:col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Cantidad (Libras)</label>
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
-                    <input pInputText formControlName="cantidadLibras" placeholder="0.00" />
+                    <input pInputText formControlName="cantidadLibras" placeholder="0" />
+                </div>
+            </div>
+
+            <div class="field col-12 md:col-6 mb-2">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Precio Quintal ($)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-money-bill"></i></span>
+                    <input pInputText formControlName="precioPorQuintal" placeholder="0.00" />
                 </div>
             </div>
 
             <div class="field col-12 mb-3">
-                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Total a Pagar ($)</label>
+                <label class="font-bold text-primary block mb-1" style="font-size: 0.9rem;">Total a Pagar ($)</label>
                 <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
-                    <input pInputText formControlName="totalPagado" placeholder="0.00" />
+                    <span class="p-inputgroup-addon bg-primary text-white border-primary"><i
+                            class="pi pi-dollar"></i></span>
+                    <input pInputText formControlName="totalPagado" placeholder="0.00" class="font-bold text-lg" />
                 </div>
             </div>
 
-            <div class="field col-6">
+            <div class="field col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Efectivo</label>
                 <input pInputText formControlName="pagoEfectivo" placeholder="0.00" />
             </div>
 
-            <div class="field col-6">
+            <div class="field col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Transferencia</label>
                 <input pInputText formControlName="pagoTransferencia" placeholder="0.00" />
             </div>
@@ -298,7 +312,8 @@
                     <td class="text-center text-700 font-medium">{{ cacao.fechaCompra | date:'yyyy-MM-dd HH:mm' }}</td>
                     <td class="text-center">
                         <span class="font-bold text-700">
-                            {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' + cacao.cliente?.apellidos) : 'Consumidor Final' }}
+                            {{ cacao.tipoCliente.id === 1 ? (cacao.cliente?.nombres + ' ' + cacao.cliente?.apellidos) :
+                            'Consumidor Final' }}
                         </span>
                     </td>
                     <td class="text-center font-bold">{{ cacao.tipoCacao.nombre }}</td>
@@ -321,8 +336,8 @@
 </p-dialog>
 
 <!-- ===== DIALOG: BUSCAR CLIENTE REGISTRADO ===== -->
-<p-dialog [(visible)]="displayClienteSearchDialog" [modal]="true" [closable]="false"
-    [style]="{width: '520px'}" styleClass="border-round-xl shadow-5">
+<p-dialog [(visible)]="displayClienteSearchDialog" [modal]="true" [closable]="false" [style]="{width: '520px'}"
+    styleClass="border-round-xl shadow-5">
 
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
