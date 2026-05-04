@@ -91,6 +91,7 @@ export class VentasComponent implements OnInit {
     comprador: string = '';
 
     idOrdenCreada: number = 0;
+    guardando: boolean = false;
 
 
 
@@ -186,34 +187,43 @@ export class VentasComponent implements OnInit {
         );
     }
     registrarVenta() {
+        this.guardando = true;
 
         if (!this.fecha) {
             this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Debe seleccionar una fecha' });
+            this.guardando = false;
             return;
         }
 
         if (!this.comprador || this.comprador.trim() === '') {
             this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Debe ingresar un comprador' });
+            this.guardando = false;
             return;
         }
 
         if (this.ventas.length === 0) {
             this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Debe agregar al menos un artículo a la orden' });
+            this.guardando = false;
             return;
         }
         if (this.ventas.some(venta => venta.cantidad === 0)) {
             this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'La cantidad de un artículo no puede ser 0' });
+            this.guardando = false;
             return;
         }
 
 
         for (let venta of this.ventas) {
-            if (venta.cantidad > venta.cantidadOriginal) {
+            const factor = this.obtenerFactorConversion(venta.unidadMedida);
+            // Convertir el stock (almacenado en UNIDADES) a la unidad seleccionada para comparar
+            const stockEnUnidadSeleccionada = parseFloat(venta.cantidadOriginal) / factor;
+            if (venta.cantidad > stockEnUnidadSeleccionada) {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: `La cantidad del artículo "${venta.articulo}" supera el stock disponible. Stock disponible: ${venta.cantidadOriginal}`
+                    detail: `La cantidad del artículo "${venta.articulo}" supera el stock disponible. Stock disponible: ${stockEnUnidadSeleccionada} ${venta.unidadMedida}`
                 });
+                this.guardando = false;
                 return;  // Detener la ejecución si hay un error
             }
         }
@@ -227,6 +237,7 @@ export class VentasComponent implements OnInit {
                 summary: 'Advertencia',
                 detail: 'El monto del abono es mayor o igual al total de la venta. No se puede registrar el pago.'
             });
+            this.guardando = false;
             return;
         }
 
@@ -268,8 +279,9 @@ export class VentasComponent implements OnInit {
 
             },
             (error) => {
-                const errorMessage = error.error?.message || 'Hubo un error al registrar la venta';  // Utiliza error.error.message
-                this.messageService.add({ severity: 'error', summary: 'Error', detail: errorMessage });                // Lógica adicional, como mostrar un mensaje de error
+                const errorMessage = error.error?.message || 'Hubo un error al registrar la venta';
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: errorMessage });
+                this.guardando = false;
             }
 
         );
@@ -330,7 +342,7 @@ export class VentasComponent implements OnInit {
         this.ventasService.registrarDetalleOrdenVenta(detalles).subscribe(
             (response) => {
                 this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Orden de Venta registrada con éxito' });
-                this.imprimirReciboTicket(this.comprador, this.total, this.ventas);
+                this.guardando = false;
                 this.limpiarCampos();
             },
             (error) => {
@@ -340,95 +352,9 @@ export class VentasComponent implements OnInit {
                 const errorMessage = error?.error?.message || error?.message || 'Hubo un error al registrar los detalles de la venta';
 
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: errorMessage });
+                this.guardando = false;
             }
         );
-    }
-
-    imprimirReciboTicket(comprador: string, total: number, ventas: any[]): void {
-        const printWindow = window.open('', '_blank', 'width=400,height=600');
-        if (!printWindow) {
-            this.messageService.add({ severity: 'warn', summary: 'Popup Bloqueado', detail: 'Habilita las ventanas emergentes para imprimir recibos.' });
-            return;
-        }
-
-        const dateStr = new Date().toLocaleDateString('es-EC');
-        const timeStr = new Date().toLocaleTimeString('es-EC');
-
-        const html = `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Recibo de Venta</title>
-                    <style>
-                        body {
-                            font-family: 'Courier New', Courier, monospace;
-                            width: 300px;
-                            margin: 0 auto;
-                            font-size: 13px;
-                            color: #000;
-                        }
-                        .header { text-align: center; margin-bottom: 15px; }
-                        .header h2 { margin: 0; font-size: 18px; margin-bottom: 5px; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-                        th, td { text-align: left; padding: 4px 2px; border-bottom: 1px dashed #ccc; font-size: 12px; }
-                        .text-right { text-align: right; }
-                        .total-row { font-weight: bold; font-size: 16px; margin-top: 10px; border-top: 1px solid #000; padding-top: 5px; }
-                        .footer { text-align: center; margin-top: 25px; font-size: 10px; }
-                        @media print {
-                            body { width: 80mm; margin: 0; padding: 10px; }
-                            @page { margin: 0; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h2>SISTEMA COCOA</h2>
-                        <div>TICKET DE VENTA</div>
-                        <div style="margin-top: 10px; text-align: left; font-size: 12px;">
-                            <div><strong>Fech:</strong> ${dateStr} ${timeStr}</div>
-                            <div><strong>Clte:</strong> ${comprador || 'Consumidor Final'}</div>
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cant</th>
-                                <th>Venta</th>
-                                <th class="text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${ventas.map(d => `
-                                <tr>
-                                    <td>${d.cantidad} ${d.unidadMedida === 'UNIDAD' ? 'U' : 'L'}</td>
-                                    <td>${d.articulo}</td>
-                                    <td class="text-right">$${d.subtotal.toFixed(2)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                    <div class="text-right total-row">
-                        TOTAL: $${total.toFixed(2)}
-                    </div>
-                    <div class="footer">
-                        <p>¡Gracias por su compra!</p>
-                        <p>Este documento no tiene validez tributaria.</p>
-                    </div>
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                window.close();
-                            }, 500);
-                        }
-                    </script>
-                </body>
-            </html>
-        `;
-
-        printWindow.document.open();
-        printWindow.document.write(html);
-        printWindow.document.close();
     }
 
     esPorPagar(): boolean {
