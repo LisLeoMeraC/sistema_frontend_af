@@ -134,21 +134,43 @@ export class InventarioComponent implements OnInit {
         this.ordenesIngresosModal=false;
     }
 
+    /** Convierte cualquier valor de fecha (string YYYY-MM-DD, array [y,m,d], timestamp o Date) en un objeto Date válido */
+    private parseFecha(valor: any): Date {
+        if (!valor) return new Date();
+        // Si ya es un Date válido, devuélvelo tal cual
+        if (valor instanceof Date && !isNaN(valor.getTime())) return valor;
+        // Si es un array [year, month, day] (formato que devuelve Jackson a veces)
+        if (Array.isArray(valor) && valor.length >= 3) {
+            return new Date(valor[0], valor[1] - 1, valor[2]);
+        }
+        // Si es string, forzar interpretación local añadiendo T00:00:00
+        if (typeof valor === 'string') {
+            const conHora = valor.includes('T') ? valor : valor + 'T00:00:00';
+            const d = new Date(conHora);
+            if (!isNaN(d.getTime())) return d;
+        }
+        // Último recurso: intentar conversión directa
+        const fallback = new Date(valor);
+        return isNaN(fallback.getTime()) ? new Date() : fallback;
+    }
+
     openDialogUpdateIngresoStock(ingreso:any){
 
-        const fechaIngreso = new Date(ingreso.fechaIngreso + 'T00:00:00'); // Establecer la hora a las 00:00 para evitar desfases
-        const fechaVencimiento = new Date(ingreso.fechaVencimiento + 'T00:00:00'); // Lo mismo para la fecha de vencimiento
+        const fechaIngreso = this.parseFecha(ingreso.fechaIngreso);
+        const fechaVencimiento = this.parseFecha(ingreso.fechaVencimiento);
 
         this.idArticuloSeleccionado=ingreso.articulo.id;
 
         console.log("ID del artículo seleccionado:", this.idArticuloSeleccionado);
+        console.log("fechaIngreso raw:", ingreso.fechaIngreso, "→ parseada:", fechaIngreso);
+        console.log("fechaVencimiento raw:", ingreso.fechaVencimiento, "→ parseada:", fechaVencimiento);
         this.idOrdenIngresoSeleccionado=ingreso.id;
     
         // Asignar las fechas al formulario
         this.updateFormIngresoStock.patchValue({
             nombreArticulo: ingreso.articulo.nombreArticulo,
-            fechaIngreso: fechaIngreso,  // Ahora se asigna la fecha con la hora configurada a las 00:00
-            fechaVencimiento: fechaVencimiento,  // Lo mismo para la fecha de vencimiento
+            fechaIngreso: fechaIngreso,
+            fechaVencimiento: fechaVencimiento,
             unidades: ingreso.unidades,
             precioVenta: ingreso.precioVenta,
             precioCompra: ingreso.precioCompra
