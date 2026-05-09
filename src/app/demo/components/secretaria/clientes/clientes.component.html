@@ -85,15 +85,16 @@
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Nombres</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Apellidos
                         </th>
-                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Cédula</th>
+                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
+                            style="width: 100px;">Cédula</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Celular</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Recinto</th>
-                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3">Hectáreas
-                        </th>
+                        <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
+                            style="width: 90px;">Hectáreas</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
                             style="width: 120px;">Programas</th>
                         <th class="text-center font-bold surface-100 uppercase text-xs text-secondary py-3"
-                            style="width: 80px;">Acción</th>
+                            style="width: 100px;">Acción</th>
                     </tr>
                 </ng-template>
 
@@ -127,9 +128,14 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <button pButton pRipple type="button" icon="pi pi-pencil"
-                                class="p-button-rounded p-button-warning p-button-text"
-                                (click)="showEditModalDialog(cliente)" pTooltip="Editar información"></button>
+                            <div class="flex justify-content-center gap-1">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-warning p-button-text"
+                                    (click)="showEditModalDialog(cliente)" pTooltip="Editar información"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger p-button-text"
+                                    (click)="eliminarCliente(cliente.id)" pTooltip="Eliminar cliente"></button>
+                            </div>
                         </td>
                     </tr>
                 </ng-template>

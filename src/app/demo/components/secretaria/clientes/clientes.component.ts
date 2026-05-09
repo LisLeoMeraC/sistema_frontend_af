@@ -447,6 +447,47 @@ export class ClientesComponent implements OnInit {
         }
     }
 
+    eliminarCliente(id: number) {
+        this.confirmationService.confirm({
+            key: 'confirm',
+            message: '¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.',
+            header: 'Confirmación de Eliminación',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí, eliminar',
+            rejectLabel: 'Cancelar',
+            accept: () => {
+                this.clienteService.eliminarCliente(id).subscribe(
+                    (response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Éxito',
+                            detail: response.message || 'Cliente eliminado con éxito.',
+                        });
+                        if (this.isSingleClientSearch) {
+                            this.clientes = this.clientes.filter((c) => c.id !== id);
+                            this.totalRecords = this.clientes.length;
+                        } else {
+                            this.cargarClientesPaginados(this.currentPage, this.rowsPerPage);
+                        }
+                    },
+                    (error) => {
+                        let errorMessage = 'Ocurrió un error al intentar eliminar el cliente.';
+                        if (error.status === 400 && error.error && error.error.error) {
+                            errorMessage = error.error.error;
+                        }
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error al Eliminar',
+                            detail: errorMessage,
+                        });
+                        console.error('Error al eliminar cliente:', error);
+                    }
+                );
+            },
+            reject: () => {}
+        });
+    }
+
     onRecintoSelect(event: any) {
         this.selectedRecinto = event.value;
         this.registerForm.patchValue({ recinto: this.selectedRecinto });

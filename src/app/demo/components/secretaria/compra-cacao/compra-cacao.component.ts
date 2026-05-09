@@ -26,6 +26,7 @@ export class CompraCacaoComponent implements OnInit {
     comprasCacao: CompraCacao[] = [];
     comprasCacaoTodas: CompraCacao[] = [];
     totalCacao: any[] = [];
+    loading: boolean = false;
 
     // Cliente seleccionado cuando es "Cliente Registrado"
     clienteSeleccionado: any = null;
@@ -516,9 +517,16 @@ export class CompraCacaoComponent implements OnInit {
     cargarComprasCacaoFecha() {
         const fecha = this.searchForm.get('fecha')?.value;
         const formattedFecha = this.datePipe.transform(fecha, 'yyyy-MM-dd') || '';
+        this.loading = true;
         this.compraCacaoService.obtenerComprasCacaoFecha(formattedFecha).subscribe(
-            (data: any[]) => { this.comprasCacaoTodas = data; },
-            (error) => { console.error('Error al obtener las compras:', error); }
+            (data: any[]) => { 
+                this.comprasCacaoTodas = data; 
+                this.loading = false;
+            },
+            (error) => { 
+                console.error('Error al obtener las compras:', error); 
+                this.loading = false;
+            }
         );
     }
 

@@ -198,8 +198,8 @@ export class InventarioComponent implements OnInit {
             articulo: {
                 id: this.idArticuloSeleccionado // id del artículo seleccionado
             },
-            fechaIngreso: this.updateFormIngresoStock.value.fechaIngreso.toISOString().split('T')[0], // Convertir a formato "YYYY-MM-DD"
-            fechaVencimiento: this.updateFormIngresoStock.value.fechaVencimiento.toISOString().split('T')[0], // Igual que la fecha de ingreso
+            fechaIngreso: this.updateFormIngresoStock.value.fechaIngreso.toISOString().split('T')[0] + 'T00:00:00', // Convertir a LocalDateTime
+            fechaVencimiento: this.updateFormIngresoStock.value.fechaVencimiento.toISOString().split('T')[0] + 'T00:00:00', // Convertir a LocalDateTime
             unidades: this.updateFormIngresoStock.value.unidades,
             precioVenta: this.updateFormIngresoStock.value.precioVenta,
             precioCompra: this.updateFormIngresoStock.value.precioCompra
