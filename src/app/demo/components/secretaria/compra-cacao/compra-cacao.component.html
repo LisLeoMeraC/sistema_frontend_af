@@ -270,7 +270,7 @@
     <div class="p-1">
         <div class="surface-50 p-3 border-round-xl border-1 border-200 mb-3">
             <form [formGroup]="searchForm" class="grid p-fluid align-items-center">
-                <div class="field col-12 md:col-6 mb-0">
+                <div class="field col-12 md:col-4 mb-0">
                     <label class="font-bold text-700 mb-1 block">Buscar por Fecha</label>
                     <div class="p-inputgroup">
                         <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
@@ -278,14 +278,20 @@
                             [appendTo]="'body'"></p-calendar>
                     </div>
                 </div>
-                <div class="field col-12 md:col-3 mb-0 pt-4">
+                <div class="field col-12 md:col-2 mb-0 pt-4">
                     <button pButton pRipple type="button" label="Consultar" icon="pi pi-search"
                         class="p-button-primary border-round-lg shadow-1" (click)="cargarComprasCacaoFecha()">
                     </button>
                 </div>
-                <div class="field col-12 md:col-3 mb-0 pt-4">
+                <div class="field col-12 md:col-2 mb-0 pt-4">
                     <button pButton pRipple type="button" label="Limpiar" icon="pi pi-refresh"
                         class="p-button-outlined p-button-secondary border-round-lg" (click)="limpiarForm()">
+                    </button>
+                </div>
+                <div class="field col-12 md:col-4 mb-0 pt-4">
+                    <button pButton pRipple type="button" label="Exportar PDF" icon="pi pi-file-pdf"
+                        class="p-button-danger border-round-lg shadow-1" (click)="generarReporteHistorialPDF()"
+                        [disabled]="comprasCacaoTodas.length === 0">
                     </button>
                 </div>
             </form>
@@ -300,10 +306,9 @@
                     <th class="text-center">Cliente</th>
                     <th class="text-center">Variedad</th>
                     <th class="text-center">Libras</th>
-                    <th class="text-right">Total $</th>
                     <th class="text-right">Efectivo</th>
                     <th class="text-right">Transf.</th>
-                    <th class="text-right">Valor Final (%)</th>
+                    <th class="text-right">Total $</th>
                 </tr>
             </ng-template>
 
@@ -318,16 +323,15 @@
                     </td>
                     <td class="text-center font-bold">{{ cacao.tipoCacao.nombre }}</td>
                     <td class="text-center font-medium">{{ cacao.cantidadLibras }}</td>
-                    <td class="text-right font-bold text-900">{{ cacao.totalPagado | currency:'USD' }}</td>
                     <td class="text-right text-500">{{ cacao.pagoEfectivo | currency:'USD' }}</td>
                     <td class="text-right text-500">{{ cacao.pagoTransferencia | currency:'USD' }}</td>
-                    <td class="text-right font-bold text-primary">{{ cacao.valorMasDos | currency:'USD' }}</td>
+                    <td class="text-right font-bold text-900">{{ cacao.totalPagado | currency:'USD' }}</td>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="8" class="text-center text-500 py-4">No se encontraron registros para la fecha
+                    <td colspan="7" class="text-center text-500 py-4">No se encontraron registros para la fecha
                         seleccionada.</td>
                 </tr>
             </ng-template>

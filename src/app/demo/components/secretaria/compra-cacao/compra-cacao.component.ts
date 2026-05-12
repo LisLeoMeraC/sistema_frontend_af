@@ -514,6 +514,174 @@ export class CompraCacaoComponent implements OnInit {
         doc.save(`Reporte_AgroFranco_${fileNameDate}.pdf`);
     }
 
+    generarReporteHistorialPDF() {
+        const doc = new jsPDF();
+        
+        // Determinar fecha para el reporte
+        const fechaForm = this.searchForm.get('fecha')?.value;
+        const fechaReporte = fechaForm ? new Date(fechaForm) : new Date();
+        const dateStr = this.datePipe.transform(fechaReporte, 'dd/MM/yyyy');
+        const fileNameDate = this.datePipe.transform(new Date(), 'yyyyMMdd_HHmmss');
+
+        // --- CONFIGURACIÓN DE COLORES ---
+        const primaryColor: [number, number, number] = [27, 94, 32]; // Verde Bosque (AgroFranco)
+        const secondaryColor: [number, number, number] = [52, 152, 219]; // Azul Informática
+        
+        // --- ENCABEZADO PREMIUM ---
+        doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.rect(0, 0, 210, 40, 'F');
+
+        doc.setFontSize(28);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('helvetica', 'bold');
+        doc.text('AGROFRANCO', 105, 22, { align: 'center' });
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('SISTEMA DE GESTIÓN DE COMPRAS - HISTORIAL DE CACAO', 105, 30, { align: 'center' });
+
+        // Cuadro de Información del Reporte
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(140, 45, 55, 25, 3, 3, 'FD');
+        doc.setTextColor(0);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.text('FECHA CONSULTA', 145, 52);
+        doc.setFont('helvetica', 'normal');
+        doc.text(dateStr || '', 145, 58);
+        doc.setFont('helvetica', 'bold');
+        doc.text('REGISTROS:', 145, 64);
+        doc.setFont('helvetica', 'normal');
+        doc.text(this.comprasCacaoTodas.length.toString(), 168, 64);
+
+        // Título del Cuerpo
+        doc.setFontSize(16);
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setFont('helvetica', 'bold');
+        doc.text('REPORTE DE HISTORIAL DE COMPRAS', 20, 60);
+        doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.setLineWidth(1);
+        doc.line(20, 63, 130, 63);
+
+        // --- SECCIÓN 1: CONSOLIDADO POR VARIEDAD ---
+        doc.setFontSize(12);
+        doc.setTextColor(0);
+        doc.text('1. CONSOLIDADO DE INVERSIÓN POR CATEGORÍA', 20, 75);
+
+        const resumenMap = new Map();
+        this.comprasCacaoTodas.forEach((compra: any) => {
+            const cat = compra.tipoCacao.nombre;
+            if (!resumenMap.has(cat)) {
+                resumenMap.set(cat, { libras: 0, dolares: 0 });
+            }
+            const data = resumenMap.get(cat);
+            data.libras += compra.cantidadLibras;
+            data.dolares += compra.totalPagado;
+        });
+
+        const summaryData = Array.from(resumenMap.entries()).map(([nombre, data]) => [
+            nombre || '',
+            `${data.libras.toFixed(2)} lb`,
+            `${(data.libras / 100).toFixed(2)} QQ`,
+            `$ ${data.dolares.toFixed(2)}`
+        ]);
+
+        autoTable(doc, {
+            startY: 80,
+            head: [['Variedad', 'Total Libras', 'Total Quintales (QQ)', 'Inversión Total']],
+            body: summaryData,
+            theme: 'striped',
+            headStyles: { fillColor: primaryColor as [number, number, number], halign: 'center' },
+            columnStyles: {
+                1: { halign: 'center' },
+                2: { halign: 'center', fontStyle: 'bold' },
+                3: { halign: 'right', fontStyle: 'bold' }
+            },
+            margin: { left: 20, right: 20 }
+        });
+
+        // --- SECCIÓN 2: DETALLE DE COMPRAS ---
+        const finalY = (doc as any).lastAutoTable.finalY + 15;
+        doc.setFontSize(12);
+        doc.text('2. DETALLE CRONOLÓGICO DE COMPRAS', 20, finalY);
+
+        const detailData = this.comprasCacaoTodas.map((item: any) => {
+            const nombreCliente = item.tipoCliente.id === 1 
+                ? `${item.cliente?.nombres || ''} ${item.cliente?.apellidos || ''}`.trim()
+                : 'Consumidor Final';
+
+            return [
+                this.datePipe.transform(item.fechaCompra, 'dd/MM/yyyy HH:mm') || '',
+                nombreCliente || '',
+                item.tipoCacao.nombre || '',
+                `${item.cantidadLibras} lb`,
+                `$${item.totalPagado.toFixed(2)}`
+            ];
+        });
+
+        autoTable(doc, {
+            startY: finalY + 5,
+            head: [['Fecha/Hora', 'Cliente', 'Variedad', 'Libras', 'Total Pago']],
+            body: detailData,
+            theme: 'grid',
+            headStyles: { fillColor: secondaryColor as [number, number, number], halign: 'center' },
+            columnStyles: {
+                0: { halign: 'center' },
+                2: { halign: 'center' },
+                3: { halign: 'center' },
+                4: { halign: 'right', textColor: primaryColor, fontStyle: 'bold' }
+            },
+            margin: { left: 20, right: 20 }
+        });
+
+        // --- TOTALES GENERALES ---
+        const finalYDetails = (doc as any).lastAutoTable.finalY + 10;
+        const totalLibrasVal = this.comprasCacaoTodas.reduce((acc: number, curr: any) => acc + curr.cantidadLibras, 0);
+        const totalDineroVal = this.comprasCacaoTodas.reduce((acc: number, curr: any) => acc + curr.totalPagado, 0);
+
+        doc.setFillColor(245, 245, 245);
+        doc.rect(130, finalYDetails, 60, 22, 'F');
+        doc.setDrawColor(200);
+        doc.rect(130, finalYDetails, 60, 22, 'S');
+
+        doc.setFontSize(9);
+        doc.setTextColor(50);
+        doc.text('TOTAL LIBRAS:', 135, finalYDetails + 7);
+        doc.text('TOTAL QUINTALES:', 135, finalYDetails + 13);
+        doc.text('TOTAL INVERSIÓN:', 135, finalYDetails + 19);
+
+        doc.setTextColor(0);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${totalLibrasVal.toFixed(2)} lb`, 185, finalYDetails + 7, { align: 'right' });
+        doc.text(`${(totalLibrasVal / 100).toFixed(2)} QQ`, 185, finalYDetails + 13, { align: 'right' });
+        doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+        doc.text(`$ ${totalDineroVal.toFixed(2)}`, 185, finalYDetails + 19, { align: 'right' });
+
+        // --- FIRMAS DE RESPONSABILIDAD ---
+        const signatureY = finalYDetails + 45;
+        doc.setDrawColor(100);
+        doc.line(40, signatureY, 90, signatureY);
+        doc.line(120, signatureY, 170, signatureY);
+
+        doc.setFontSize(9);
+        doc.setTextColor(100);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Firma Encargado', 65, signatureY + 5, { align: 'center' });
+        doc.text('Firma Gerencia', 145, signatureY + 5, { align: 'center' });
+
+        // --- PIE DE PÁGINA ---
+        const pageCount = (doc as any).internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            const footerText = `Generado por AGROFRANCO - Sistema Cocoa - Página ${i} de ${pageCount}`;
+            doc.text(footerText, 105, 285, { align: 'center' });
+        }
+
+        doc.save(`Reporte_Historial_Compras_${fileNameDate}.pdf`);
+    }
+
     cargarComprasCacaoFecha() {
         const fecha = this.searchForm.get('fecha')?.value;
         const formattedFecha = this.datePipe.transform(fecha, 'yyyy-MM-dd') || '';
