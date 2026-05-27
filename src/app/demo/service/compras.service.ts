@@ -58,4 +58,13 @@ export class ComprasService {
      
       return this.http.get<any[]>(`${baseUrl}/compras/semanal?desde=${fechaInicio}&hasta=${fechaFin}&nombreProducto=${producto}`);
     }
+
+    buscarComprasPorFechaYProducto(fecha: string, productoId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${baseUrl}/compras/buscar?fecha=${fecha}&productoId=${productoId}`);
+    }
+
+    buscarVentasPorFechaYProducto(fecha: string, productoId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${baseUrl}/compras/buscar-ventas?fecha=${fecha}&productoId=${productoId}`);
+    }
 }
+

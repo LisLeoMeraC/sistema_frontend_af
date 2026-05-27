@@ -29,6 +29,14 @@ export class ComprasComponent implements OnInit {
     registerVenta: FormGroup;
     registerFormProducto: FormGroup;
 
+    buscarComprasModal: boolean = false;
+    buscarComprasForm: FormGroup;
+    resultadosBusqueda: any[] = [];
+    busquedaRealizada: boolean = false;
+    cargandoBusqueda: boolean = false;
+    buscarModalTitulo: string = 'Buscar Compras';
+    esVentasSearch: boolean = false;
+
     unidadMedidaSeleccionada: string = '';
 
     unidadesMedida: any[] = [
@@ -61,6 +69,10 @@ export class ComprasComponent implements OnInit {
             cantVenta: [null, Validators.required],
             totalCobrado: [null, Validators.required],
             tipo: [null, Validators.required],
+        });
+        this.buscarComprasForm = this.fb.group({
+            fecha: [new Date(), Validators.required],
+            productoId: [null, Validators.required],
         });
         this.registerCompra
             .get('producto')
@@ -204,6 +216,94 @@ export class ComprasComponent implements OnInit {
     obtenerProductos() {
         this.compraservice.obtenerProductos().subscribe((data) => {
             this.productos = data;
+        });
+    }
+
+    openBuscarComprasDialog() {
+        this.buscarComprasModal = true;
+        this.esVentasSearch = false;
+        this.buscarModalTitulo = 'Buscar Compras';
+        this.resultadosBusqueda = [];
+        this.busquedaRealizada = false;
+        this.cargandoBusqueda = false;
+        this.obtenerProductos();
+        this.buscarComprasForm.patchValue({
+            fecha: new Date(),
+            productoId: null
+        });
+    }
+
+    openBuscarVentasDialog() {
+        this.buscarComprasModal = true;
+        this.esVentasSearch = true;
+        this.buscarModalTitulo = 'Buscar Ventas';
+        this.resultadosBusqueda = [];
+        this.busquedaRealizada = false;
+        this.cargandoBusqueda = false;
+        this.obtenerProductos();
+        this.buscarComprasForm.patchValue({
+            fecha: new Date(),
+            productoId: null
+        });
+    }
+
+    closeBuscarComprasDialog() {
+        this.buscarComprasModal = false;
+        this.buscarComprasForm.reset({
+            fecha: new Date(),
+            productoId: null
+        });
+    }
+
+    onBuscar() {
+        if (this.buscarComprasForm.invalid) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Por favor complete todos los campos de búsqueda.'
+            });
+            return;
+        }
+
+        this.cargandoBusqueda = true;
+        this.busquedaRealizada = false;
+        const formValue = this.buscarComprasForm.value;
+        const fecha = this.datePipe.transform(formValue.fecha, 'yyyy-MM-dd') || '';
+        const productoId = formValue.productoId ? formValue.productoId.id : null;
+
+        if (!productoId) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Debe seleccionar un producto válido.'
+            });
+            this.cargandoBusqueda = false;
+            return;
+        }
+
+        console.log('Enviando parámetros de búsqueda:', { fecha: fecha, productoId: productoId, esVentas: this.esVentasSearch });
+        const endpoint = this.esVentasSearch ? 'buscar-ventas' : 'buscar';
+        console.log('URL de Búsqueda:', `http://localhost:8080/compras/${endpoint}?fecha=${fecha}&productoId=${productoId}`);
+
+        const searchObservable = this.esVentasSearch
+            ? this.compraservice.buscarVentasPorFechaYProducto(fecha, productoId)
+            : this.compraservice.buscarComprasPorFechaYProducto(fecha, productoId);
+
+        searchObservable.subscribe({
+            next: (data) => {
+                this.resultadosBusqueda = data;
+                this.cargandoBusqueda = false;
+                this.busquedaRealizada = true;
+            },
+            error: (err) => {
+                this.cargandoBusqueda = false;
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: `Ocurrió un error al buscar las ${this.esVentasSearch ? 'ventas' : 'compras'}.`
+                });
+                console.error(err);
+            }
         });
     }
 

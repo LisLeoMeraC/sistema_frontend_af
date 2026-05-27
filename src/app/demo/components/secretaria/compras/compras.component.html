@@ -3,15 +3,16 @@
 <div class="grid">
     <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
     <div class="col-12 p-0">
-        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative" 
-             style="border-radius: 1.25rem;">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
             <div class="flex align-items-center relative z-1">
                 <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
                     <i class="pi pi-box text-orange-600 text-3xl"></i>
                 </div>
                 <div>
                     <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Otras Compras y Ventas</h2>
-                    <p class="m-0 text-600 font-medium opacity-70">Gestión de insumos agrícolas y productos varios · AgroFranco</p>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de insumos agrícolas y productos varios ·
+                        AgroFranco</p>
                 </div>
             </div>
             <div class="flex gap-3 relative z-1">
@@ -23,7 +24,8 @@
                 </button>
             </div>
             <!-- Elemento decorativo de fondo -->
-            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50" style="width: 250px; height: 250px;"></div>
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
         </div>
     </div>
 </div>
@@ -36,42 +38,51 @@
                 <!-- PESTAÑA COMPRAS -->
                 <p-tabPanel header="Compras Realizadas">
                     <div class="p-3">
-                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                        <div class="flex align-items-center justify-content-between mb-3"
+                            style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
                             <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Compras de Hoy</h4>
+                            <button pButton pRipple label="Buscar por Fecha" icon="pi pi-calendar-search"
+                                class="p-button-outlined border-round-lg font-bold py-1 px-3"
+                                style="border-color: #7C3AED; color: #7C3AED; font-size: 0.8rem;"
+                                (click)="openBuscarComprasDialog()">
+                            </button>
                         </div>
-                        
+
                         <p-table [value]="compras" [rows]="6" [rowHover]="true"
-                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
+                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true"
+                            responsiveLayout="scroll">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th class="text-center" style="width: 140px;">Fecha y Hora</th>
                                     <th>Producto</th>
                                     <th class="text-center" style="width: 100px;">Cantidad</th>
                                     <th class="text-right" style="width: 130px;">Pagado</th>
-                                    <th class="text-right" style="width: 130px;">Total (2%)</th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-compra>
                                 <tr>
-                                    <td class="text-center text-700">{{ compra.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
+                                    <td class="text-center text-700">{{ compra.fechaCompra | date:'dd-MM-yyyy HH:mm' }}
+                                    </td>
                                     <td>
                                         <div class="flex align-items-center gap-2">
-                                            <div class="flex align-items-center justify-content-center border-round bg-primary-50" style="width: 24px; height: 24px;">
+                                            <div class="flex align-items-center justify-content-center border-round bg-primary-50"
+                                                style="width: 24px; height: 24px;">
                                                 <i class="pi pi-tag text-primary text-xs"></i>
                                             </div>
                                             <span class="font-medium">{{ compra.producto.nombre }}</span>
                                         </div>
                                     </td>
                                     <td class="text-center font-bold">
-                                        {{ compra.cantidad }} <small class="text-500">{{ compra.producto.unidad_medida }}</small>
+                                        {{ compra.cantidad }} <small class="text-500">{{ compra.producto.unidad_medida
+                                            }}</small>
                                     </td>
                                     <td class="text-right font-medium">{{ compra.totalPagado | currency:'USD' }}</td>
-                                    <td class="text-right font-bold text-primary">{{ compra.valorMasDos | currency:'USD' }}</td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="5" class="text-center text-500 py-4">No hay compras registradas hoy.</td>
+                                    <td colspan="4" class="text-center text-500 py-4">No hay compras registradas hoy.
+                                    </td>
                                 </tr>
                             </ng-template>
                         </p-table>
@@ -81,12 +92,19 @@
                 <!-- PESTAÑA VENTAS -->
                 <p-tabPanel header="Ventas Realizadas">
                     <div class="p-3">
-                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+                        <div class="flex align-items-center justify-content-between mb-3"
+                            style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
                             <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Historial de Ventas de Hoy</h4>
+                            <button pButton pRipple label="Buscar por Fecha" icon="pi pi-calendar-search"
+                                class="p-button-outlined border-round-lg font-bold py-1 px-3"
+                                style="border-color: #0D9488; color: #0D9488; font-size: 0.8rem;"
+                                (click)="openBuscarVentasDialog()">
+                            </button>
                         </div>
 
                         <p-table [value]="ventas" [rows]="6" [rowHover]="true"
-                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
+                            styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true"
+                            responsiveLayout="scroll">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th class="text-center" style="width: 140px;">Fecha y Hora</th>
@@ -97,24 +115,29 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-venta>
                                 <tr>
-                                    <td class="text-center text-700">{{ venta.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
+                                    <td class="text-center text-700">{{ venta.fechaCompra | date:'dd-MM-yyyy HH:mm' }}
+                                    </td>
                                     <td>
                                         <div class="flex align-items-center gap-2">
-                                            <div class="flex align-items-center justify-content-center border-round bg-green-50" style="width: 24px; height: 24px;">
+                                            <div class="flex align-items-center justify-content-center border-round bg-green-50"
+                                                style="width: 24px; height: 24px;">
                                                 <i class="pi pi-box text-green-600 text-xs"></i>
                                             </div>
                                             <span class="font-medium">{{ venta.producto.nombre }}</span>
                                         </div>
                                     </td>
                                     <td class="text-center font-bold">
-                                        {{ venta.cantidad }} <small class="text-500">{{ venta.producto.unidad_medida }}</small>
+                                        {{ venta.cantidad }} <small class="text-500">{{ venta.producto.unidad_medida
+                                            }}</small>
                                     </td>
-                                    <td class="text-right font-bold text-green-600">{{ venta.totalPagado | currency:'USD' }}</td>
+                                    <td class="text-right font-bold text-green-600">{{ venta.totalPagado |
+                                        currency:'USD' }}</td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="4" class="text-center text-500 py-4">No hay ventas registradas hoy.</td>
+                                    <td colspan="4" class="text-center text-500 py-4">No hay ventas registradas hoy.
+                                    </td>
                                 </tr>
                             </ng-template>
                         </p-table>
@@ -131,10 +154,11 @@
                 <!-- RESUMEN COMPRAS -->
                 <p-tabPanel header="Compras">
                     <div class="p-3 h-full flex flex-column">
-                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                        <div class="flex align-items-center mb-3"
+                            style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
                             <h5 class="m-0 font-bold text-900">Total Comprado Hoy</h5>
                         </div>
-                        
+
                         <p-table [value]="totalCompras" styleClass="p-datatable-sm p-datatable-gridlines mb-3">
                             <ng-template pTemplate="header">
                                 <tr>
@@ -145,11 +169,14 @@
                             <ng-template pTemplate="body" let-total>
                                 <tr>
                                     <td class="font-medium text-700">{{ total.producto }}</td>
-                                    <td class="text-right font-bold text-primary">{{ total.totalDolares | currency: 'USD' }}</td>
+                                    <td class="text-right font-bold text-primary">{{ total.totalDolares | currency:
+                                        'USD' }}</td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
-                                <tr><td colspan="2" class="text-center text-500 py-2">Sin datos.</td></tr>
+                                <tr>
+                                    <td colspan="2" class="text-center text-500 py-2">Sin datos.</td>
+                                </tr>
                             </ng-template>
                         </p-table>
 
@@ -165,7 +192,8 @@
                 <!-- RESUMEN VENTAS -->
                 <p-tabPanel header="Ventas">
                     <div class="p-3 h-full flex flex-column">
-                        <div class="flex align-items-center mb-3" style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
+                        <div class="flex align-items-center mb-3"
+                            style="border-left: 4px solid var(--green-500); padding-left: 0.85rem;">
                             <h5 class="m-0 font-bold text-900">Total Vendido Hoy</h5>
                         </div>
 
@@ -179,11 +207,14 @@
                             <ng-template pTemplate="body" let-total>
                                 <tr>
                                     <td class="font-medium text-700">{{ total.producto }}</td>
-                                    <td class="text-right font-bold text-green-600">{{ total.totalDolares | currency: 'USD' }}</td>
+                                    <td class="text-right font-bold text-green-600">{{ total.totalDolares | currency:
+                                        'USD' }}</td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
-                                <tr><td colspan="2" class="text-center text-500 py-2">Sin datos.</td></tr>
+                                <tr>
+                                    <td colspan="2" class="text-center text-500 py-2">Sin datos.</td>
+                                </tr>
                             </ng-template>
                         </p-table>
 
@@ -201,9 +232,9 @@
 </div>
 
 <!-- ===== DIALOG: REGISTRO DE COMPRA ===== -->
-<p-dialog [(visible)]="compraCacaoModal" [modal]="true" [closable]="false"
-    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="compraCacaoModal" [modal]="true" [closable]="false" [style]="{width: '450px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-primary-50">
@@ -219,29 +250,32 @@
     <form [formGroup]="registerCompra" (ngSubmit)="onSubmitCompra()" class="p-fluid">
         <div class="field mb-4">
             <label class="font-bold text-700 block mb-2">Origen del Cliente</label>
-            <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente" styleClass="w-full"></p-selectButton>
+            <p-selectButton [options]="tipoClientes" optionLabel="name" formControlName="tipoCliente"
+                styleClass="w-full"></p-selectButton>
         </div>
 
         <div class="grid">
             <div class="field col-12 mb-3">
                 <label class="font-semibold text-700 block mb-1">Fecha y Hora</label>
-                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true"
-                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"></p-calendar>
+                <p-calendar formControlName="fechaCompra" [showIcon]="true" [showTime]="true" dateFormat="dd/mm/yy"
+                    hourFormat="24" [appendTo]="'body'"></p-calendar>
             </div>
 
             <div class="field col-12 mb-3">
                 <label class="font-semibold text-700 block mb-1">Seleccionar Producto</label>
                 <div class="flex gap-2">
                     <p-dropdown [options]="productos" optionLabel="nombre" formControlName="producto"
-                        placeholder="Elija un producto" [showClear]="true" [appendTo]="'body'" class="flex-1"></p-dropdown>
-                    <button pButton pRipple type="button" icon="pi pi-plus"
-                        class="p-button-outlined p-button-secondary" (click)="OpenProductoModalDialog()">
+                        placeholder="Elija un producto" [showClear]="true" [appendTo]="'body'"
+                        class="flex-1"></p-dropdown>
+                    <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-outlined p-button-secondary"
+                        (click)="OpenProductoModalDialog()">
                     </button>
                 </div>
             </div>
 
             <div class="field col-12 mb-3">
-                <label class="font-semibold text-700 block mb-1">Cantidad ({{ unidadMedidaSeleccionada || '---' }})</label>
+                <label class="font-semibold text-700 block mb-1">Cantidad ({{ unidadMedidaSeleccionada || '---'
+                    }})</label>
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
                     <input type="text" pInputText formControlName="cantidad" placeholder="0.00" />
@@ -269,9 +303,9 @@
 </p-dialog>
 
 <!-- ===== DIALOG: REGISTRO DE VENTA ===== -->
-<p-dialog [(visible)]="ventaModal" [modal]="true" [closable]="false"
-    [style]="{width: '450px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="ventaModal" [modal]="true" [closable]="false" [style]="{width: '450px'}"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-green-50">
@@ -287,14 +321,15 @@
     <form [formGroup]="registerVenta" (ngSubmit)="onSubmitVenta()" class="p-fluid">
         <div class="field mb-4">
             <label class="font-bold text-700 block mb-2">Canal de Venta</label>
-            <p-selectButton [options]="tipo" optionLabel="name" formControlName="tipo" styleClass="w-full"></p-selectButton>
+            <p-selectButton [options]="tipo" optionLabel="name" formControlName="tipo"
+                styleClass="w-full"></p-selectButton>
         </div>
 
         <div class="grid">
             <div class="field col-12 mb-3">
                 <label class="font-semibold text-700 block mb-2">Fecha y Hora</label>
-                <p-calendar formControlName="fechaVenta" [showIcon]="true" [showTime]="true"
-                    dateFormat="dd/mm/yy" hourFormat="24" [appendTo]="'body'"></p-calendar>
+                <p-calendar formControlName="fechaVenta" [showIcon]="true" [showTime]="true" dateFormat="dd/mm/yy"
+                    hourFormat="24" [appendTo]="'body'"></p-calendar>
             </div>
 
             <div class="field col-12 mb-3">
@@ -304,7 +339,8 @@
             </div>
 
             <div class="field col-12 mb-3">
-                <label class="font-semibold text-700 block mb-1">Cantidad a Vender ({{ unidadMedidaSeleccionada || '---' }})</label>
+                <label class="font-semibold text-700 block mb-1">Cantidad a Vender ({{ unidadMedidaSeleccionada || '---'
+                    }})</label>
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
                     <input type="text" pInputText formControlName="cantVenta" placeholder="0.00" />
@@ -332,9 +368,9 @@
 </p-dialog>
 
 <!-- ===== DIALOG: NUEVO PRODUCTO ===== -->
-<p-dialog [(visible)]="productoModal" [modal]="true" [closable]="false"
-    [style]="{ width: '350px' }" styleClass="border-round-xl shadow-5 overflow-hidden">
-    
+<p-dialog [(visible)]="productoModal" [modal]="true" [closable]="false" [style]="{ width: '350px' }"
+    styleClass="border-round-xl shadow-5 overflow-hidden">
+
     <ng-template pTemplate="header">
         <div class="flex align-items-center gap-3">
             <div class="p-2 border-round-lg bg-primary-50">
@@ -355,7 +391,7 @@
                 <input type="text" pInputText formControlName="nombreProducto" placeholder="Nombre del producto" />
             </div>
         </div>
-        
+
         <div class="field mb-4">
             <label class="font-semibold text-700 block mb-1">Unidad de Medida</label>
             <p-dropdown [options]="unidadesMedida" optionLabel="label" formControlName="unidadMedida"
@@ -371,4 +407,136 @@
             </button>
         </div>
     </form>
+</p-dialog>
+
+<!-- ===== DIALOG: BUSCAR REGISTROS ===== -->
+<p-dialog [(visible)]="buscarComprasModal" [modal]="true" [closable]="true" (onHide)="closeBuscarComprasDialog()"
+    [style]="{width: '750px'}" styleClass="border-round-xl shadow-5 overflow-hidden">
+
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg" [ngClass]="esVentasSearch ? 'bg-green-50' : 'bg-info-50'"
+                [style.background-color]="esVentasSearch ? 'var(--green-50)' : 'var(--blue-50)'">
+                <i class="pi pi-search text-xl" [ngClass]="esVentasSearch ? 'text-green-600' : 'text-blue-600'"
+                    [style.color]="esVentasSearch ? 'var(--green-600)' : 'var(--blue-600)'"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">{{ buscarModalTitulo }}</div>
+                <div class="text-500" style="font-size: 0.8rem;">
+                    {{ esVentasSearch ? 'Filtrar ventas por fecha y producto' : 'Filtrar adquisiciones por fecha y
+                    producto' }}
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="p-fluid">
+        <!-- Panel de Filtros -->
+        <form [formGroup]="buscarComprasForm" (ngSubmit)="onBuscar()" class="grid mb-4">
+            <div class="field col-12 md:col-5 mb-3 md:mb-0">
+                <label class="font-semibold text-700 block mb-1">
+                    {{ esVentasSearch ? 'Fecha de Venta' : 'Fecha de Compra' }}
+                </label>
+                <p-calendar formControlName="fecha" [showIcon]="true" dateFormat="dd/mm/yy"
+                    [appendTo]="'body'"></p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-5 mb-3 md:mb-0">
+                <label class="font-semibold text-700 block mb-1">Seleccionar Producto</label>
+                <p-dropdown [options]="productos" optionLabel="nombre" formControlName="productoId"
+                    placeholder="Seleccione el producto" [showClear]="true" [appendTo]="'body'"></p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-2 flex align-items-end mb-0">
+                <button pButton pRipple type="submit" label="Buscar" icon="pi pi-search"
+                    [ngClass]="esVentasSearch ? 'p-button-success' : 'p-button-primary'"
+                    class="shadow-2 border-round-lg font-bold w-full" style="height: 40px;">
+                </button>
+            </div>
+        </form>
+
+        <hr class="border-top-1 surface-border my-4" />
+
+        <!-- Indicador de Carga -->
+        <div *ngIf="cargandoBusqueda" class="flex flex-column align-items-center justify-content-center py-5">
+            <i class="pi pi-spin pi-spinner text-primary text-4xl mb-3"></i>
+            <span class="text-600 font-medium">Buscando registros...</span>
+        </div>
+
+        <!-- Tabla de Resultados -->
+        <div *ngIf="!cargandoBusqueda && busquedaRealizada">
+            <div *ngIf="resultadosBusqueda.length > 0"
+                class="card border-none shadow-sm border-round-xl p-0 overflow-hidden">
+                <div class="flex align-items-center mb-3 px-3"
+                    [style.border-left]="esVentasSearch ? '4px solid var(--green-500)' : '4px solid var(--primary-color)'"
+                    style="padding-left: 0.85rem;">
+                    <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">
+                        {{ esVentasSearch ? 'Ventas Encontradas' : 'Compras Encontradas' }}
+                    </h4>
+                </div>
+
+                <p-table [value]="resultadosBusqueda" [rows]="5" [rowHover]="true"
+                    styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center" style="width: 140px;">Fecha y Hora</th>
+                            <th>Producto</th>
+                            <th class="text-center" style="width: 110px;">Cantidad</th>
+                            <th class="text-right" style="width: 120px;">
+                                {{ esVentasSearch ? 'Recibido' : 'Pagado' }}
+                            </th>
+                            <th class="text-center" style="width: 150px;">
+                                {{ esVentasSearch ? 'Tipo de Venta' : 'Tipo de Cliente' }}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-compra>
+                        <tr>
+                            <td class="text-center text-700">{{ compra.fechaCompra | date:'dd-MM-yyyy HH:mm' }}</td>
+                            <td>
+                                <div class="flex align-items-center gap-2">
+                                    <div class="flex align-items-center justify-content-center border-round"
+                                        [ngClass]="esVentasSearch ? 'bg-green-50' : 'bg-primary-50'"
+                                        style="width: 24px; height: 24px;">
+                                        <i class="pi text-xs"
+                                            [ngClass]="esVentasSearch ? 'pi-box text-green-600' : 'pi-tag text-primary'"></i>
+                                    </div>
+                                    <span class="font-medium">{{ compra.producto?.nombre }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center font-bold">
+                                {{ compra.cantidad }} <small class="text-500">{{ compra.producto?.unidad_medida
+                                    }}</small>
+                            </td>
+                            <td class="text-right font-medium" [ngClass]="{'text-green-600 font-bold': esVentasSearch}">
+                                {{ compra.totalPagado | currency:'USD' }}
+                            </td>
+                            <td class="text-center">
+                                <span *ngIf="!esVentasSearch"
+                                    [class]="'customer-badge status-' + (compra.tipoCliente?.id === 1 ? 'registered' : 'final')">
+                                    {{ compra.tipoCliente?.nombre || (compra.tipoCliente?.id === 1 ? 'Cliente
+                                    Registrado' : 'Consumidor Final') }}
+                                </span>
+                                <span *ngIf="esVentasSearch"
+                                    [class]="'customer-badge status-' + (compra.tipo === 'V' ? 'normal' : 'provider')">
+                                    {{ compra.tipo === 'V' ? 'Venta Normal' : 'Venta a Proveedor' }}
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <!-- Sin resultados -->
+            <div *ngIf="resultadosBusqueda.length === 0"
+                class="flex flex-column align-items-center justify-content-center py-5 bg-gray-50 border-round-xl">
+                <i class="pi pi-exclamation-circle text-orange-500 text-4xl mb-3"></i>
+                <h5 class="m-0 font-bold text-800 mb-1">Sin Resultados</h5>
+                <p class="m-0 text-600 font-medium">
+                    {{ esVentasSearch ? 'No se encontraron ventas para la fecha y el producto seleccionados.' : 'No se
+                    encontraron compras para la fecha y el producto seleccionados.' }}
+                </p>
+            </div>
+        </div>
+    </div>
 </p-dialog>
