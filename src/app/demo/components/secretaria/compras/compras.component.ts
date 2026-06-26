@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ComprasService } from 'src/app/demo/service/compras.service';
 
 import { jsPDF } from 'jspdf';
@@ -36,6 +36,8 @@ export class ComprasComponent implements OnInit {
     cargandoBusqueda: boolean = false;
     buscarModalTitulo: string = 'Buscar Compras';
     esVentasSearch: boolean = false;
+    guardando: boolean = false;
+    eliminandoId: number | null = null;
 
     unidadMedidaSeleccionada: string = '';
 
@@ -50,7 +52,8 @@ export class ComprasComponent implements OnInit {
         private messageService: MessageService,
         private fb: FormBuilder,
         private compraservice: ComprasService,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        private confirmationService: ConfirmationService
     ) {
         this.registerCompra = this.fb.group({
             tipoCliente: [null, Validators.required],
@@ -116,6 +119,7 @@ export class ComprasComponent implements OnInit {
 
     closeCompraDialog() {
         this.compraCacaoModal = false;
+        this.guardando = false;
         this.registerCompra.reset();
     }
 
@@ -128,6 +132,9 @@ export class ComprasComponent implements OnInit {
             });
             return;
         }
+
+        // Deshabilitar el botón para evitar registros duplicados
+        this.guardando = true;
 
         const formValue = this.registerCompra.value;
         const fechaCompra = new Date(formValue.fechaCompra);
@@ -152,6 +159,7 @@ export class ComprasComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Compra registrada correctamente.',
                 });
+                this.guardando = false;
                 this.closeCompraDialog();
                 this.obtenerComprasToday();
                 this.obtenerTotalComprasToday();
@@ -162,6 +170,7 @@ export class ComprasComponent implements OnInit {
                     summary: 'Error',
                     detail: 'Ocurrió un error al registrar la compra.',
                 });
+                this.guardando = false;
             },
         });
     }
@@ -304,6 +313,45 @@ export class ComprasComponent implements OnInit {
                 });
                 console.error(err);
             }
+        });
+    }
+
+    eliminarCompra(compra: any) {
+        this.eliminandoId = compra.id;
+        this.compraservice.eliminarCompra(compra.id).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Éxito',
+                    detail: 'Compra eliminada correctamente.',
+                });
+                this.eliminandoId = null;
+                this.obtenerComprasToday();
+                this.obtenerTotalComprasToday();
+                if (this.buscarComprasModal && this.busquedaRealizada) {
+                    this.onBuscar();
+                }
+            },
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Ocurrió un error al intentar eliminar la compra.',
+                });
+                this.eliminandoId = null;
+            }
+        });
+    }
+
+    confirmDeleteCompra(compra: any) {
+        this.confirmationService.confirm({
+            key: 'confirm',
+            message: '¿Estás seguro de eliminar esta compra? Esta acción es irreversible.',
+            header: 'Confirmación de Eliminación',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Sí, eliminar',
+            rejectLabel: 'Cancelar',
+            accept: () => { this.eliminarCompra(compra); },
         });
     }
 

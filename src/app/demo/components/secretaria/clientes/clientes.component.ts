@@ -44,6 +44,8 @@ export class ClientesComponent implements OnInit {
     selectedCliente: Cliente | null = null;
     private isSingleClientSearch: boolean = false;
     mensaje: string = '';
+    guardandoRecinto: boolean = false;
+    guardandoCliente: boolean = false;
 
     constructor(
         private fb: FormBuilder,
@@ -102,12 +104,14 @@ export class ClientesComponent implements OnInit {
     CloseModalDialog() {
         this.registerForm.reset();
         this.selectedRecinto = null;
+        this.guardandoCliente = false;
         this.displayModal = false;
     }
 
     //Para cerrar el modal de recinto
     CloseRecintoModalDialog() {
         this.registerFormRecinto.reset();
+        this.guardandoRecinto = false;
         this.displayRecintoModal = false;
     }
 
@@ -504,6 +508,9 @@ export class ClientesComponent implements OnInit {
             return;
         }
 
+        // Deshabilitar el botón para evitar registros duplicados
+        this.guardandoCliente = true;
+
         const cliente: any = {
             id: this.isEditing ? this.registerForm.get('id')?.value : undefined,
             nombres: this.registerForm.get('nombre')?.value,
@@ -526,6 +533,7 @@ export class ClientesComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Cliente registrado exitosamente.',
                 });
+                this.guardandoCliente = false;
                 this.CloseModalDialog();
                 this.cargarClientesPaginados(
                     this.currentPage,
@@ -538,6 +546,7 @@ export class ClientesComponent implements OnInit {
                     summary: 'Error',
                     detail: 'No se pudo registrar el cliente.',
                 });
+                this.guardandoCliente = false;
                 console.error('Error al registrar cliente:', error);
             }
         );
@@ -554,6 +563,9 @@ export class ClientesComponent implements OnInit {
             return;
         }
 
+        // Deshabilitar el botón para evitar registros duplicados
+        this.guardandoRecinto = true;
+
         const recinto: Recinto = {
             nombreRecinto: this.registerFormRecinto.get('nombreRecinto')?.value,
         };
@@ -565,6 +577,7 @@ export class ClientesComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Recinto registrado exitosamente.',
                 });
+                this.guardandoRecinto = false;
                 this.CloseRecintoModalDialog();
                 // Actualizar la referencia del arreglo para que PrimeNG detecte el cambio
                 this.recintos = [...this.recintos, data];
@@ -576,6 +589,7 @@ export class ClientesComponent implements OnInit {
                     summary: 'Error',
                     detail: 'No se pudo registrar el recinto.',
                 });
+                this.guardandoRecinto = false;
                 console.error('Error al registrar recinto:', error);
             }
         );

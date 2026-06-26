@@ -13,6 +13,7 @@ import { ViewComprasOtrosProductosComponent } from "./view-compras-otros-product
 import { NgModule } from "@angular/core";
 import { ViewVentasComponent } from "./view-ventas/view-ventas.component";
 import { ReporteMensualClientesComponent } from "./reporte-mensual-clientes/reporte-mensual-clientes.component";
+import { VentasCacaoComponent } from "./ventas-cacao/ventas-cacao.component";
 
 const routes: Routes=[
     {path:'clientes', component:ClientesComponent},
@@ -21,6 +22,7 @@ const routes: Routes=[
     {path:'ventas', component:VentasComponent},
     {path:'caja', component:CajaComponent},
     {path:'compras-cacao', component:CompraCacaoComponent},
+    {path:'ventas-cacao', component:VentasCacaoComponent},
     {path:'otras-compras', component:ComprasComponent},
     {path:'inventario', component:InventarioComponent},
     {path:'compras-semanales', component:ComprasSemanalesComponent},

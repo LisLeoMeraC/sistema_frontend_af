@@ -27,6 +27,8 @@ export class CompraCacaoComponent implements OnInit {
     comprasCacaoTodas: CompraCacao[] = [];
     totalCacao: any[] = [];
     loading: boolean = false;
+    guardando: boolean = false;
+    eliminandoId: number | null = null;
 
     // Cliente seleccionado cuando es "Cliente Registrado"
     clienteSeleccionado: any = null;
@@ -191,6 +193,9 @@ export class CompraCacaoComponent implements OnInit {
             return;
         }
 
+        // Deshabilitar el botón para evitar registros duplicados
+        this.guardando = true;
+
         const fechaCompra = new Date(formValue.fechaCompra);
 
         const compraCacao: CompraCacao = {
@@ -219,6 +224,7 @@ export class CompraCacaoComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Compra registrada correctamente.',
                 });
+                this.guardando = false;
                 this.closeModalCompraCacaoDialog();
                 this.obtenerComprasCacaoToday();
                 this.obtenerTotalTipoCacaoToday();
@@ -229,6 +235,7 @@ export class CompraCacaoComponent implements OnInit {
                     summary: 'Error',
                     detail: 'Ocurrió un error al registrar la compra.',
                 });
+                this.guardando = false;
             },
         });
     }
@@ -247,6 +254,7 @@ export class CompraCacaoComponent implements OnInit {
     closeModalCompraCacaoDialog() {
         this.displayModalCompraCacao = false;
         this.clienteSeleccionado = null;
+        this.guardando = false;
         this.registerFormCompraCacao.reset();
     }
 
@@ -285,34 +293,40 @@ export class CompraCacaoComponent implements OnInit {
     }
 
     eliminarCompra(compraCacao: any) {
-        this.compraCacaoService.eliminarCompraCacao(compraCacao.id).subscribe(
-            () => {
+        this.eliminandoId = compraCacao.id;
+        this.compraCacaoService.eliminarCompraCacao(compraCacao.id).subscribe({
+            next: () => {
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Éxito',
-                    detail: 'Registro de compra eliminado correctamente',
+                    detail: 'Registro de compra eliminado correctamente.',
                 });
+                this.eliminandoId = null;
                 this.obtenerComprasCacaoToday();
                 this.obtenerTotalTipoCacaoToday();
+                if (this.displayModalCompraCacaoTodas) {
+                    this.cargarComprasCacaoFecha();
+                }
             },
-            () => {
+            error: () => {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'Error al eliminar el registro',
+                    detail: 'Ocurrió un error al eliminar el registro.',
                 });
+                this.eliminandoId = null;
             }
-        );
+        });
     }
 
     confirmDeleteCompra(compraCacao: any) {
         this.confirmationService.confirm({
             key: 'confirm',
-            message: `¿Estás seguro de que deseas eliminar este registro?`,
-            header: 'Confirmación',
+            message: '¿Estás seguro de eliminar esta compra? Esta acción no se puede deshacer.',
+            header: 'Confirmación de Eliminación',
             icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Sí',
-            rejectLabel: 'No',
+            acceptLabel: 'Sí, eliminar',
+            rejectLabel: 'Cancelar',
             accept: () => { this.eliminarCompra(compraCacao); },
         });
     }

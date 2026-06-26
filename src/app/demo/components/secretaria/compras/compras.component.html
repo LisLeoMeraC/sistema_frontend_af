@@ -1,4 +1,8 @@
 <p-toast></p-toast>
+<p-confirmDialog key="confirm" icon="pi pi-exclamation-triangle" [style]="{ width: '450px' }" acceptLabel="Aceptar"
+    rejectLabel="Cancelar" acceptButtonStyleClass="p-button-primary border-round-lg shadow-2"
+    rejectButtonStyleClass="p-button-text p-button-secondary border-round-lg">
+</p-confirmDialog>
 
 <div class="grid">
     <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
@@ -57,6 +61,7 @@
                                     <th>Producto</th>
                                     <th class="text-center" style="width: 100px;">Cantidad</th>
                                     <th class="text-right" style="width: 130px;">Pagado</th>
+                                    <th class="text-center" style="width: 60px;"></th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-compra>
@@ -65,10 +70,7 @@
                                     </td>
                                     <td>
                                         <div class="flex align-items-center gap-2">
-                                            <div class="flex align-items-center justify-content-center border-round bg-primary-50"
-                                                style="width: 24px; height: 24px;">
-                                                <i class="pi pi-tag text-primary text-xs"></i>
-                                            </div>
+
                                             <span class="font-medium">{{ compra.producto.nombre }}</span>
                                         </div>
                                     </td>
@@ -77,11 +79,19 @@
                                             }}</small>
                                     </td>
                                     <td class="text-right font-medium">{{ compra.totalPagado | currency:'USD' }}</td>
+                                    <td class="text-center">
+                                        <button pButton pRipple type="button" icon="pi pi-trash"
+                                            class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                                            style="width: 2rem; height: 2rem;" pTooltip="Eliminar compra"
+                                            tooltipPosition="top" [disabled]="eliminandoId === compra.id"
+                                            (click)="confirmDeleteCompra(compra)">
+                                        </button>
+                                    </td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="4" class="text-center text-500 py-4">No hay compras registradas hoy.
+                                    <td colspan="5" class="text-center text-500 py-4">No hay compras registradas hoy.
                                     </td>
                                 </tr>
                             </ng-template>
@@ -295,8 +305,9 @@
             <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
                 class="p-button-text p-button-secondary" (click)="closeCompraDialog()">
             </button>
-            <button pButton pRipple type="submit" label="Registrar Compra" icon="pi pi-save"
-                class="p-button-primary shadow-2 border-round-lg">
+            <button pButton pRipple type="submit" [label]="guardando ? 'Registrando...' : 'Registrar Compra'"
+                [icon]="guardando ? 'pi pi-spin pi-spinner' : 'pi pi-save'"
+                class="p-button-primary shadow-2 border-round-lg" [disabled]="guardando">
             </button>
         </div>
     </form>
@@ -488,6 +499,7 @@
                             <th class="text-center" style="width: 150px;">
                                 {{ esVentasSearch ? 'Tipo de Venta' : 'Tipo de Cliente' }}
                             </th>
+                            <th class="text-center" style="width: 60px;" *ngIf="!esVentasSearch"></th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-compra>
@@ -521,6 +533,13 @@
                                     [class]="'customer-badge status-' + (compra.tipo === 'V' ? 'normal' : 'provider')">
                                     {{ compra.tipo === 'V' ? 'Venta Normal' : 'Venta a Proveedor' }}
                                 </span>
+                            </td>
+                            <td class="text-center" *ngIf="!esVentasSearch">
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                                    style="width: 2rem; height: 2rem;" pTooltip="Eliminar compra" tooltipPosition="top"
+                                    [disabled]="eliminandoId === compra.id" (click)="confirmDeleteCompra(compra)">
+                                </button>
                             </td>
                         </tr>
                     </ng-template>

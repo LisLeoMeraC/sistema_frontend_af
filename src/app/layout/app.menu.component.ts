@@ -186,9 +186,14 @@ export class AppMenuComponent implements OnInit {
                     items: [
 
                         {
-                            label: 'Cacao',
+                            label: 'Compras de Cacao',
                             icon: 'pi pi-cart-plus',
                             routerLink: ['/secretaria/compras-cacao'],
+                        },
+                        {
+                            label: 'Ventas de Cacao',
+                            icon: 'pi pi-cart-plus',
+                            routerLink: ['/secretaria/ventas-cacao'],
                         },
                         {
                             label: 'Otros Productos',

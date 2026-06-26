@@ -66,5 +66,9 @@ export class ComprasService {
     buscarVentasPorFechaYProducto(fecha: string, productoId: number): Observable<any[]> {
         return this.http.get<any[]>(`${baseUrl}/compras/buscar-ventas?fecha=${fecha}&productoId=${productoId}`);
     }
+
+    eliminarCompra(id: number): Observable<void> {
+        return this.http.delete<void>(`${baseUrl}/compras/${id}`);
+    }
 }
 

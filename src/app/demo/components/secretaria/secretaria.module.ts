@@ -41,10 +41,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TabViewModule } from 'primeng/tabview';
 import { TooltipModule } from 'primeng/tooltip';
-import { FijacionesComponent } from './fijaciones/fijaciones.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ViewVentasComponent } from './view-ventas/view-ventas.component';
+import { VentasCacaoComponent } from './ventas-cacao/ventas-cacao.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +58,7 @@ import { ViewVentasComponent } from './view-ventas/view-ventas.component';
     ComprasComponent,
     ComprasSemanalesComponent,
     ViewComprasOtrosProductosComponent,
+    VentasCacaoComponent,
     ViewVentasComponent,
     ReporteMensualClientesComponent
   ],

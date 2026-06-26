@@ -198,8 +198,11 @@
         <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
             <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
                 (click)="CloseRecintoModalDialog()" type="button"></button>
-            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary shadow-2 border-round-lg"
-                type="submit" [disabled]="registerFormRecinto.invalid"></button>
+            <button pButton pRipple
+                [label]="guardandoRecinto ? 'Guardando...' : 'Guardar'"
+                [icon]="guardandoRecinto ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+                class="p-button-primary shadow-2 border-round-lg"
+                type="submit" [disabled]="registerFormRecinto.invalid || guardandoRecinto"></button>
         </div>
     </form>
 </p-dialog>
@@ -301,8 +304,11 @@
         <div class="flex justify-content-end gap-2 mt-4 pt-3 border-top-1 surface-border">
             <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary"
                 (click)="CloseModalDialog()" type="button"></button>
-            <button pButton pRipple label="Finalizar Registro" icon="pi pi-save"
-                class="p-button-primary shadow-2 border-round-lg" type="submit"></button>
+            <button pButton pRipple
+                [label]="guardandoCliente ? 'Guardando...' : 'Finalizar Registro'"
+                [icon]="guardandoCliente ? 'pi pi-spin pi-spinner' : 'pi pi-save'"
+                class="p-button-primary shadow-2 border-round-lg"
+                type="submit" [disabled]="guardandoCliente"></button>
         </div>
     </form>
 </p-dialog>

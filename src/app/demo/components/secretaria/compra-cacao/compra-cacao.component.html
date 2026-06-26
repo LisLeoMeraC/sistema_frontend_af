@@ -1,5 +1,8 @@
 <p-toast></p-toast>
-<p-confirmDialog key="confirm" border="none"></p-confirmDialog>
+<p-confirmDialog key="confirm" icon="pi pi-exclamation-triangle" [style]="{ width: '450px' }" acceptLabel="Aceptar"
+    rejectLabel="Cancelar" acceptButtonStyleClass="p-button-primary border-round-lg shadow-2"
+    rejectButtonStyleClass="p-button-text p-button-secondary border-round-lg">
+</p-confirmDialog>
 
 <div class="grid">
     <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
@@ -90,7 +93,10 @@
                         <td class="text-center">
                             <button pButton pRipple type="button" icon="pi pi-trash"
                                 class="p-button-rounded p-button-danger p-button-text p-button-sm"
-                                style="width: 2rem; height: 2rem;" (click)="confirmDeleteCompra(cacao)">
+                                style="width: 2rem; height: 2rem;"
+                                pTooltip="Eliminar compra" tooltipPosition="top"
+                                [disabled]="eliminandoId === cacao.id"
+                                (click)="confirmDeleteCompra(cacao)">
                             </button>
                         </td>
                     </tr>
@@ -244,8 +250,11 @@
             <button pButton pRipple type="button" label="Cancelar" icon="pi pi-times"
                 class="p-button-text p-button-secondary" (click)="closeModalCompraCacaoDialog()">
             </button>
-            <button pButton pRipple type="submit" label="Guardar Registro" icon="pi pi-save"
-                class="p-button-primary shadow-2 border-round-lg">
+            <button pButton pRipple type="submit"
+                [label]="guardando ? 'Guardando...' : 'Guardar Registro'"
+                [icon]="guardando ? 'pi pi-spin pi-spinner' : 'pi pi-save'"
+                class="p-button-primary shadow-2 border-round-lg"
+                [disabled]="guardando">
             </button>
         </div>
     </form>
@@ -309,6 +318,7 @@
                     <th class="text-right">Efectivo</th>
                     <th class="text-right">Transf.</th>
                     <th class="text-right">Total $</th>
+                    <th class="text-center" style="width: 60px;"></th>
                 </tr>
             </ng-template>
 
@@ -326,12 +336,21 @@
                     <td class="text-right text-500">{{ cacao.pagoEfectivo | currency:'USD' }}</td>
                     <td class="text-right text-500">{{ cacao.pagoTransferencia | currency:'USD' }}</td>
                     <td class="text-right font-bold text-900">{{ cacao.totalPagado | currency:'USD' }}</td>
+                    <td class="text-center">
+                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                            style="width: 2rem; height: 2rem;"
+                            pTooltip="Eliminar compra" tooltipPosition="top"
+                            [disabled]="eliminandoId === cacao.id"
+                            (click)="confirmDeleteCompra(cacao)">
+                        </button>
+                    </td>
                 </tr>
             </ng-template>
 
             <ng-template pTemplate="emptymessage">
                 <tr>
-                    <td colspan="7" class="text-center text-500 py-4">No se encontraron registros para la fecha
+                    <td colspan="8" class="text-center text-500 py-4">No se encontraron registros para la fecha
                         seleccionada.</td>
                 </tr>
             </ng-template>
