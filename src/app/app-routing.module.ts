@@ -41,10 +41,13 @@ import { ViewComprasOtrosProductosComponent } from './demo/components/secretaria
             path: 'secretaria',
             loadChildren: () => import('./demo/components/secretaria/secretaria.module').then(m => m.SecretariaModule)
           },
-          // Carga perezosa para el módulo de asistente de factura
           {
             path: 'asistente-factura',
             loadChildren: () => import('./demo/components/Asistente-factura/asistente-factura.module').then(m => m.AsistenteFacturaModule)
+          },
+          {
+            path: 'caja-bancos',
+            loadChildren: () => import('./demo/components/caja-bancos/caja-bancos.module').then(m => m.CajaBancosModule)
           }
                 ],
             },

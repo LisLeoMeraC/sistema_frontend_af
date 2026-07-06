@@ -31,6 +31,7 @@
                         <th class="text-700 font-bold py-3">ID Caja</th>
                         <th class="text-700 font-bold">Fecha Apertura</th>
                         <th class="text-700 font-bold">Saldo Inicial</th>
+                        <th class="text-700 font-bold">Saldo Actual</th>
                         <th class="text-700 font-bold">Fecha Cierre</th>
                         <th class="text-center text-700 font-bold">Estado</th>
                         <th class="text-center text-700 font-bold" style="width: 180px;">Acciones</th>
@@ -42,6 +43,8 @@
                         <td class="font-bold text-primary-600">#{{caja.id}}</td>
                         <td class="text-700">{{caja.fechaApertura}}</td>
                         <td class="font-semibold text-color-secondary">{{caja.saldoInicial | currency:'USD':'code'}}
+                        </td>
+                        <td class="font-semibold text-primary">{{caja.saldoActual | currency:'USD':'code'}}
                         </td>
                         <td class="text-500">{{caja.fechaCierre || 'N/A'}}</td>
                         <td class="text-center">
@@ -62,6 +65,10 @@
                                 <button *ngIf="caja.estado === false" pButton pRipple icon="pi pi-eye"
                                     class="p-button-rounded p-button-secondary p-button-text"
                                     pTooltip="Resumen de Cierre" (click)="openViewDetalleCajaDialog(caja.id)"></button>
+
+                                <button *ngIf="caja.estado === false" pButton pRipple icon="pi pi-print"
+                                    class="p-button-rounded p-button-success p-button-text"
+                                    pTooltip="Generar Reporte" (click)="generarReporte(caja.id)"></button>
 
                                 <button *ngIf="caja.estado === true" pButton pRipple icon="pi pi-lock"
                                     class="p-button-rounded p-button-warning p-button-text" pTooltip="Cerrar Caja"

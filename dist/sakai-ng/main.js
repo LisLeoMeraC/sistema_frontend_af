@@ -62,12 +62,13 @@ class AppRoutingModule {
           loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-node_modules_primeng_fesm2022_primeng-panelmenu_mjs"), __webpack_require__.e("default-src_app_demo_service_cliente_service_ts-node_modules_rxjs_dist_esm_internal_operators-b3281e"), __webpack_require__.e("default-node_modules_primeng_fesm2022_primeng-styleclass_mjs"), __webpack_require__.e("default-src_app_demo_components_secretaria_caja_caja_component_ts-src_app_demo_components_sec-2f2a19"), __webpack_require__.e("default-node_modules_primeng_fesm2022_primeng-fieldset_mjs-node_modules_primeng_fesm2022_prim-b028b5"), __webpack_require__.e("default-src_app_demo_components_dashboard_dashboard-routing_module_ts"), __webpack_require__.e("common"), __webpack_require__.e("src_app_demo_components_Administrador_administrador_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./demo/components/Administrador/administrador.module */ 48258)).then(m => m.AdministradorModule)
         }, {
           path: 'secretaria',
-          loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-node_modules_primeng_fesm2022_primeng-checkbox_mjs"), __webpack_require__.e("default-src_app_demo_service_cliente_service_ts-node_modules_rxjs_dist_esm_internal_operators-b3281e"), __webpack_require__.e("default-src_app_demo_components_secretaria_caja_caja_component_ts-src_app_demo_components_sec-2f2a19"), __webpack_require__.e("default-src_app_demo_components_uikit_table_tabledemo-routing_module_ts"), __webpack_require__.e("common"), __webpack_require__.e("src_app_demo_components_secretaria_secretaria_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./demo/components/secretaria/secretaria.module */ 2930)).then(m => m.SecretariaModule)
-        },
-        // Carga perezosa para el módulo de asistente de factura
-        {
+          loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-node_modules_primeng_fesm2022_primeng-checkbox_mjs"), __webpack_require__.e("default-src_app_demo_service_cliente_service_ts-node_modules_rxjs_dist_esm_internal_operators-b3281e"), __webpack_require__.e("default-src_app_demo_components_secretaria_caja_caja_component_ts-src_app_demo_components_sec-2f2a19"), __webpack_require__.e("default-node_modules_html2canvas_dist_html2canvas_js"), __webpack_require__.e("default-src_app_demo_components_uikit_table_tabledemo-routing_module_ts"), __webpack_require__.e("common"), __webpack_require__.e("src_app_demo_components_secretaria_secretaria_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./demo/components/secretaria/secretaria.module */ 2930)).then(m => m.SecretariaModule)
+        }, {
           path: 'asistente-factura',
           loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("default-src_app_demo_service_cliente_service_ts-node_modules_rxjs_dist_esm_internal_operators-b3281e"), __webpack_require__.e("common"), __webpack_require__.e("src_app_demo_components_Asistente-factura_asistente-factura_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./demo/components/Asistente-factura/asistente-factura.module */ 44150)).then(m => m.AsistenteFacturaModule)
+        }, {
+          path: 'caja-bancos',
+          loadChildren: () => Promise.all(/*! import() */[__webpack_require__.e("common"), __webpack_require__.e("src_app_demo_components_caja-bancos_caja-bancos_module_ts")]).then(__webpack_require__.bind(__webpack_require__, /*! ./demo/components/caja-bancos/caja-bancos.module */ 62198)).then(m => m.CajaBancosModule)
         }]
       }, {
         path: 'auth',
@@ -2554,6 +2555,26 @@ class AppMenuComponent {
           label: 'Clientes',
           icon: 'pi pi-fw pi-users',
           routerLink: ['/administrador/clientes']
+        }, {
+          label: 'Bancos',
+          icon: 'pi pi-fw pi-building',
+          routerLink: ['/caja-bancos/bancos']
+        }, {
+          label: 'Cuentas Bancarias',
+          icon: 'pi pi-fw pi-id-card',
+          routerLink: ['/caja-bancos/cuentas-bancarias']
+        }, {
+          label: 'Transacciones Bancarias',
+          icon: 'pi pi-fw pi-arrow-right-arrow-left',
+          routerLink: ['/caja-bancos/transacciones-banco']
+        }, {
+          label: 'Cuentas por Pagar',
+          icon: 'pi pi-fw pi-money-bill',
+          routerLink: ['/caja-bancos/cuentas-por-pagar']
+        }, {
+          label: 'Cuentas por Cobrar',
+          icon: 'pi pi-fw pi-dollar',
+          routerLink: ['/caja-bancos/cuentas-por-cobrar']
         }]
       }, {
         label: 'Compras de Cacao',
@@ -2630,6 +2651,26 @@ class AppMenuComponent {
           label: 'Prestamos',
           icon: 'pi pi-fw pi-wallet',
           routerLink: ['/secretaria/prestamos']
+        }, {
+          label: 'Bancos',
+          icon: 'pi pi-fw pi-building',
+          routerLink: ['/caja-bancos/bancos']
+        }, {
+          label: 'Cuentas Bancarias',
+          icon: 'pi pi-fw pi-id-card',
+          routerLink: ['/caja-bancos/cuentas-bancarias']
+        }, {
+          label: 'Transacciones Bancarias',
+          icon: 'pi pi-fw pi-arrow-right-arrow-left',
+          routerLink: ['/caja-bancos/transacciones-banco']
+        }, {
+          label: 'Cuentas por Pagar',
+          icon: 'pi pi-fw pi-money-bill',
+          routerLink: ['/caja-bancos/cuentas-por-pagar']
+        }, {
+          label: 'Cuentas por Cobrar',
+          icon: 'pi pi-fw pi-dollar',
+          routerLink: ['/caja-bancos/cuentas-por-cobrar']
         }]
       }, {
         label: 'Inventario',
@@ -2645,9 +2686,13 @@ class AppMenuComponent {
       }, {
         label: 'Compras - Ventas',
         items: [{
-          label: 'Cacao',
+          label: 'Compras de Cacao',
           icon: 'pi pi-cart-plus',
           routerLink: ['/secretaria/compras-cacao']
+        }, {
+          label: 'Ventas de Cacao',
+          icon: 'pi pi-cart-plus',
+          routerLink: ['/secretaria/ventas-cacao']
         }, {
           label: 'Otros Productos',
           icon: 'pi pi-cart-plus',

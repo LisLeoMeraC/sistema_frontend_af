@@ -47,7 +47,31 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-fw pi-users',
                             routerLink: ['/administrador/clientes'],
                         },
-
+                        {
+                            label: 'Bancos',
+                            icon: 'pi pi-fw pi-building',
+                            routerLink: ['/caja-bancos/bancos'],
+                        },
+                        {
+                            label: 'Cuentas Bancarias',
+                            icon: 'pi pi-fw pi-id-card',
+                            routerLink: ['/caja-bancos/cuentas-bancarias'],
+                        },
+                        {
+                            label: 'Transacciones Bancarias',
+                            icon: 'pi pi-fw pi-arrow-right-arrow-left',
+                            routerLink: ['/caja-bancos/transacciones-banco'],
+                        },
+                        {
+                            label: 'Cuentas por Pagar',
+                            icon: 'pi pi-fw pi-money-bill',
+                            routerLink: ['/caja-bancos/cuentas-por-pagar'],
+                        },
+                        {
+                            label: 'Cuentas por Cobrar',
+                            icon: 'pi pi-fw pi-dollar',
+                            routerLink: ['/caja-bancos/cuentas-por-cobrar'],
+                        }
                     ]
                 },
 
@@ -160,8 +184,32 @@ export class AppMenuComponent implements OnInit {
                             label: 'Prestamos',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/prestamos'],
+                        },
+                        {
+                            label: 'Bancos',
+                            icon: 'pi pi-fw pi-building',
+                            routerLink: ['/caja-bancos/bancos'],
+                        },
+                        {
+                            label: 'Cuentas Bancarias',
+                            icon: 'pi pi-fw pi-id-card',
+                            routerLink: ['/caja-bancos/cuentas-bancarias'],
+                        },
+                        {
+                            label: 'Transacciones Bancarias',
+                            icon: 'pi pi-fw pi-arrow-right-arrow-left',
+                            routerLink: ['/caja-bancos/transacciones-banco'],
+                        },
+                        {
+                            label: 'Cuentas por Pagar',
+                            icon: 'pi pi-fw pi-money-bill',
+                            routerLink: ['/caja-bancos/cuentas-por-pagar'],
+                        },
+                        {
+                            label: 'Cuentas por Cobrar',
+                            icon: 'pi pi-fw pi-dollar',
+                            routerLink: ['/caja-bancos/cuentas-por-cobrar'],
                         }
-
                     ],
                 },
                 {

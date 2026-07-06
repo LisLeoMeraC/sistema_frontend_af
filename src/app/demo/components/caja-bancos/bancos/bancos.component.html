@@ -1,0 +1,106 @@
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-blue-50 mr-4 shadow-sm">
+                    <i class="pi pi-building text-blue-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Administración de Bancos</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de entidades financieras del sistema</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Nuevo Banco" icon="pi pi-plus"
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="openNew()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-blue-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card border-none shadow-2 border-round-xl p-3">
+            <div class="flex align-items-center mb-3"
+                style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Listado de Bancos</h4>
+            </div>
+
+            <p-table #dt [value]="bancos" [rows]="10" [paginator]="true" [globalFilterFields]="['nombre']" responsiveLayout="scroll" [rowHover]="true" dataKey="id" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id" class="text-center" style="width: 100px;">ID <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nombre">Nombre de la Entidad <p-sortIcon field="nombre"></p-sortIcon></th>
+                        <th class="text-center" style="width: 120px;">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-banco>
+                    <tr>
+                        <td class="text-center font-medium text-600">
+                            {{banco.id}}
+                        </td>
+                        <td class="font-bold text-800">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-building text-primary-500"></i>
+                                {{banco.nombre}}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center gap-2">
+                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success p-button-sm" pTooltip="Editar" tooltipPosition="top" (click)="editBanco(banco)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm" pTooltip="Desactivar" tooltipPosition="top" (click)="deleteBanco(banco)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center text-500 py-4">
+                            <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                            No se encontraron bancos registrados.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="bancoDialog" [style]="{width: '450px'}" [modal]="true" class="p-fluid" styleClass="border-round-xl shadow-5 overflow-hidden">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-building text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Detalles del Banco</div>
+                <div class="text-500" style="font-size: 0.8rem;">Información de la entidad</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <div class="field mt-3">
+            <label for="nombre" class="font-semibold text-700 block mb-1">Nombre de la Entidad</label>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon"><i class="pi pi-id-card"></i></span>
+                <input type="text" pInputText id="nombre" [(ngModel)]="banco.nombre" required autofocus [ngClass]="{'ng-invalid ng-dirty': submitted && !banco.nombre}" styleClass="border-round-lg" placeholder="Ej. BANCO PICHINCHA" />
+            </div>
+            <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !banco.nombre">El nombre es requerido.</small>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2 mt-2 pt-3 border-top-1 surface-border">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary shadow-2 border-round-lg" (click)="saveBanco()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

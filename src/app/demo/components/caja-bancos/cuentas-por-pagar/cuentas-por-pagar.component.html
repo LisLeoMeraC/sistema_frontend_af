@@ -1,0 +1,193 @@
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-red-50 mr-4 shadow-sm">
+                    <i class="pi pi-file-excel text-red-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Cuentas por Pagar</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Deudas pendientes por compras de cacao</p>
+                </div>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-red-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card border-none shadow-2 border-round-xl p-3">
+            <div class="flex flex-column md:flex-row align-items-center justify-content-between mb-3 pb-2 border-bottom-1 surface-border">
+                <div class="flex align-items-center" style="border-left: 4px solid var(--red-500); padding-left: 0.85rem;">
+                    <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">
+                        {{ vistaActual === 'PENDIENTES' ? 'Listado de Obligaciones Pendientes' : 'Historial de Obligaciones Pagadas' }}
+                    </h4>
+                </div>
+                <div class="mt-3 md:mt-0">
+                    <button pButton pRipple 
+                        [label]="vistaActual === 'PENDIENTES' ? 'Ver Pagadas' : 'Ver Pendientes'" 
+                        [icon]="vistaActual === 'PENDIENTES' ? 'pi pi-history' : 'pi pi-list'" 
+                        [class]="vistaActual === 'PENDIENTES' ? 'p-button-outlined p-button-secondary' : 'p-button-outlined p-button-primary'" 
+                        (click)="toggleVista()">
+                    </button>
+                </div>
+            </div>
+            
+            <p-table #dt [value]="cuentas" [loading]="loading" [rows]="10" [paginator]="true" [globalFilterFields]="['clienteNombre']" responsiveLayout="scroll" [rowHover]="true" dataKey="id" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id" class="text-center">ID Compra <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="fechaCreacion" class="text-center">Fecha <p-sortIcon field="fechaCreacion"></p-sortIcon></th>
+                        <th pSortableColumn="clienteNombre">Proveedor <p-sortIcon field="clienteNombre"></p-sortIcon></th>
+                        <th pSortableColumn="montoTotal" class="text-right">Monto Total <p-sortIcon field="montoTotal"></p-sortIcon></th>
+                        <th pSortableColumn="montoPagado" class="text-right">Abonado <p-sortIcon field="montoPagado"></p-sortIcon></th>
+                        <th pSortableColumn="saldoPendiente" class="text-right">Saldo Pendiente <p-sortIcon field="saldoPendiente"></p-sortIcon></th>
+                        <th pSortableColumn="estado" class="text-center">Estado <p-sortIcon field="estado"></p-sortIcon></th>
+                        <th class="text-center" style="width: 120px;">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-cuenta>
+                    <tr>
+                        <td class="text-center font-medium text-600">#{{cuenta.compraCacaoId}}</td>
+                        <td class="text-center text-700 font-medium">{{cuenta.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}</td>
+                        <td class="font-bold text-800">
+                            <i class="pi pi-user mr-2 text-primary-500"></i>{{cuenta.clienteNombre}}
+                        </td>
+                        <td class="text-right font-medium text-700">{{cuenta.montoTotal | currency:'USD'}}</td>
+                        <td class="text-right text-green-600 font-bold">{{cuenta.montoPagado | currency:'USD'}}</td>
+                        <td class="text-right text-red-600 font-bold text-lg">{{cuenta.saldoPendiente | currency:'USD'}}</td>
+                        <td class="text-center">
+                            <span class="p-badge" [ngClass]="{'p-badge-success': cuenta.estado === 'PAGADA', 'p-badge-warning': cuenta.estado === 'PENDIENTE'}">
+                                {{cuenta.estado}}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center gap-2">
+                                <button *ngIf="cuenta.estado !== 'PAGADA'" pButton pRipple label="Abonar" icon="pi pi-money-bill" class="p-button-success p-button-sm border-round-lg shadow-2 font-bold px-3" (click)="openAbonoDialog(cuenta)"></button>
+                                <button pButton pRipple icon="pi pi-list" class="p-button-info p-button-sm border-round-lg shadow-2 px-3" (click)="verHistorial(cuenta)" pTooltip="Ver Historial de Pagos" tooltipPosition="top"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8" class="text-center text-500 py-4">
+                            <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                            No se encontraron cuentas por pagar.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="abonoDialog" [style]="{width: '500px'}" [modal]="true" [focusTrap]="false" class="p-fluid" styleClass="border-round-xl shadow-5 overflow-hidden">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-green-50">
+                <i class="pi pi-money-bill text-green-600 text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Registrar Abono</div>
+                <div class="text-500" style="font-size: 0.8rem;">Pago de obligación pendiente</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <div *ngIf="cuentaSeleccionada" class="mt-2">
+            <div class="bg-red-50 px-4 py-3 border-round-lg border-1 border-red-200 mb-4 flex align-items-center justify-content-between">
+                <span class="text-red-800 font-bold">Deuda Pendiente:</span>
+                <span class="text-2xl font-bold text-red-600">{{cuentaSeleccionada.saldoPendiente | currency:'USD'}}</span>
+            </div>
+
+            <div class="field">
+                <label for="monto" class="font-semibold text-700 block mb-1">Monto a Abonar ($)</label>
+                <p-inputNumber id="monto" [(ngModel)]="montoAbono" mode="currency" currency="USD" locale="en-US" [min]="0.01" [max]="cuentaSeleccionada.saldoPendiente" [required]="true" [ngClass]="{'ng-invalid ng-dirty': submitted && montoAbono <= 0}" inputStyleClass="border-round-lg font-bold text-lg"></p-inputNumber>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && montoAbono <= 0">El monto debe ser mayor a 0.</small>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && montoAbono > cuentaSeleccionada.saldoPendiente">El monto no puede superar la deuda.</small>
+            </div>
+
+            <div class="field">
+                <label for="metodoPago" class="font-semibold text-700 block mb-1">Método de Pago</label>
+                <p-dropdown id="metodoPago" [options]="metodosPago" [(ngModel)]="metodoPago" optionLabel="label" optionValue="value" styleClass="border-round-lg"></p-dropdown>
+            </div>
+
+            <div class="field" *ngIf="metodoPago === 'TRANSFERENCIA'">
+                <label for="cuentaBancaria" class="font-semibold text-700 block mb-1">Cuenta Bancaria (Origen del Dinero)</label>
+                <p-dropdown id="cuentaBancaria" [options]="cuentasBancarias" [(ngModel)]="cuentaBancariaSeleccionada" optionLabel="numeroCuenta" placeholder="Selecciona una Cuenta" [ngClass]="{'ng-invalid ng-dirty': submitted && !cuentaBancariaSeleccionada}" styleClass="border-round-lg" [appendTo]="'body'">
+                    <ng-template let-cb pTemplate="item">
+                        {{cb.banco.nombre}} - {{cb.numeroCuenta}}
+                    </ng-template>
+                    <ng-template pTemplate="selectedItem">
+                        <div *ngIf="cuentaBancariaSeleccionada">{{cuentaBancariaSeleccionada.banco.nombre}} - {{cuentaBancariaSeleccionada.numeroCuenta}}</div>
+                    </ng-template>
+                </p-dropdown>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !cuentaBancariaSeleccionada">Debe seleccionar una cuenta bancaria.</small>
+            </div>
+
+            <div class="field">
+                <label for="descripcion" class="font-semibold text-700 block mb-1">Descripción</label>
+                <textarea id="descripcion" pInputTextarea [(ngModel)]="descripcionAbono" required rows="3" [ngClass]="{'ng-invalid ng-dirty': submitted && !descripcionAbono}" class="border-round-lg"></textarea>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !descripcionAbono">La descripción es requerida.</small>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2 pt-3 border-top-1 surface-border">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary" (click)="hideAbonoDialog()"></button>
+            <button pButton pRipple label="Registrar Pago" icon="pi pi-check" class="p-button-primary shadow-2 border-round-lg p-button-success" (click)="saveAbono()"></button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="historialDialog" [style]="{width: '650px'}" [modal]="true" class="p-fluid" styleClass="border-round-xl shadow-5 overflow-hidden">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-blue-50">
+                <i class="pi pi-history text-blue-600 text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Historial de Pagos</div>
+                <div class="text-500" style="font-size: 0.8rem;">Proveedor: <span class="font-bold text-700">{{ cuentaSeleccionada?.clienteNombre }}</span></div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <p-table [value]="pagosHistorial" [loading]="loadingHistorial" responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines mt-3" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Fecha de Pago</th>
+                    <th>Método</th>
+                    <th>Descripción</th>
+                    <th class="text-right">Monto Abonado</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-pago>
+                <tr>
+                    <td class="font-medium text-700">{{ pago.fechaPago | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="text-center">
+                        <span class="p-badge" [ngClass]="pago.metodoPago === 'EFECTIVO' ? 'p-badge-success' : 'p-badge-info'">
+                            {{ pago.metodoPago }}
+                        </span>
+                    </td>
+                    <td class="text-600">{{ pago.descripcion }}</td>
+                    <td class="text-right text-green-600 font-bold">{{ pago.monto | currency:'USD' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="4" class="text-center text-500 py-3">No hay pagos registrados para esta cuenta.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+</p-dialog>

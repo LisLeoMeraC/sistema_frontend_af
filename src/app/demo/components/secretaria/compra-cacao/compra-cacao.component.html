@@ -227,22 +227,39 @@
             </div>
 
             <div class="field col-12 mb-3">
-                <label class="font-bold text-primary block mb-1" style="font-size: 0.9rem;">Total a Pagar ($)</label>
+                <label class="font-bold text-primary block mb-1" style="font-size: 0.9rem;">Total de la Compra ($)</label>
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon bg-primary text-white border-primary"><i
                             class="pi pi-dollar"></i></span>
-                    <input pInputText formControlName="totalPagado" placeholder="0.00" class="font-bold text-lg" />
+                    <input pInputText [value]="totalCompraCalculado | number:'1.2-2'" placeholder="0.00" class="font-bold text-lg" readonly />
                 </div>
             </div>
 
             <div class="field col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Efectivo</label>
-                <input pInputText formControlName="pagoEfectivo" placeholder="0.00" />
+                <input pInputText formControlName="pagoEfectivo" placeholder="0.00" type="number" />
             </div>
 
             <div class="field col-6 mb-2">
                 <label class="font-semibold text-700 block mb-1" style="font-size: 0.82rem;">Transferencia</label>
-                <input pInputText formControlName="pagoTransferencia" placeholder="0.00" />
+                <input pInputText formControlName="pagoTransferencia" placeholder="0.00" type="number" />
+            </div>
+
+            <div class="field col-12 mb-2" *ngIf="registerFormCompraCacao.get('pagoTransferencia')?.value > 0">
+                <label class="font-semibold text-700 block mb-1" style="font-size: 0.85rem;">Cuenta Bancaria (Origen)</label>
+                <p-dropdown [options]="cuentasBancarias" formControlName="cuentaBancariaId" optionLabel="numeroCuenta"
+                    placeholder="Selecciona una Cuenta" [showClear]="true" [appendTo]="'body'" styleClass="border-round-lg">
+                    <ng-template let-cb pTemplate="item">
+                        {{cb.banco?.nombre}} - {{cb.numeroCuenta}}
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <div class="col-12" *ngIf="saldoPendienteCalculado > 0">
+                <div class="p-message p-message-warn p-2 border-round-lg">
+                    <i class="pi pi-exclamation-triangle mr-2 text-yellow-600"></i>
+                    <span class="text-yellow-800">Se generará una <b>Cuenta por Pagar</b> por el saldo pendiente de <b>{{saldoPendienteCalculado | currency:'USD'}}</b>.</span>
+                </div>
             </div>
         </div>
 

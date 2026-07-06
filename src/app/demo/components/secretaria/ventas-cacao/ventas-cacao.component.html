@@ -269,9 +269,31 @@
             </div>
 
             <div class="field col-12 md:col-6 mb-3">
-                <label class="font-semibold text-700 block mb-1">Forma de Pago *</label>
+                <label class="font-semibold text-700 block mb-1">Forma de Cobro *</label>
                 <p-selectButton [options]="formasPago" optionLabel="label" optionValue="value"
                     formControlName="formaPago" styleClass="w-full"></p-selectButton>
+            </div>
+
+            <div class="field col-12 md:col-6 mb-3">
+                <label class="font-semibold text-700 block mb-1">Monto Cobrado ($) *</label>
+                <input pInputText type="number" formControlName="montoPagado" placeholder="0.00" />
+            </div>
+
+            <div class="field col-12 md:col-6 mb-3" *ngIf="ventaForm.get('formaPago')?.value === 'T'">
+                <label class="font-semibold text-700 block mb-1">Cuenta Bancaria (Destino) *</label>
+                <p-dropdown [options]="cuentasBancarias" optionLabel="numeroCuenta" formControlName="cuentaBancariaId"
+                    placeholder="Seleccione cuenta destino" [appendTo]="'body'" styleClass="border-round-lg">
+                    <ng-template let-cb pTemplate="item">
+                        {{cb.banco?.nombre}} - {{cb.numeroCuenta}}
+                    </ng-template>
+                </p-dropdown>
+            </div>
+
+            <div class="col-12" *ngIf="saldoPendienteCalculado > 0">
+                <div class="p-message p-message-info p-2 border-round-lg">
+                    <i class="pi pi-info-circle mr-2 text-blue-600"></i>
+                    <span class="text-blue-800">Se generará una <b>Cuenta por Cobrar</b> por el saldo pendiente de <b>{{saldoPendienteCalculado | currency:'USD'}}</b>.</span>
+                </div>
             </div>
         </div>
 
@@ -363,9 +385,16 @@
                 <span class="font-semibold text-800">{{ selectedVenta.fecha | date:'dd-MM-yyyy HH:mm' }}</span>
             </div>
             <div class="col-6 mt-3">
-                <span class="text-500 text-xs font-semibold block mb-1">FORMA DE PAGO</span>
+                <span class="text-500 text-xs font-semibold block mb-1">FORMA DE COBRO</span>
                 <span class="font-semibold text-800">
                     {{ selectedVenta.formaPago === 'E' ? 'Efectivo' : 'Transferencia' }}
+                </span>
+            </div>
+
+            <div class="col-6 mt-3">
+                <span class="text-500 text-xs font-semibold block mb-1">MONTO COBRADO INICIALMENTE</span>
+                <span class="font-semibold text-green-600">
+                    {{ (selectedVenta.montoPagado !== undefined ? selectedVenta.montoPagado : selectedVenta.total) | currency:'USD' }}
                 </span>
             </div>
 

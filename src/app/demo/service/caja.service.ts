@@ -44,6 +44,10 @@ export class CajaService {
         return this.http.get<any>(`${baseUrl}/caja/${idCaja}`);
     }
 
+    obtenerTodasTransaccionesCaja(idCaja: number): Observable<any[]> {
+        return this.http.get<any[]>(`${baseUrl}/transacciones/caja/${idCaja}`);
+    }
+
     cerrarCaja(id: number, CierreCaja: any): Observable<any> {
         return this.http.post<any>(`${baseUrl}/caja/cerrar/${id}`, CierreCaja);
     }

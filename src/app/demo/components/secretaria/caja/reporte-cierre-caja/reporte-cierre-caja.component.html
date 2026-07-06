@@ -1,0 +1,218 @@
+<p-toast></p-toast>
+
+<div class="flex justify-content-between align-items-center mb-4 noprint">
+    <button pButton pRipple label="Volver a Caja" icon="pi pi-arrow-left" class="p-button-text p-button-secondary" routerLink="/secretaria/caja"></button>
+    <div class="flex gap-2">
+        <button pButton pRipple label="Imprimir" icon="pi pi-print" class="p-button-outlined" (click)="imprimir()"></button>
+        <button pButton pRipple label="Exportar PDF" icon="pi pi-file-pdf" class="p-button-danger" (click)="exportarPDF()"></button>
+    </div>
+</div>
+
+<div *ngIf="cargando" class="flex justify-content-center align-items-center" style="height: 50vh;">
+    <p-progressSpinner></p-progressSpinner>
+</div>
+
+<div *ngIf="!cargando && caja" class="report-container surface-card shadow-2 p-6 border-round" #reportContent>
+    
+    <!-- 1. ENCABEZADO -->
+    <div class="flex justify-content-between align-items-start border-bottom-2 border-gray-300 pb-4 mb-4">
+        <div class="flex align-items-center gap-4">
+            <img src="assets/logo.png" alt="AGROFRANCO" style="max-height: 80px;">
+            <div>
+                <h1 class="m-0 text-900 font-bold text-3xl">AGROFRANCO</h1>
+                <p class="m-0 text-700 text-lg">Comercializadora de Cacao</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <h2 class="m-0 text-primary font-bold text-2xl uppercase tracking-wider mb-2">Cierre de Caja Diario</h2>
+            <div class="text-sm text-600 line-height-2">
+                <div><strong>Caja ID:</strong> #{{ caja.id }}</div>
+                <div><strong>Fecha y Hora de Cierre:</strong> {{ caja.fechaCierre | date:'dd/MM/yyyy HH:mm' }}</div>
+                <div><strong>Usuario/Cajero:</strong> {{ usuarioCierre }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. RESUMEN GENERAL -->
+    <div class="mb-5">
+        <h3 class="border-bottom-1 border-gray-300 pb-2 text-800 text-lg font-bold mb-3 uppercase">Resumen General</h3>
+        <div class="grid">
+            <div class="col-4">
+                <div class="bg-gray-50 border-1 border-gray-200 p-3 border-round">
+                    <span class="block text-500 font-bold text-sm uppercase mb-1">Saldo Inicial</span>
+                    <span class="block text-900 font-bold text-2xl">{{ caja.saldoInicial | currency:'USD' }}</span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="bg-green-50 border-1 border-green-200 p-3 border-round">
+                    <span class="block text-green-600 font-bold text-sm uppercase mb-1">Total Ingresos</span>
+                    <span class="block text-green-700 font-bold text-2xl">+ {{ caja.totalIngreso | currency:'USD' }}</span>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="bg-red-50 border-1 border-red-200 p-3 border-round">
+                    <span class="block text-red-600 font-bold text-sm uppercase mb-1">Total Egresos</span>
+                    <span class="block text-red-700 font-bold text-2xl">- {{ caja.totalEgresos | currency:'USD' }}</span>
+                </div>
+            </div>
+            <div class="col-4 mt-3">
+                <div class="bg-blue-50 border-1 border-blue-200 p-3 border-round">
+                    <span class="block text-blue-600 font-bold text-sm uppercase mb-1">Saldo Final (Calculado)</span>
+                    <span class="block text-blue-700 font-bold text-2xl">{{ caja.saldoFinal | currency:'USD' }}</span>
+                </div>
+            </div>
+            <div class="col-4 mt-3">
+                <div class="bg-orange-50 border-1 border-orange-200 p-3 border-round">
+                    <span class="block text-orange-600 font-bold text-sm uppercase mb-1">Efectivo Contado</span>
+                    <span class="block text-orange-700 font-bold text-2xl">{{ caja.efectivoCaja | currency:'USD' }}</span>
+                </div>
+            </div>
+            <div class="col-4 mt-3">
+                <div class="p-3 border-round border-1" [ngClass]="caja.discrepancia == 0 ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'">
+                    <span class="block font-bold text-sm uppercase mb-1" [ngClass]="caja.discrepancia == 0 ? 'text-green-700' : 'text-red-700'">Diferencia ({{ caja.tipoDiscrepancia }})</span>
+                    <span class="block font-bold text-2xl" [ngClass]="caja.discrepancia == 0 ? 'text-green-800' : 'text-red-800'">
+                        {{ caja.discrepancia | currency:'USD' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. RESUMEN POR TIPO DE MOVIMIENTO -->
+    <div class="mb-5 grid">
+        <div class="col-6">
+            <h3 class="border-bottom-1 border-green-300 pb-2 text-green-700 text-lg font-bold mb-3 uppercase">Detalle de Ingresos</h3>
+            <table class="report-table">
+                <tr>
+                    <td class="font-medium text-700">Cobros a Clientes (Ventas)</td>
+                    <td class="text-right text-900 font-bold w-4">{{ totalCobrosClientes | currency:'USD' }}</td>
+                </tr>
+                <tr>
+                    <td class="font-medium text-700">Otros Ingresos</td>
+                    <td class="text-right text-900 font-bold w-4">{{ totalOtrosIngresos | currency:'USD' }}</td>
+                </tr>
+                <tr class="bg-gray-100">
+                    <td class="font-bold text-900 text-right">TOTAL INGRESOS</td>
+                    <td class="text-right text-green-700 font-bold text-lg w-4">{{ caja.totalIngreso | currency:'USD' }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-6">
+            <h3 class="border-bottom-1 border-red-300 pb-2 text-red-700 text-lg font-bold mb-3 uppercase">Detalle de Egresos</h3>
+            <table class="report-table">
+                <tr>
+                    <td class="font-medium text-700">Compras de Cacao (Proveedores)</td>
+                    <td class="text-right text-900 font-bold w-4">{{ totalPagosProveedores | currency:'USD' }}</td>
+                </tr>
+                <tr>
+                    <td class="font-medium text-700">Gastos Administrativos / Otros</td>
+                    <td class="text-right text-900 font-bold w-4">{{ totalGastosAdministrativos | currency:'USD' }}</td>
+                </tr>
+                <tr class="bg-gray-100">
+                    <td class="font-bold text-900 text-right">TOTAL EGRESOS</td>
+                    <td class="text-right text-red-700 font-bold text-lg w-4">{{ caja.totalEgresos | currency:'USD' }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. DETALLE DE MOVIMIENTOS -->
+    <div class="mb-5 page-break-inside-avoid">
+        <h3 class="border-bottom-1 border-gray-300 pb-2 text-800 text-lg font-bold mb-3 uppercase">Registro Detallado de Transacciones</h3>
+        <table class="report-table data-table" *ngIf="transacciones.length > 0; else noMovimientos">
+            <thead>
+                <tr>
+                    <th>Hora</th>
+                    <th>Tipo</th>
+                    <th>Concepto / Descripción</th>
+                    <th class="text-right">Monto</th>
+                    <th class="text-right">Saldo Acum.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let tx of transacciones" [ngClass]="{'bg-green-50': tx.idTipoTransaccion === 1, 'bg-red-50': tx.idTipoTransaccion === 2}">
+                    <td>{{ tx.hora }}</td>
+                    <td class="font-bold" [ngClass]="tx.idTipoTransaccion === 1 ? 'text-green-700' : 'text-red-700'">{{ tx.tipoNombre }}</td>
+                    <td>{{ tx.descripcion }}</td>
+                    <td class="text-right font-bold" [ngClass]="tx.idTipoTransaccion === 1 ? 'text-green-700' : 'text-red-700'">
+                        {{ tx.idTipoTransaccion === 1 ? '+' : '-' }} {{ tx.monto | currency:'USD' }}
+                    </td>
+                    <td class="text-right font-medium text-900">{{ tx.saldoDespues | currency:'USD' }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <ng-template #noMovimientos>
+            <div class="text-center p-4 border-1 border-300 bg-gray-50 border-round">
+                <i class="pi pi-inbox text-400 text-3xl mb-2"></i>
+                <p class="m-0 text-600 font-medium">Sin movimientos registrados</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- 8. FORMAS DE PAGO & 9. INDICADORES -->
+    <div class="mb-5 grid page-break-inside-avoid">
+        <div class="col-6">
+            <h3 class="border-bottom-1 border-gray-300 pb-2 text-800 text-lg font-bold mb-3 uppercase">Formas de Pago</h3>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th class="text-center">Operaciones</th>
+                        <th class="text-right">Total Movido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">Efectivo Físico</td>
+                        <td class="text-center">{{ numIngresos + numEgresos }}</td>
+                        <td class="text-right font-bold">{{ (caja.totalIngreso + caja.totalEgresos) | currency:'USD' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-xs text-500 mt-2 italic">* Las transacciones bancarias se reportan por separado en el módulo Bancos.</p>
+        </div>
+        <div class="col-6">
+            <h3 class="border-bottom-1 border-gray-300 pb-2 text-800 text-lg font-bold mb-3 uppercase">Indicadores Operativos</h3>
+            <div class="grid text-sm">
+                <div class="col-6 py-1"><span class="text-600">Total Operaciones:</span> <span class="font-bold ml-2">{{ numIngresos + numEgresos }}</span></div>
+                <div class="col-6 py-1"><span class="text-600">Prom. Movimiento:</span> <span class="font-bold ml-2">{{ promedioMovimiento | currency:'USD' }}</span></div>
+                <div class="col-6 py-1"><span class="text-600">Mayor Ingreso:</span> <span class="font-bold ml-2 text-green-600">{{ mayorIngreso | currency:'USD' }}</span></div>
+                <div class="col-6 py-1"><span class="text-600">Mayor Egreso:</span> <span class="font-bold ml-2 text-red-600">{{ mayorEgreso | currency:'USD' }}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. OBSERVACIONES -->
+    <div class="mb-6 page-break-inside-avoid">
+        <h3 class="border-bottom-1 border-gray-300 pb-2 text-800 text-lg font-bold mb-3 uppercase">Observaciones del Cajero</h3>
+        <textarea pInputTextarea [(ngModel)]="observacionesCajero" rows="3" class="w-full noprint border-round border-gray-300" placeholder="Escriba las observaciones o novedades de este cierre de caja..."></textarea>
+        <div class="print-only border-1 border-gray-300 p-3 min-h-3rem border-round" style="display: none; white-space: pre-wrap;">{{ observacionesCajero || 'Ninguna observación reportada.' }}</div>
+    </div>
+
+    <!-- 12. FIRMAS -->
+    <div class="mt-8 pt-5 grid text-center page-break-inside-avoid">
+        <div class="col-4">
+            <div class="border-top-1 border-900 mx-4 pt-2">
+                <span class="block font-bold text-800">Cajero / Preparado por</span>
+                <span class="block text-sm text-600 mt-1">{{ usuarioCierre }}</span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="border-top-1 border-900 mx-4 pt-2">
+                <span class="block font-bold text-800">Supervisor / Revisado por</span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="border-top-1 border-900 mx-4 pt-2">
+                <span class="block font-bold text-800">Gerencia / Aprobado por</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. PIE DE PÁGINA -->
+    <div class="mt-6 pt-3 border-top-1 border-gray-300 flex justify-content-between text-xs text-500">
+        <div>Generado por: {{ usuarioCierre }} | Fecha: {{ fechaReporte | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div>Código de Cierre: #CC-{{ caja.id }}-{{ caja.fechaCierre | date:'MMyy' }}</div>
+        <div>Sistema AgroFranco</div>
+    </div>
+</div>

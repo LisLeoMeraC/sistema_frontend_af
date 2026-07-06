@@ -1,0 +1,147 @@
+<div class="grid">
+    <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+    <div class="col-12">
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-indigo-50 mr-4 shadow-sm">
+                    <i class="pi pi-wallet text-indigo-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Cuentas Bancarias</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión de cuentas corrientes y de ahorros</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Nueva Cuenta" icon="pi pi-plus"
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="openNew()">
+                </button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-indigo-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card border-none shadow-2 border-round-xl p-3">
+            <div class="flex align-items-center mb-3"
+                style="border-left: 4px solid var(--primary-color); padding-left: 0.85rem;">
+                <h4 class="m-0 font-bold text-900" style="font-size: 1rem;">Listado de Cuentas Activas</h4>
+            </div>
+
+            <p-table #dt [value]="cuentas" [rows]="10" [paginator]="true" [globalFilterFields]="['numeroCuenta', 'titular', 'banco.nombre']" responsiveLayout="scroll" [rowHover]="true" dataKey="id" styleClass="p-datatable-sm p-datatable-gridlines">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="banco.nombre">Banco <p-sortIcon field="banco.nombre"></p-sortIcon></th>
+                        <th pSortableColumn="numeroCuenta">Número de Cuenta <p-sortIcon field="numeroCuenta"></p-sortIcon></th>
+                        <th pSortableColumn="tipoCuenta" class="text-center">Tipo <p-sortIcon field="tipoCuenta"></p-sortIcon></th>
+                        <th pSortableColumn="titular">Titular <p-sortIcon field="titular"></p-sortIcon></th>
+                        <th pSortableColumn="saldoActual" class="text-right">Saldo Actual <p-sortIcon field="saldoActual"></p-sortIcon></th>
+                        <th class="text-center" style="width: 120px;">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-cuenta>
+                    <tr>
+                        <td class="font-semibold text-800">
+                            {{cuenta.banco?.nombre}}
+                        </td>
+                        <td class="text-700 font-medium">
+                            <i class="pi pi-credit-card text-500 mr-2"></i>
+                            {{cuenta.numeroCuenta}}
+                        </td>
+                        <td class="text-center">
+                            <span class="p-badge" [ngClass]="{'p-badge-info': cuenta.tipoCuenta === 'CORRIENTE', 'p-badge-success': cuenta.tipoCuenta === 'AHORROS'}">
+                                {{cuenta.tipoCuenta}}
+                            </span>
+                        </td>
+                        <td class="text-700">
+                            <i class="pi pi-user text-500 mr-2"></i>
+                            {{cuenta.titular}}
+                        </td>
+                        <td class="text-right font-bold text-primary">
+                            {{cuenta.saldoActual | currency:'USD'}}
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center gap-2">
+                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-success p-button-sm" pTooltip="Editar" tooltipPosition="top" (click)="editCuenta(cuenta)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm" pTooltip="Desactivar" tooltipPosition="top" (click)="deleteCuenta(cuenta)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center text-500 py-4">
+                            <i class="pi pi-inbox text-3xl mb-2 block"></i>
+                            No se encontraron cuentas bancarias.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="cuentaDialog" [style]="{width: '500px'}" [modal]="true" class="p-fluid" styleClass="border-round-xl shadow-5 overflow-hidden">
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="p-2 border-round-lg bg-primary-50">
+                <i class="pi pi-wallet text-primary text-xl"></i>
+            </div>
+            <div>
+                <div class="font-bold text-900" style="font-size: 1.05rem;">Detalles de la Cuenta</div>
+                <div class="text-500" style="font-size: 0.8rem;">Información bancaria</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <div class="grid mt-2">
+            <div class="field col-12 mb-3">
+                <label for="banco" class="font-semibold text-700 block mb-1">Banco</label>
+                <p-dropdown [options]="bancos" [(ngModel)]="bancoSeleccionado" optionLabel="nombre" placeholder="Selecciona un Banco" [ngClass]="{'ng-invalid ng-dirty': submitted && !bancoSeleccionado}" styleClass="border-round-lg" [appendTo]="'body'"></p-dropdown>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !bancoSeleccionado">El banco es requerido.</small>
+            </div>
+            
+            <div class="field col-12 md:col-6 mb-3">
+                <label for="numeroCuenta" class="font-semibold text-700 block mb-1">Número de Cuenta</label>
+                <input type="text" pInputText id="numeroCuenta" [(ngModel)]="cuenta.numeroCuenta" required [ngClass]="{'ng-invalid ng-dirty': submitted && !cuenta.numeroCuenta}" styleClass="border-round-lg" />
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !cuenta.numeroCuenta">Requerido.</small>
+            </div>
+
+            <div class="field col-12 md:col-6 mb-3">
+                <label for="tipoCuenta" class="font-semibold text-700 block mb-1">Tipo de Cuenta</label>
+                <p-dropdown [options]="tiposCuenta" [(ngModel)]="cuenta.tipoCuenta" optionLabel="label" optionValue="value" placeholder="Seleccione" [ngClass]="{'ng-invalid ng-dirty': submitted && !cuenta.tipoCuenta}" styleClass="border-round-lg" [appendTo]="'body'"></p-dropdown>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !cuenta.tipoCuenta">Requerido.</small>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label for="titular" class="font-semibold text-700 block mb-1">Titular</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-user"></i></span>
+                    <input type="text" pInputText id="titular" [(ngModel)]="cuenta.titular" required [ngClass]="{'ng-invalid ng-dirty': submitted && !cuenta.titular}" styleClass="border-round-lg" />
+                </div>
+                <small class="ng-dirty ng-invalid text-red-500 mt-1 block" *ngIf="submitted && !cuenta.titular">El titular es requerido.</small>
+            </div>
+
+            <div class="field col-12 mb-2">
+                <label for="saldoActual" class="font-semibold text-700 block mb-1">Saldo Inicial / Actual ($)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-dollar"></i></span>
+                    <input type="number" pInputText id="saldoActual" [(ngModel)]="cuenta.saldoActual" placeholder="0.00" step="0.01" styleClass="border-round-lg" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-2 pt-3 border-top-1 surface-border">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-primary shadow-2 border-round-lg" (click)="saveCuenta()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

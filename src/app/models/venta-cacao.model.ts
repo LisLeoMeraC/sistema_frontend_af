@@ -21,6 +21,8 @@ export interface OrdenVentaCacao {
     precioPorQuintal?: number;
     total?: number;
     formaPago: 'E' | 'T';
+    montoPagado?: number;
+    cuentaBancariaId?: number;
     notas?: string;
     estado?: string;
     detalles: DetalleVentaCacao[];

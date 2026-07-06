@@ -11,4 +11,5 @@ export interface CompraCacao {
     pagoTransferencia: number;
     precioPorQuintal: number;
     cliente?: Cliente;
+    cuentaBancariaId?: number;
 }

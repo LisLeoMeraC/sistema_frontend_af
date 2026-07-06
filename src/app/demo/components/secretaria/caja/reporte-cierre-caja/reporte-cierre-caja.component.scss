@@ -1,0 +1,89 @@
+.report-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: white;
+    color: #333;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    
+    th, td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #f9fafb;
+        font-weight: 700;
+        color: #374151;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+}
+
+.data-table {
+    border: 1px solid #e5e7eb;
+    
+    th, td {
+        border: 1px solid #e5e7eb;
+    }
+}
+
+/* Print Specific Styles */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    app-reporte-cierre-caja,
+    app-reporte-cierre-caja * {
+        visibility: visible;
+    }
+    
+    app-reporte-cierre-caja {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background-color: white;
+    }
+
+    .report-container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+    
+    .noprint {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+    
+    .page-break-inside-avoid {
+        page-break-inside: avoid;
+    }
+    
+    /* Colors for printing */
+    .bg-gray-50 { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
+    .bg-green-50 { background-color: #f0fdf4 !important; -webkit-print-color-adjust: exact; }
+    .bg-red-50 { background-color: #fef2f2 !important; -webkit-print-color-adjust: exact; }
+    .bg-blue-50 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; }
+    .bg-orange-50 { background-color: #fff7ed !important; -webkit-print-color-adjust: exact; }
+    .bg-green-100 { background-color: #dcfce7 !important; -webkit-print-color-adjust: exact; }
+    .bg-red-100 { background-color: #fee2e2 !important; -webkit-print-color-adjust: exact; }
+    
+    .text-green-700 { color: #15803d !important; }
+    .text-red-700 { color: #b91c1c !important; }
+    .text-blue-700 { color: #1d4ed8 !important; }
+    .text-orange-700 { color: #c2410c !important; }
+}

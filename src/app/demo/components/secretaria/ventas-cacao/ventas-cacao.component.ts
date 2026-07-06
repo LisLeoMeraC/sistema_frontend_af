@@ -8,6 +8,8 @@ import { VentaCacaoService } from 'src/app/demo/service/venta-cacao.service';
 import { CompraCacaoService } from 'src/app/demo/service/compra-cacao.service';
 import { Proveedor } from 'src/app/models/proveedor.model';
 import { OrdenVentaCacao, DetalleVentaCacao, TipoCacao } from 'src/app/models/venta-cacao.model';
+import { CuentaBancariaService } from 'src/app/demo/service/cuenta-bancaria.service';
+import { CuentaBancaria } from 'src/app/demo/api/caja-bancos';
 
 @Component({
     selector: 'app-ventas-cacao',
@@ -22,6 +24,9 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
     ventas: OrdenVentaCacao[] = [];
     proveedores: Proveedor[] = [];
     tiposCacao: TipoCacao[] = [];
+    cuentasBancarias: CuentaBancaria[] = [];
+    
+    saldoPendienteCalculado: number = 0;
 
     // Loadings
     loadingVentas: boolean = false;
@@ -58,9 +63,11 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
         private fb: FormBuilder,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
+        private confirmService: ConfirmationService, // the parameter is already confirmationService, let me just keep it
         private proveedorService: ProveedorService,
         private ventaCacaoService: VentaCacaoService,
-        private compraCacaoService: CompraCacaoService
+        private compraCacaoService: CompraCacaoService,
+        private cuentaBancariaService: CuentaBancariaService
     ) {}
 
     ngOnInit(): void {
@@ -68,6 +75,7 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
         this.cargarVentas();
         this.cargarProveedores();
         this.cargarTiposCacao();
+        this.cargarCuentasBancarias();
 
         // Configuración de búsqueda reactiva (debounce)
         this.searchVentasSub = this.searchVentasSubject.pipe(debounceTime(350)).subscribe(term => {
@@ -96,10 +104,22 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
         this.ventaForm = this.fb.group({
             proveedor: [null, Validators.required],
             formaPago: ['E', Validators.required],
+            montoPagado: [0, Validators.required],
+            cuentaBancariaId: [null],
             notas: [''],
             quintales: [{ value: 0, disabled: true }],
             total: [{ value: 0, disabled: true }],
             detalles: this.fb.array([], Validators.required)
+        });
+
+        this.ventaForm.get('montoPagado')?.valueChanges.subscribe(val => {
+            this.calcularSaldoPendiente();
+        });
+    }
+
+    cargarCuentasBancarias() {
+        this.cuentaBancariaService.listarCuentasBancariasActivas().subscribe(res => {
+            this.cuentasBancarias = res;
         });
     }
 
@@ -279,6 +299,8 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
         this.editingVentaId = null;
         this.ventaForm.reset({
             formaPago: 'E',
+            montoPagado: 0,
+            cuentaBancariaId: null,
             quintales: 0,
             total: 0
         });
@@ -342,6 +364,15 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
             quintales: totalQuintales.toFixed(2),
             total: totalDinero.toFixed(2)
         }, { emitEvent: false });
+        
+        this.calcularSaldoPendiente();
+    }
+
+    calcularSaldoPendiente() {
+        const total = parseFloat(this.ventaForm.get('total')?.value) || 0;
+        const cobrado = parseFloat(this.ventaForm.get('montoPagado')?.value) || 0;
+        this.saldoPendienteCalculado = total - cobrado;
+        if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;
     }
 
     editVenta(venta: OrdenVentaCacao) {
@@ -350,6 +381,8 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
         this.ventaForm.reset({
             proveedor: this.proveedores.find(p => p.id === venta.proveedor.id),
             formaPago: venta.formaPago,
+            montoPagado: venta.montoPagado || venta.total || 0,
+            cuentaBancariaId: venta.cuentaBancariaId ? this.cuentasBancarias.find(c => c.id === venta.cuentaBancariaId) : null,
             notas: venta.notas,
             quintales: venta.quintales,
             total: venta.total
@@ -390,6 +423,8 @@ export class VentasCacaoComponent implements OnInit, OnDestroy {
             fecha: this.formatearFechaLocal(new Date()),
             proveedor: { id: formValue.proveedor.id } as Proveedor,
             formaPago: formValue.formaPago,
+            montoPagado: parseFloat(formValue.montoPagado),
+            cuentaBancariaId: formValue.cuentaBancariaId?.id,
             notas: formValue.notas,
             detalles: detallesMapeados
         };

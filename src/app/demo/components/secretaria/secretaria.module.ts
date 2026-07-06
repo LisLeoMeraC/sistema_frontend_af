@@ -13,6 +13,7 @@ import { ComprasComponent } from './compras/compras.component';
 import { ComprasSemanalesComponent } from './compras-semanales/compras-semanales.component';
 import { ViewComprasOtrosProductosComponent } from './view-compras-otros-productos/view-compras-otros-productos.component';
 import { ReporteMensualClientesComponent } from './reporte-mensual-clientes/reporte-mensual-clientes.component';
+import { ReporteCierreCajaComponent } from './caja/reporte-cierre-caja/reporte-cierre-caja.component';
 
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -60,7 +61,8 @@ import { VentasCacaoComponent } from './ventas-cacao/ventas-cacao.component';
     ViewComprasOtrosProductosComponent,
     VentasCacaoComponent,
     ViewVentasComponent,
-    ReporteMensualClientesComponent
+    ReporteMensualClientesComponent,
+    ReporteCierreCajaComponent
   ],
   imports: [
     CommonModule,

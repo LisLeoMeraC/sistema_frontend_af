@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { CajaService } from 'src/app/demo/service/caja.service';
 import { LoginService } from 'src/app/demo/service/login.service';
@@ -51,7 +52,8 @@ export class CajaComponent implements OnInit {
         private messageService: MessageService,
         private datePipe: DatePipe,
         private confirmationService: ConfirmationService,
-        private loginService: LoginService
+        private loginService: LoginService,
+        private router: Router
     ) {
         this.idCaja = 0;
         this.openCajaForm = this.fb.group({
@@ -259,6 +261,7 @@ export class CajaComponent implements OnInit {
                         detail: 'Transacción registrada correctamente',
                     });
                     this.closeTransaccionDialog();
+                    this.listarCaja();
                 },
                 error: (err) => {
                     this.messageService.add({
@@ -481,6 +484,7 @@ export class CajaComponent implements OnInit {
                     idTipoTransaccionIngreso,
                     idTipoTransaccionEgreso
                 );
+                this.listarCaja();
             },
             error: (error: any) => {
                 this.messageService.add({
@@ -506,5 +510,11 @@ export class CajaComponent implements OnInit {
         });
     }
 
-   
+    generarReporte(idCaja: number) {
+        // Redirige a la ruta del reporte en otra ventana o en la misma, pasándole el ID de la caja
+        const url = this.router.serializeUrl(
+            this.router.createUrlTree(['/secretaria/caja/reporte'], { queryParams: { id: idCaja } })
+        );
+        window.open(url, '_blank');
+    }
 }

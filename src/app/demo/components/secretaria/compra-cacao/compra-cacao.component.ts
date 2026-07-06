@@ -9,6 +9,8 @@ import { ClienteService } from 'src/app/demo/service/cliente.service';
 import { CompraCacaoService } from 'src/app/demo/service/compra-cacao.service';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { CuentaBancariaService } from 'src/app/demo/service/cuenta-bancaria.service';
+import { CuentaBancaria } from 'src/app/demo/api/caja-bancos';
 
 @Component({
     selector: 'app-compra-cacao',
@@ -29,6 +31,10 @@ export class CompraCacaoComponent implements OnInit {
     loading: boolean = false;
     guardando: boolean = false;
     eliminandoId: number | null = null;
+    
+    cuentasBancarias: CuentaBancaria[] = [];
+    totalCompraCalculado: number = 0;
+    saldoPendienteCalculado: number = 0;
 
     // Cliente seleccionado cuando es "Cliente Registrado"
     clienteSeleccionado: any = null;
@@ -46,7 +52,8 @@ export class CompraCacaoComponent implements OnInit {
         private compraCacaoService: CompraCacaoService,
         private confirmationService: ConfirmationService,
         private clienteService: ClienteService,
-        private datePipe: DatePipe
+        private datePipe: DatePipe,
+        private cuentaBancariaService: CuentaBancariaService
     ) {
         this.registerFormCompraCacao = this.fb.group({
             tipoCliente: [null, Validators.required],
@@ -54,9 +61,10 @@ export class CompraCacaoComponent implements OnInit {
             fechaCompra: [new Date(), Validators.required],
             cantidadLibras: [null, Validators.required],
             precioPorQuintal: [null, Validators.required],
-            totalPagado: [null, Validators.required],
-            pagoEfectivo: [null, Validators.required],
-            pagoTransferencia: [null, Validators.required],
+            totalPagado: [0],
+            pagoEfectivo: [0, Validators.required],
+            pagoTransferencia: [0, Validators.required],
+            cuentaBancariaId: [null]
         });
         this.searchForm = this.fb.group({
             fecha: [null],
@@ -71,7 +79,8 @@ export class CompraCacaoComponent implements OnInit {
 
         this.obtenerComprasCacaoToday();
         this.obtenerTotalTipoCacaoToday();
-        this.onTotalPagadoChange();
+        this.cargarCuentasBancarias();
+        this.onPagosChange();
         this.onCalcularTotalChange();
 
         // Debounce para búsqueda de clientes
@@ -89,6 +98,12 @@ export class CompraCacaoComponent implements OnInit {
     }
 
     // ─── TIPO CLIENTE ──────────────────────────────────────────────────────────
+    cargarCuentasBancarias() {
+        this.cuentaBancariaService.listarCuentasBancariasActivas().subscribe(res => {
+            this.cuentasBancarias = res;
+        });
+    }
+
     onTipoClienteChange(event: any): void {
         const valor = event?.value?.value;
         if (valor === 1) {
@@ -204,9 +219,10 @@ export class CompraCacaoComponent implements OnInit {
             fechaCompra: this.formatearFechaLocal(fechaCompra),
             cantidadLibras: parseFloat(formValue.cantidadLibras),
             precioPorQuintal: parseFloat(formValue.precioPorQuintal),
-            totalPagado: parseFloat(formValue.totalPagado),
-            pagoEfectivo: parseFloat(formValue.pagoEfectivo),
-            pagoTransferencia: parseFloat(formValue.pagoTransferencia),
+            totalPagado: this.totalCompraCalculado,
+            pagoEfectivo: parseFloat(formValue.pagoEfectivo) || 0,
+            pagoTransferencia: parseFloat(formValue.pagoTransferencia) || 0,
+            cuentaBancariaId: formValue.cuentaBancariaId?.id
         };
 
         // Envelope: siempre envía compraCacao; clienteId solo si es cliente registrado
@@ -244,8 +260,12 @@ export class CompraCacaoComponent implements OnInit {
     showCompraCacaoModalDialog() {
         this.registerFormCompraCacao.patchValue({
             fechaCompra: new Date(),
-            pagoTransferencia: 0.0,
+            pagoEfectivo: 0,
+            pagoTransferencia: 0,
+            cuentaBancariaId: null
         });
+        this.totalCompraCalculado = 0;
+        this.saldoPendienteCalculado = 0;
         this.clienteSeleccionado = null;
         this.displayModalCompraCacao = true;
         this.obtenerTiposCacao();
@@ -259,14 +279,17 @@ export class CompraCacaoComponent implements OnInit {
     }
 
     // ─── AUXILIARES ───────────────────────────────────────────────────────────
-    onTotalPagadoChange(): void {
-        const ctrl = this.registerFormCompraCacao.get('totalPagado');
-        if (ctrl) {
-            ctrl.valueChanges.subscribe((value) => {
-                this.registerFormCompraCacao.patchValue(
-                    { pagoEfectivo: value || 0, pagoTransferencia: 0.0 },
-                    { emitEvent: false }
-                );
+    onPagosChange(): void {
+        const ef = this.registerFormCompraCacao.get('pagoEfectivo');
+        const tr = this.registerFormCompraCacao.get('pagoTransferencia');
+        if (ef && tr) {
+            merge(ef.valueChanges, tr.valueChanges).subscribe(() => {
+                const eVal = parseFloat(ef.value) || 0;
+                const tVal = parseFloat(tr.value) || 0;
+                const tp = eVal + tVal;
+                
+                this.saldoPendienteCalculado = this.totalCompraCalculado - tp;
+                if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;
             });
         }
     }
@@ -274,6 +297,8 @@ export class CompraCacaoComponent implements OnInit {
     onCalcularTotalChange(): void {
         const libras = this.registerFormCompraCacao.get('cantidadLibras');
         const precio = this.registerFormCompraCacao.get('precioPorQuintal');
+        const ef = this.registerFormCompraCacao.get('pagoEfectivo');
+        const tr = this.registerFormCompraCacao.get('pagoTransferencia');
         
         if (libras && precio) {
             merge(libras.valueChanges, precio.valueChanges).subscribe(() => {
@@ -282,12 +307,13 @@ export class CompraCacaoComponent implements OnInit {
                 
                 // Conversión: 100 lb = 1 QQ
                 const total = (qLibras / 100) * qPrecio;
+                this.totalCompraCalculado = total;
                 
-                if (total > 0) {
-                    this.registerFormCompraCacao.patchValue({
-                        totalPagado: total.toFixed(2)
-                    }, { emitEvent: true });
-                }
+                const eVal = parseFloat(ef?.value) || 0;
+                const tVal = parseFloat(tr?.value) || 0;
+                const tp = eVal + tVal;
+                this.saldoPendienteCalculado = total - tp;
+                if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;
             });
         }
     }
