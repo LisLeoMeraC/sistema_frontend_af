@@ -318,6 +318,14 @@ export class CompraCacaoComponent implements OnInit {
         }
     }
 
+    onTotalManualChange(newTotal: number): void {
+        this.totalCompraCalculado = parseFloat(newTotal as any) || 0;
+        const ef = parseFloat(this.registerFormCompraCacao.get('pagoEfectivo')?.value) || 0;
+        const tr = parseFloat(this.registerFormCompraCacao.get('pagoTransferencia')?.value) || 0;
+        this.saldoPendienteCalculado = this.totalCompraCalculado - (ef + tr);
+        if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;
+    }
+
     eliminarCompra(compraCacao: any) {
         this.eliminandoId = compraCacao.id;
         this.compraCacaoService.eliminarCompraCacao(compraCacao.id).subscribe({

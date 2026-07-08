@@ -1,6 +1,7 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="/">
-        <img src="assets/logo.png" alt="AgroFranco Logo" style="height: 50px; object-fit: contain;">
+    <a class="layout-topbar-logo" routerLink="/" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+        <img src="assets/logo.png" alt="AgroFranco Logo" style="height: 42px; object-fit: contain;">
+        <div style="font-family: 'Inter', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; color: #1a5c2a;">AgroFranco</div>
     </a>
 
     <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
