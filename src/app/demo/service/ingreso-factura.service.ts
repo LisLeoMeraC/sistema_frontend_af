@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IngresoFacturaComponent } from '../components/Asistente-factura/ingreso-factura/ingreso-factura.component';
 import { Observable } from 'rxjs';
 import baseUrl from './helper';
 import { IngresoFactura } from 'src/app/models/ingresoFactura';

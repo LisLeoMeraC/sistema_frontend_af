@@ -141,17 +141,53 @@ export class TransaccionesBancoComponent implements OnInit {
   // Comprobantes
   descargarComprobante(transaccion: TransaccionBancariaDTO) {
     if(transaccion.id) {
-      this.transaccionService.descargarComprobante(transaccion.id).subscribe((blob) => {
+      this.transaccionService.descargarComprobante(transaccion.id).subscribe((response: any) => {
+        let filename = `Comprobante_${transaccion.numeroComprobante || transaccion.id}.pdf`;
+        const contentDisposition = response.headers.get('content-disposition');
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+            if (filenameMatch && filenameMatch.length === 2)
+                filename = filenameMatch[1];
+        }
+
+        const blob = response.body;
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Comprobante_${transaccion.numeroComprobante || transaccion.id}.pdf`; // Extensión puede variar
+        a.download = filename; 
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
       }, err => {
         Swal.fire('Error', 'No se pudo descargar el comprobante', 'error');
+      });
+    }
+  }
+
+  eliminarComprobante(transaccion: TransaccionBancariaDTO) {
+    if (transaccion.id) {
+      Swal.fire({
+        title: '¿Eliminar comprobante?',
+        text: '¿Está seguro de que desea eliminar este comprobante?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.transaccionService.eliminarComprobante(transaccion.id!).subscribe({
+            next: () => {
+              Swal.fire('Eliminado', 'Comprobante eliminado correctamente', 'success');
+              if (this.cuentaSeleccionada?.id) {
+                this.cargarTransacciones(this.cuentaSeleccionada.id);
+              }
+            },
+            error: () => {
+              Swal.fire('Error', 'No se pudo eliminar el comprobante', 'error');
+            }
+          });
+        }
       });
     }
   }

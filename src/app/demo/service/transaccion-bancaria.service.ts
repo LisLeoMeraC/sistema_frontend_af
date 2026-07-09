@@ -28,7 +28,11 @@ export class TransaccionBancariaService {
     return this.http.post<TransaccionBancariaDTO>(`${baseUrl}/transacciones-bancarias/${id}/comprobante`, formData);
   }
 
-  descargarComprobante(id: number): Observable<Blob> {
-    return this.http.get(`${baseUrl}/transacciones-bancarias/${id}/comprobante`, { responseType: 'blob' });
+  descargarComprobante(id: number): Observable<any> {
+    return this.http.get(`${baseUrl}/transacciones-bancarias/${id}/comprobante`, { responseType: 'blob', observe: 'response' });
+  }
+
+  eliminarComprobante(id: number): Observable<any> {
+    return this.http.delete(`${baseUrl}/transacciones-bancarias/${id}/comprobante`);
   }
 }

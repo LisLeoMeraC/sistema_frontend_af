@@ -307,12 +307,15 @@ export class CompraCacaoComponent implements OnInit {
                 
                 // Conversión: 100 lb = 1 QQ
                 const total = (qLibras / 100) * qPrecio;
-                this.totalCompraCalculado = total;
+                this.totalCompraCalculado = parseFloat(total.toFixed(2));
                 
-                const eVal = parseFloat(ef?.value) || 0;
+                // Asignar el total al campo de efectivo
+                this.registerFormCompraCacao.patchValue({ pagoEfectivo: this.totalCompraCalculado }, { emitEvent: false });
+                
+                const eVal = this.totalCompraCalculado;
                 const tVal = parseFloat(tr?.value) || 0;
                 const tp = eVal + tVal;
-                this.saldoPendienteCalculado = total - tp;
+                this.saldoPendienteCalculado = this.totalCompraCalculado - tp;
                 if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;
             });
         }
@@ -320,7 +323,9 @@ export class CompraCacaoComponent implements OnInit {
 
     onTotalManualChange(newTotal: number): void {
         this.totalCompraCalculado = parseFloat(newTotal as any) || 0;
-        const ef = parseFloat(this.registerFormCompraCacao.get('pagoEfectivo')?.value) || 0;
+        this.registerFormCompraCacao.patchValue({ pagoEfectivo: this.totalCompraCalculado }, { emitEvent: false });
+        
+        const ef = this.totalCompraCalculado;
         const tr = parseFloat(this.registerFormCompraCacao.get('pagoTransferencia')?.value) || 0;
         this.saldoPendienteCalculado = this.totalCompraCalculado - (ef + tr);
         if (this.saldoPendienteCalculado < 0) this.saldoPendienteCalculado = 0;

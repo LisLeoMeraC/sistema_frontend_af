@@ -89,7 +89,8 @@
                         <td class="text-center">
                             <div class="flex justify-content-center gap-2">
                                 <button *ngIf="tx.tieneComprobante" pButton pRipple icon="pi pi-download" class="p-button-rounded p-button-text p-button-info p-button-sm" pTooltip="Descargar Comprobante" tooltipPosition="top" (click)="descargarComprobante(tx)"></button>
-                                <button pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-text p-button-secondary p-button-sm" pTooltip="Subir Comprobante" tooltipPosition="top" (click)="openSubirComprobante(tx)"></button>
+                                <button *ngIf="tx.tieneComprobante" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger p-button-sm" pTooltip="Eliminar Comprobante" tooltipPosition="top" (click)="eliminarComprobante(tx)"></button>
+                                <button *ngIf="!tx.tieneComprobante" pButton pRipple icon="pi pi-upload" class="p-button-rounded p-button-text p-button-secondary p-button-sm" pTooltip="Subir Comprobante" tooltipPosition="top" (click)="openSubirComprobante(tx)"></button>
                             </div>
                         </td>
                     </tr>
