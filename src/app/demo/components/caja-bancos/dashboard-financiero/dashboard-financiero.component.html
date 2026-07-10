@@ -1,0 +1,200 @@
+<div *ngIf="!dashboardData" class="flex justify-content-center align-items-center h-screen">
+    <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+</div>
+
+<div *ngIf="dashboardData" class="report-container">
+    <div class="action-bar surface-0 p-3 shadow-2 border-round flex justify-content-end align-items-center mb-4">
+        <button pButton pRipple icon="pi pi-download" label="Exportar a PDF" class="p-button-primary" (click)="descargarPDF()" [loading]="descargando" [disabled]="descargando"></button>
+    </div>
+
+    <div class="paper shadow-2 p-5 bg-white border-round-xl" #reportePaper>
+        <!-- Header -->
+        <div class="header border-bottom-1 surface-border pb-4 mb-4 flex justify-content-between align-items-start">
+            <div class="flex align-items-center gap-3">
+                <img src="assets/logo.png" alt="Logo AgroFranco" style="height: 60px; width: auto; object-fit: contain;" />
+                <div>
+                    <h2 class="m-0 text-900 font-bold">AgroFranco</h2>
+                    <p class="m-0 text-600">Sistema ERP Corporativo</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="m-0 text-primary font-bold text-2xl">DASHBOARD EJECUTIVO</h1>
+                <h2 class="m-0 text-700 text-lg">Disponibilidad Financiera</h2>
+                <p class="m-0 text-500 mt-2 text-sm">Moneda: USD ($)</p>
+                <p class="m-0 text-500 text-sm">Fecha consulta: {{fechaActual | date:'dd/MM/yyyy HH:mm'}}</p>
+                <p class="m-0 text-500 text-sm">Usuario: {{usuarioActual}}</p>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid mb-5">
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="kpi-card surface-0 shadow-1 p-3 border-round-xl border-left-3 border-blue-500">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-2">Liquidez Total</span>
+                            <div class="text-900 font-bold text-2xl">{{dashboardData.liquidezTotal | currency:'USD'}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-money-bill text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-green-500 font-medium">100% </span>
+                    <span class="text-500">del efectivo</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="kpi-card surface-0 shadow-1 p-3 border-round-xl border-left-3 border-indigo-500">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-2">Total en Bancos</span>
+                            <div class="text-900 font-bold text-2xl">{{dashboardData.totalBancos | currency:'USD'}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-indigo-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-building text-indigo-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-indigo-500 font-medium">{{dashboardData.porcentajeBancos | number:'1.0-1'}}% </span>
+                    <span class="text-500">de liquidez</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="kpi-card surface-0 shadow-1 p-3 border-round-xl border-left-3 border-orange-500">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-2">Total en Cajas</span>
+                            <div class="text-900 font-bold text-2xl">{{dashboardData.totalCajas | currency:'USD'}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-inbox text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-orange-500 font-medium">{{dashboardData.porcentajeCajas | number:'1.0-1'}}% </span>
+                    <span class="text-500">de liquidez</span>
+                </div>
+            </div>
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="kpi-card surface-0 shadow-1 p-3 border-round-xl border-left-3 border-green-500">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-2">Cuentas Activas</span>
+                            <div class="text-900 font-bold text-2xl">{{dashboardData.numCuentasActivas}}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-wallet text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                    <span class="text-500">en </span>
+                    <span class="text-green-500 font-medium">{{dashboardData.numBancos}} Bancos</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid mb-5">
+            <div class="col-12 lg:col-4">
+                <div class="card p-3 shadow-1 border-none border-round h-full">
+                    <h5 class="text-700 font-bold mb-4 text-center">Distribución de Liquidez</h5>
+                    <div class="flex justify-content-center">
+                        <p-chart type="doughnut" [data]="donutData" [options]="donutOptions" width="250px" height="250px"></p-chart>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 lg:col-4">
+                <div class="card p-3 shadow-1 border-none border-round h-full">
+                    <h5 class="text-700 font-bold mb-4 text-center">Saldos por Banco</h5>
+                    <p-chart type="bar" [data]="barData" [options]="barOptions" height="250px"></p-chart>
+                </div>
+            </div>
+            <div class="col-12 lg:col-4">
+                <div class="card p-3 shadow-1 border-none border-round h-full">
+                    <h5 class="text-700 font-bold mb-4 text-center">Ranking Cuentas (Top 10)</h5>
+                    <p-chart type="bar" [data]="rankingData" [options]="rankingOptions" height="250px"></p-chart>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <div class="mb-5 border-top-1 surface-border pt-4">
+            <h4 class="text-800 font-bold mb-3"><i class="pi pi-bell mr-2"></i>Alertas Financieras</h4>
+            <div class="grid">
+                <div class="col-12 md:col-4">
+                    <div class="p-3 border-round bg-green-50 text-green-700 border-1 border-green-200">
+                        <i class="pi pi-check-circle mr-2"></i>
+                        <strong>{{dashboardData.cuentasSaldoSuficiente}}</strong> Cuentas con saldo saludable (> $500)
+                    </div>
+                </div>
+                <div class="col-12 md:col-4">
+                    <div class="p-3 border-round bg-yellow-50 text-yellow-700 border-1 border-yellow-200">
+                        <i class="pi pi-exclamation-triangle mr-2"></i>
+                        <strong>{{dashboardData.cuentasSaldoBajo}}</strong> Cuentas con saldo bajo (< $500)
+                    </div>
+                </div>
+                <div class="col-12 md:col-4">
+                    <div class="p-3 border-round bg-red-50 text-red-700 border-1 border-red-200">
+                        <i class="pi pi-times-circle mr-2"></i>
+                        <strong>{{dashboardData.cuentasSinFondos}}</strong> Cuentas sin fondos ($0)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="mb-5">
+            <h4 class="text-800 font-bold mb-3"><i class="pi pi-table mr-2"></i>Detalle Consolidado de Cuentas</h4>
+            <p-table [value]="dashboardData.cuentasConsolidadas" responsiveLayout="scroll" [rows]="100" [rowHover]="true" styleClass="p-datatable-sm p-datatable-striped">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Banco / Caja</th>
+                        <th>Nombre Cuenta</th>
+                        <th>Nro. Cuenta</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-right">Saldo Disponible</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-cuenta>
+                    <tr [ngClass]="{'table-row-inactiva': cuenta.estado === 'Inactiva', 'table-row-cero': cuenta.saldoDisponible === 0}">
+                        <td><span class="p-badge" [ngClass]="cuenta.tipo === 'BANCO' ? 'p-badge-info' : 'p-badge-warning'">{{cuenta.tipo}}</span></td>
+                        <td class="font-bold">{{cuenta.banco}}</td>
+                        <td>{{cuenta.cuenta}}</td>
+                        <td class="font-mono text-500">{{cuenta.numeroCuenta}}</td>
+                        <td class="text-center">
+                            <span class="p-tag" [ngClass]="cuenta.estado === 'Activa' ? 'p-tag-success' : 'p-tag-danger'">
+                                {{cuenta.estado}}
+                            </span>
+                        </td>
+                        <td class="text-right font-bold text-lg" [ngClass]="{'text-green-600': cuenta.saldoDisponible > 500, 'text-yellow-600': cuenta.saldoDisponible > 0 && cuenta.saldoDisponible <= 500, 'text-red-600': cuenta.saldoDisponible <= 0}">
+                            {{cuenta.saldoDisponible | currency:'USD'}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="surface-100 p-4 border-round mb-4">
+            <h5 class="text-900 font-bold mb-2">Conclusión Automática</h5>
+            <p class="text-700 line-height-3 m-0 text-justify">
+                La empresa dispone actualmente de una liquidez total de <strong>{{dashboardData.liquidezTotal | currency:'USD'}}</strong>. 
+                El <strong>{{dashboardData.porcentajeBancos | number:'1.0-1'}}%</strong> del efectivo se encuentra en cuentas bancarias 
+                y el <strong>{{dashboardData.porcentajeCajas | number:'1.0-1'}}%</strong> en cajas de la empresa. 
+                El banco con mayor disponibilidad es <strong>{{dashboardData.distribucionBancos[0]?.banco || 'N/A'}}</strong>, 
+                mientras que la cuenta con mayor saldo corresponde a <strong>{{dashboardData.cuentasConsolidadas[0]?.cuenta || 'N/A'}}</strong>. 
+                Actualmente existen {{dashboardData.cuentasSaldoBajo}} cuentas con saldo bajo y {{dashboardData.cuentasSinFondos}} cuentas sin fondos.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="border-top-1 surface-border pt-3 flex justify-content-between text-sm text-500 mt-5">
+            <div>
+                Sistema ERP AgroFranco<br>
+                Módulo Financiero Gerencial v2.1
+            </div>
+            <div class="text-right">
+                Generado el {{fechaActual | date:'dd/MM/yyyy HH:mm'}}<br>
+                Documento de uso interno confidencial
+            </div>
+        </div>
+    </div>
+</div>

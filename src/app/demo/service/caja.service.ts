@@ -13,8 +13,16 @@ export class CajaService {
         return this.http.post(`${baseUrl}/caja/abrir`, data);
     }
 
-    listarCajasDescendente(): Observable<any[]> {
-        return this.http.get<any[]>(`${baseUrl}/caja`);
+    listarCajasDescendente(tipoCaja: string = 'GENERAL'): Observable<any[]> {
+        return this.http.get<any[]>(`${baseUrl}/caja`, {
+            params: { tipoCaja }
+        });
+    }
+
+    obtenerCajaAbierta(tipoCaja: string = 'GENERAL'): Observable<any> {
+        return this.http.get<any>(`${baseUrl}/caja/abierta`, {
+            params: { tipoCaja }
+        });
     }
 
     obtenerTiposTransaccion(): Observable<any[]> {

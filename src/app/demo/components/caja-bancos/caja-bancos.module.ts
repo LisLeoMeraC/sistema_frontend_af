@@ -8,6 +8,8 @@ import { CuentasBancariasComponent } from './cuentas-bancarias/cuentas-bancarias
 import { TransaccionesBancoComponent } from './transacciones-banco/transacciones-banco.component';
 import { CuentasPorPagarComponent } from './cuentas-por-pagar/cuentas-por-pagar.component';
 import { CuentasPorCobrarComponent } from './cuentas-por-cobrar/cuentas-por-cobrar.component';
+import { ReporteLibroBancosComponent } from './reporte-libro-bancos/reporte-libro-bancos.component';
+import { DashboardFinancieroComponent } from './dashboard-financiero/dashboard-financiero.component';
 
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
@@ -21,6 +23,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CalendarModule } from 'primeng/calendar';
+import { ChartModule } from 'primeng/chart';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
@@ -29,7 +33,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     CuentasBancariasComponent,
     TransaccionesBancoComponent,
     CuentasPorPagarComponent,
-    CuentasPorCobrarComponent
+    CuentasPorCobrarComponent,
+    ReporteLibroBancosComponent,
+    DashboardFinancieroComponent
   ],
   imports: [
     CommonModule,
@@ -46,8 +52,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     ConfirmDialogModule,
     InputNumberModule,
     TooltipModule,
-    InputTextareaModule
+    InputTextareaModule,
+    CalendarModule,
+    ChartModule
   ],
+
   providers: [MessageService, ConfirmationService]
 })
 export class CajaBancosModule { }

@@ -67,3 +67,62 @@ export interface PagoCuentaDTO {
     descripcion: string;
     fechaPago: string;
 }
+
+export interface ReporteLibroBancosDTO {
+    cuentaId: number;
+    bancoNombre: string;
+    numeroCuenta: string;
+    tipoCuenta: string;
+    fechaInicio: string;
+    fechaFin: string;
+    saldoInicial: number;
+    totalIngresos: number;
+    totalEgresos: number;
+    saldoFinal: number;
+    transacciones: TransaccionBancariaDTO[];
+}
+
+export interface CuentaConsolidadaDTO {
+    id: number;
+    tipo: string;
+    banco: string;
+    cuenta: string;
+    numeroCuenta: string;
+    moneda: string;
+    saldoDisponible: number;
+    estado: string;
+    ultimoMovimiento: string;
+    responsable: string;
+}
+
+export interface BancoConsolidadoDTO {
+    banco: string;
+    saldo: number;
+    porcentaje: number;
+}
+
+export interface DashboardFinancieroDTO {
+    liquidezTotal: number;
+    totalBancos: number;
+    totalCajas: number;
+    
+    numCuentasActivas: number;
+    numBancos: number;
+    numCajas: number;
+    
+    porcentajeBancos: number;
+    porcentajeCajas: number;
+    
+    distribucionBancos: BancoConsolidadoDTO[];
+    cuentasConsolidadas: CuentaConsolidadaDTO[];
+
+    cuentasInactivas: number;
+    saldoPromedioCuenta: number;
+    mayorSaldo: number;
+    menorSaldo: number;
+
+    cuentasSaldoSuficiente: number;
+    cuentasSaldoBajo: number;
+    cuentasSinFondos: number;
+    cuentasSinMovimientos: number;
+}

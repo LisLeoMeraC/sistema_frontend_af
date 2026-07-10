@@ -47,5 +47,10 @@ export class CompraCacaoService {
   eliminarCompraCacao(id: number): Observable<void> {
     return this.http.delete<void>(`${baseUrl}/compras-cacao/${id}`);
   }
-    
+
+  obtenerDashboardCompras(desde: string, hasta: string): Observable<any> {
+    return this.http.get<any>(`${baseUrl}/compras-cacao/dashboard`, {
+        params: { desde, hasta }
+    });
+  }
 }

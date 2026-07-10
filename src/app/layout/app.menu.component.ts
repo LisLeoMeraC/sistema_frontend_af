@@ -48,6 +48,11 @@ export class AppMenuComponent implements OnInit {
                             routerLink: ['/administrador/clientes'],
                         },
                         {
+                            label: 'Dashboard Financiero',
+                            icon: 'pi pi-fw pi-chart-pie',
+                            routerLink: ['/caja-bancos/dashboard-financiero'],
+                        },
+                        {
                             label: 'Bancos',
                             icon: 'pi pi-fw pi-building',
                             routerLink: ['/caja-bancos/bancos'],
@@ -180,10 +185,16 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-money-bill',
                             routerLink: ['/secretaria/caja'],
                         },
+
                         {
                             label: 'Prestamos',
                             icon: 'pi pi-fw pi-wallet',
                             routerLink: ['/secretaria/prestamos'],
+                        },
+                        {
+                            label: 'Dashboard Financiero',
+                            icon: 'pi pi-fw pi-chart-pie',
+                            routerLink: ['/caja-bancos/dashboard-financiero'],
                         },
                         {
                             label: 'Bancos',
@@ -215,6 +226,11 @@ export class AppMenuComponent implements OnInit {
                 {
                     label: 'Inventario',
                     items: [
+                        {
+                            label: 'Caja Inventario',
+                            icon: 'pi pi-wallet',
+                            routerLink: ['/secretaria/caja-operaciones'],
+                        },
                         {
                             label: 'Artículos',
                             icon: 'pi pi-shopping-bag',

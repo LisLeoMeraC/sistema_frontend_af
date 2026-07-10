@@ -33,6 +33,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TagModule } from 'primeng/tag';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { ChartModule } from 'primeng/chart';
 
 
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -47,6 +48,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ViewVentasComponent } from './view-ventas/view-ventas.component';
 import { VentasCacaoComponent } from './ventas-cacao/ventas-cacao.component';
 
+import { CajaOperacionesComponent } from './caja-operaciones/caja-operaciones.component';
+
 @NgModule({
   declarations: [
     ClientesComponent,
@@ -55,6 +58,7 @@ import { VentasCacaoComponent } from './ventas-cacao/ventas-cacao.component';
     InventarioComponent,
     VentasComponent,
     CajaComponent,
+    CajaOperacionesComponent,
     CompraCacaoComponent,
     ComprasComponent,
     ComprasSemanalesComponent,
@@ -94,7 +98,8 @@ import { VentasCacaoComponent } from './ventas-cacao/ventas-cacao.component';
     CheckboxModule,
     ProgressSpinnerModule,
     TagModule,
-    InputSwitchModule
+    InputSwitchModule,
+    ChartModule
   ],
   providers: [
   ]

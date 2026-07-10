@@ -1,0 +1,378 @@
+<p-toast></p-toast>
+
+<div class="grid">
+    <div class="col-12">
+        <!-- ##### HEADER PREMIUM ESTANDARIZADO ##### -->
+        <div class="card p-4 border-none shadow-premium mb-4 flex align-items-center justify-content-between bg-white overflow-hidden relative"
+            style="border-radius: 1.25rem;">
+            <div class="flex align-items-center relative z-1">
+                <div class="p-3 border-round-xl bg-orange-50 mr-4 shadow-sm">
+                    <i class="pi pi-wallet text-orange-600 text-3xl"></i>
+                </div>
+                <div>
+                    <h2 class="m-0 font-bold text-900 line-height-2 tracking-tight">Administración de Caja</h2>
+                    <p class="m-0 text-600 font-medium opacity-70">Gestión financiera y control transaccional para la
+                        compra y venta de maíz, arroz y demás productos agrícolas - AgroFranco</p>
+                </div>
+            </div>
+            <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Abrir Nueva Caja" icon="pi pi-plus"
+                    class="p-button-primary px-4 py-2 border-round-xl shadow-md font-bold"
+                    (click)="openCajaDialog()"></button>
+            </div>
+            <!-- Elemento decorativo de fondo -->
+            <div class="absolute -top-10 -right-10 bg-orange-50 border-circle opacity-50"
+                style="width: 250px; height: 250px;"></div>
+        </div>
+
+        <div class="card shadow-2 border-round-xl overflow-hidden">
+            <p-table [value]="cajasRegistradas" [rows]="10" [paginator]="true" [rowHover]="true"
+                responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines">
+
+                <ng-template pTemplate="header">
+                    <tr class="bg-gray-50">
+                        <th class="text-700 font-bold py-3">ID Caja</th>
+                        <th class="text-700 font-bold">Fecha Apertura</th>
+                        <th class="text-700 font-bold">Saldo Inicial</th>
+                        <th class="text-700 font-bold">Saldo Actual</th>
+                        <th class="text-700 font-bold">Fecha Cierre</th>
+                        <th class="text-center text-700 font-bold">Estado</th>
+                        <th class="text-center text-700 font-bold" style="width: 180px;">Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-caja>
+                    <tr class="hover:bg-gray-50 transition-all transition-duration-200">
+                        <td class="font-bold text-primary-600">#{{caja.id}}</td>
+                        <td class="text-700">{{caja.fechaApertura}}</td>
+                        <td class="font-semibold text-color-secondary">{{caja.saldoInicial | currency:'USD':'code'}}
+                        </td>
+                        <td class="font-semibold text-primary">{{caja.saldoActual | currency:'USD':'code'}}
+                        </td>
+                        <td class="text-500">{{caja.fechaCierre || 'N/A'}}</td>
+                        <td class="text-center">
+                            <p-tag [severity]="caja.estado ? 'info' : 'danger'"
+                                [value]="caja.estado ? 'ABIERTO' : 'CERRADO'" [rounded]="true" class="shadow-1"></p-tag>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex justify-content-center gap-2">
+                                <button pButton pRipple icon="pi pi-plus"
+                                    class="p-button-rounded p-button-primary p-button-text" pTooltip="Nueva Transacción"
+                                    (click)="openTransaccionDialog(caja.id)"
+                                    [disabled]="isNuevaTransaccionButtonDisabled(caja)"></button>
+
+                                <button pButton pRipple icon="pi pi-info-circle"
+                                    class="p-button-rounded p-button-info p-button-text" pTooltip="Ver Movimientos"
+                                    (click)="openViewCajaDialog(caja.id)"></button>
+
+                                <button *ngIf="caja.estado === false" pButton pRipple icon="pi pi-eye"
+                                    class="p-button-rounded p-button-secondary p-button-text"
+                                    pTooltip="Resumen de Cierre" (click)="openViewDetalleCajaDialog(caja.id)"></button>
+
+                                <button *ngIf="caja.estado === false" pButton pRipple icon="pi pi-print"
+                                    class="p-button-rounded p-button-success p-button-text" pTooltip="Generar Reporte"
+                                    (click)="generarReporte(caja.id)"></button>
+
+                                <button *ngIf="caja.estado === true" pButton pRipple icon="pi pi-lock"
+                                    class="p-button-rounded p-button-warning p-button-text" pTooltip="Cerrar Caja"
+                                    (click)="openCerrarCaja(caja.id)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center py-6">
+                            <i class="pi pi-inbox text-400 text-5xl mb-3 block"></i>
+                            <span class="text-600 font-medium">No se encontraron registros de caja</span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Apertura de Caja -->
+<p-dialog [(visible)]="openCajaModal" [modal]="true" [header]="'Apertura de Nueva Caja'" [draggable]="false"
+    [resizable]="false" [style]="{width: '400px'}" styleClass="custom-dialog shadow-8" [closable]="true">
+    <form [formGroup]="openCajaForm" (ngSubmit)="onSubmitOpenCaja()">
+        <div class="grid p-fluid mt-2">
+            <div class="field col-12">
+                <label class="font-bold text-700">Fecha de Inicio</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
+                            class="pi pi-calendar"></i></span>
+                    <p-calendar formControlName="fechaApertura" [showIcon]="false" dateFormat="dd/mm/yy"
+                        [showTime]="true" [appendTo]="'body'" class="w-full"></p-calendar>
+                </div>
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700">Fondo Inicial ($)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
+                            class="pi pi-dollar"></i></span>
+                    <input type="text" pInputText formControlName="saldoInicial" pKeyFilter="money"
+                        placeholder="0.00" />
+                </div>
+                <small class="p-error block mt-1"
+                    *ngIf="openCajaForm.get('saldoInicial')?.invalid && openCajaForm.get('saldoInicial')?.touched">
+                    Monto inicial obligatorio (formato numérico).
+                </small>
+            </div>
+        </div>
+
+        <div class="flex justify-content-between gap-2 mt-5 border-top-1 surface-border pt-4">
+            <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text p-button-secondary border-round-lg"
+                (click)="closeCajaDialog()" type="button"></button>
+            <button pButton label="Confirmar Apertura" icon="pi pi-check"
+                class="p-button-primary shadow-2 border-round-lg px-4" type="submit"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Modal: Nueva Transacción -->
+<p-dialog [(visible)]="openTransaccionModal" [modal]="true" [header]="'Registro de Transacción'" [draggable]="false"
+    [style]="{width: '450px'}" styleClass="custom-dialog shadow-8" [closable]="true">
+    <form [formGroup]="openTransaccionForm" (ngSubmit)="onSubmitTransaccion()">
+        <div class="grid p-fluid mt-2">
+            <div class="field col-12">
+                <label class="font-bold text-700">ID Caja Referencia</label>
+                <div class="p-inputgroup shadow-sm">
+                    <span class="p-inputgroup-addon border-none bg-gray-100"><i class="pi pi-id-card"></i></span>
+                    <input type="text" pInputText formControlName="idCaja" [readonly]="true"
+                        class="bg-gray-50 border-none" />
+                </div>
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700 text-sm mb-2 block uppercase text-primary">Tipo de Movimiento</label>
+                <p-dropdown [options]="tipoTransaccion" optionLabel="tipo" formControlName="tipoTransaccion"
+                    placeholder="Seleccione Ingreso/Egreso" [showClear]="true" [appendTo]="'body'"
+                    styleClass="w-full border-round-lg"></p-dropdown>
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700">Asunto / Descripción</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
+                            class="pi pi-file-edit"></i></span>
+                    <input type="text" pInputText formControlName="descripcion"
+                        placeholder="Motivo del movimiento..." />
+                </div>
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700">Monto del Movimiento</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary"><i
+                            class="pi pi-money-bill"></i></span>
+                    <input type="text" pInputText formControlName="monto" pKeyFilter="money" placeholder="0.00" />
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-content-end gap-2 mt-5 border-top-1 surface-border pt-4">
+            <button pButton label="Descartar" icon="pi pi-times"
+                class="p-button-text p-button-secondary border-round-lg" (click)="closeTransaccionDialog()"
+                type="button"></button>
+            <button pButton label="Registrar" icon="pi pi-save" class="p-button-primary shadow-2 border-round-lg px-4"
+                type="submit"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Modal: Detalle de Movimientos (Ingresos/Egresos) -->
+<p-dialog [(visible)]="openViewCajaModal" [modal]="true" header="Movimientos de Caja" [style]="{width: '75vw'}"
+    styleClass="custom-dialog shadow-8" [closable]="true">
+
+    <div class="grid px-2 mt-2">
+        <!-- Columna Ingresos -->
+        <div class="col-12 lg:col-6">
+            <div class="card border-none shadow-1 border-round-xl p-0 overflow-hidden"
+                style="border-top: 4px solid #22c55e !important; background: #f0fdf4;">
+                <div class="p-3 flex justify-content-between align-items-center">
+                    <h5 class="m-0 font-bold text-green-700"><i class="pi pi-arrow-down-left mr-2"></i>INGRESOS</h5>
+                    <span class="text-xs font-medium text-green-600 uppercase tracking-wider">Entradas</span>
+                </div>
+                <p-table [value]="ingresos" [rows]="5" [paginator]="true" styleClass="p-datatable-sm no-border">
+                    <ng-template pTemplate="header">
+                        <tr class="bg-white-alpha-50">
+                            <th class="text-xs text-600 uppercase py-2">Descripción</th>
+                            <th class="text-xs text-600 uppercase py-2" style="width: 70px;">Hora</th>
+                            <th class="text-xs text-600 uppercase py-2 text-right" style="width: 90px;">Monto</th>
+                            <th class="py-2" style="width: 40px;"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-transaccion>
+                        <tr class="bg-white hover:bg-green-50 transition-colors transition-duration-150">
+                            <td class="text-700 text-sm py-2">{{ transaccion.descripcion }}</td>
+                            <td class="text-500 text-xs py-2">{{ formatHora(transaccion.hora) }}</td>
+                            <td class="text-green-700 font-bold text-sm py-2 text-right">$ {{ transaccion.monto |
+                                number:'1.2-2' }}</td>
+                            <td class="text-center py-2 px-1">
+                                <button pButton icon="pi pi-trash"
+                                    class="p-button-danger p-button-text p-button-rounded py-1"
+                                    style="width: 2rem; height: 2rem;"
+                                    [disabled]="isEliminarTransaccionButtonDisabled(transaccion, idCaja)"
+                                    (click)="confirmDeleteTransaccion(transaccion, idCaja)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div
+                    class="p-3 bg-white-alpha-70 border-top-1 surface-border flex justify-content-between align-items-center">
+                    <span class="text-600 font-semibold text-xs uppercase">Total Ingresos</span>
+                    <span class="text-xl font-bold text-green-700">{{totalIngresos | currency}}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Egresos -->
+        <div class="col-12 lg:col-6">
+            <div class="card border-none shadow-1 border-round-xl p-0 overflow-hidden"
+                style="border-top: 4px solid #ef4444 !important; background: #fef2f2;">
+                <div class="p-3 flex justify-content-between align-items-center">
+                    <h5 class="m-0 font-bold text-red-700"><i class="pi pi-arrow-up-right mr-2"></i>EGRESOS</h5>
+                    <span class="text-xs font-medium text-red-600 uppercase tracking-wider">Salidas</span>
+                </div>
+                <p-table [value]="egresos" [rows]="5" [paginator]="true" styleClass="p-datatable-sm no-border">
+                    <ng-template pTemplate="header">
+                        <tr class="bg-white-alpha-50">
+                            <th class="text-xs text-600 uppercase py-2">Descripción</th>
+                            <th class="text-xs text-600 uppercase py-2" style="width: 70px;">Hora</th>
+                            <th class="text-xs text-600 uppercase py-2 text-right" style="width: 90px;">Monto</th>
+                            <th class="py-2" style="width: 40px;"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-transaccion>
+                        <tr class="bg-white hover:bg-red-50 transition-colors transition-duration-150">
+                            <td class="text-700 text-sm py-2">{{ transaccion.descripcion }}</td>
+                            <td class="text-500 text-xs py-2">{{ formatHora(transaccion.hora) }}</td>
+                            <td class="text-red-700 font-bold text-sm py-2 text-right">$ {{ transaccion.monto |
+                                number:'1.2-2' }}</td>
+                            <td class="text-center py-2 px-1">
+                                <button pButton icon="pi pi-trash"
+                                    class="p-button-danger p-button-text p-button-rounded py-1"
+                                    style="width: 2rem; height: 2rem;"
+                                    [disabled]="isEliminarTransaccionButtonDisabled(transaccion, idCaja)"
+                                    (click)="confirmDeleteTransaccion(transaccion, idCaja)"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div
+                    class="p-3 bg-white-alpha-70 border-top-1 surface-border flex justify-content-between align-items-center">
+                    <span class="text-600 font-semibold text-xs uppercase">Total Egresos</span>
+                    <span class="text-xl font-bold text-red-700">{{totalEgresos | currency}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+<!-- Modal: Cierre de Caja -->
+<p-dialog [(visible)]="closeCajaModal" [modal]="true" header="Proceso de Cierre de Caja" [draggable]="false"
+    [style]="{width: '400px'}" styleClass="custom-dialog shadow-8" [closable]="true">
+    <form [formGroup]="closeCajaForm" (ngSubmit)="onSubmitcloseCaja()">
+        <div class="grid p-fluid mt-2 text-center px-3">
+            <div class="col-12 mb-3">
+                <i class="pi pi-lock-open text-warning text-4xl mb-2"></i>
+                <p class="text-600 text-sm">Está por finalizar el ciclo de esta caja. Asegure contar el efectivo físico.
+                </p>
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700">ID Caja Actual</label>
+                <input type="text" pInputText formControlName="idCaja" [readonly]="true"
+                    class="bg-gray-100 text-center font-bold border-none" />
+            </div>
+
+            <div class="field col-12">
+                <label class="font-bold text-700">Dinero Contado en Caja ($)</label>
+                <div class="p-inputgroup shadow-sm">
+                    <span class="p-inputgroup-addon border-none bg-primary-50 text-primary">💰</span>
+                    <input type="text" pInputText formControlName="efectivoCaja" pKeyFilter="money"
+                        class="text-lg font-bold" placeholder="0.00" />
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-column gap-2 mt-5 border-top-1 surface-border pt-4 px-3 pb-3">
+            <button pButton label="Completar Cierre de Caja" icon="pi pi-lock"
+                class="p-button-warning shadow-2 border-round-lg py-3 font-bold" type="submit"></button>
+            <button pButton label="Atrás, continuar operando" icon="pi pi-chevron-left"
+                class="p-button-text p-button-secondary border-round-lg" (click)="closeCerrarCaja()"
+                type="button"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Modal: Resumen de Caja Cerrada -->
+<p-dialog [(visible)]="openDetalleCajaModal" [closable]="true" [modal]="true" header="Resumen Financiero Consolidado"
+    [style]="{width: '550px'}" styleClass="custom-dialog shadow-8">
+
+    <div class="p-fluid grid px-3">
+        <div
+            class="col-12 mb-4 bg-primary-50 p-3 border-round-xl border-left-3 border-primary flex justify-content-between align-items-center">
+            <div>
+                <span class="text-xs font-bold text-primary uppercase block">Caja Auditada</span>
+                <span class="text-xl font-bold text-primary-900">ID: {{cajaDetalle?.id}}</span>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-bold text-700 uppercase block">Fecha Apertura</span>
+                <span class="text-sm font-medium text-700">{{cajaDetalle?.fechaApertura | date:'dd-MM-yy HH:mm'}}</span>
+            </div>
+        </div>
+
+        <!-- Bloque de Totales -->
+        <div class="col-12 md:col-6 mb-3">
+            <div class="p-3 border-round-xl surface-50 border-1 surface-border">
+                <span class="text-xs font-bold text-500 uppercase block mb-1">Saldo Inicial</span>
+                <span class="text-lg font-bold text-900">{{cajaDetalle?.saldoInicial | currency}}</span>
+            </div>
+        </div>
+        <div class="col-12 md:col-6 mb-3">
+            <div class="p-3 border-round-xl bg-blue-50 border-1 border-blue-100">
+                <span class="text-xs font-bold text-blue-500 uppercase block mb-1">Saldo Final (Calculado)</span>
+                <span class="text-lg font-bold text-blue-900">{{cajaDetalle?.saldoFinal | currency}}</span>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-6 mb-3">
+            <div class="p-3 border-round-xl bg-green-50 border-1 border-green-100">
+                <span class="text-xs font-bold text-green-600 uppercase block mb-1">Total Ingresos</span>
+                <span class="text-lg font-bold text-green-700">+ {{cajaDetalle?.totalIngreso | currency}}</span>
+            </div>
+        </div>
+        <div class="col-12 md:col-6 mb-3">
+            <div class="p-3 border-round-xl bg-red-50 border-1 border-red-100">
+                <span class="text-xs font-bold text-red-600 uppercase block mb-1">Total Egresos</span>
+                <span class="text-lg font-bold text-red-700">- {{cajaDetalle?.totalEgresos | currency}}</span>
+            </div>
+        </div>
+
+        <div class="col-12 mt-2">
+            <div class="p-4 border-round-xl shadow-1 flex justify-content-between align-items-center"
+                [ngClass]="cajaDetalle?.discrepancia == 0 ? 'bg-green-500 text-white' : 'bg-orange-500 text-white'">
+                <div>
+                    <span class="text-xs uppercase font-bold opacity-80">Efectivo Físico Reportado</span>
+                    <span class="text-2xl font-bold block">{{cajaDetalle?.efectivoCaja | currency}}</span>
+                </div>
+                <div class="text-right border-left-1 border-white-alpha-30 pl-4">
+                    <span class="text-xs uppercase font-bold opacity-80">Discrepancia</span>
+                    <span class="text-2xl font-bold block">{{cajaDetalle?.discrepancia | currency}}</span>
+                    <small class="text-xs font-medium">{{cajaDetalle?.tipoDiscrepancia}}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Confirmación Global -->
+<p-confirmDialog header="Confirmación Requerida" key="confirm" icon="pi pi-exclamation-triangle"
+    [style]="{ width: '400px' }" acceptLabel="Confirmar" rejectLabel="Cancelar"
+    styleClass="custom-confirm-dialog shadow-8"></p-confirmDialog>

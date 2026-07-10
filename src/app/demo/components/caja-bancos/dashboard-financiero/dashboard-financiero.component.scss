@@ -1,0 +1,44 @@
+.report-container {
+    background: #f4f6f9;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.action-bar {
+    @media print {
+        display: none !important;
+    }
+}
+
+.paper {
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    @media print {
+        box-shadow: none !important;
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+        border-radius: 0 !important;
+    }
+}
+
+.kpi-card {
+    transition: transform 0.2s;
+    border: 1px solid var(--surface-border);
+    
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+}
+
+.table-row-inactiva {
+    color: var(--text-color-secondary) !important;
+    background-color: var(--surface-100) !important;
+    opacity: 0.7;
+}
+
+.table-row-cero {
+    color: var(--text-color-secondary) !important;
+}

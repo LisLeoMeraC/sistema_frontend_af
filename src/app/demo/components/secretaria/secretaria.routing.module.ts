@@ -1,6 +1,7 @@
 
 import { RouterModule, Routes } from "@angular/router";
 import { CajaComponent } from "./caja/caja.component";
+import { CajaOperacionesComponent } from "./caja-operaciones/caja-operaciones.component";
 import { ReporteCierreCajaComponent } from "./caja/reporte-cierre-caja/reporte-cierre-caja.component";
 import { ClientesComponent } from "./clientes/clientes.component";
 import { CompraCacaoComponent } from "./compra-cacao/compra-cacao.component";
@@ -22,6 +23,7 @@ const routes: Routes=[
     {path:'prestamos', component:PrestamosComponent},
     {path:'ventas', component:VentasComponent},
     {path:'caja', component:CajaComponent},
+    {path:'caja-operaciones', component:CajaOperacionesComponent},
     {path:'caja/reporte', component:ReporteCierreCajaComponent},
     {path:'compras-cacao', component:CompraCacaoComponent},
     {path:'ventas-cacao', component:VentasCacaoComponent},

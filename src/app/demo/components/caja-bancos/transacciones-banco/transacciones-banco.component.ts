@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TransaccionBancariaService } from '../../../service/transaccion-bancaria.service';
 import { CuentaBancariaService } from '../../../service/cuenta-bancaria.service';
 import { CuentaBancaria, TransaccionBancariaDTO, DepositoRetiroDTO } from '../../../api/caja-bancos';
@@ -27,9 +28,15 @@ export class TransaccionesBancoComponent implements OnInit {
   transaccionSeleccionadaParaComprobante: TransaccionBancariaDTO | null = null;
   archivoComprobante: File | null = null;
 
+  // Variables para reporte
+  reporteDialog: boolean = false;
+  fechaInicioReporte: Date | null = null;
+  fechaFinReporte: Date | null = null;
+
   constructor(
     private transaccionService: TransaccionBancariaService,
-    private cuentaService: CuentaBancariaService
+    private cuentaService: CuentaBancariaService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -226,6 +233,38 @@ export class TransaccionesBancoComponent implements OnInit {
       });
     } else {
       Swal.fire('Atención', 'Debe seleccionar un archivo', 'warning');
+    }
+  }
+
+  // Métodos para el reporte
+  openReporteDialog() {
+    if (!this.cuentaSeleccionada) {
+      Swal.fire('Atención', 'Debe seleccionar una cuenta bancaria primero', 'warning');
+      return;
+    }
+    this.fechaInicioReporte = null;
+    this.fechaFinReporte = null;
+    this.reporteDialog = true;
+  }
+
+  hideReporteDialog() {
+    this.reporteDialog = false;
+  }
+
+  generarReporte() {
+    if (this.fechaInicioReporte && this.fechaFinReporte && this.cuentaSeleccionada?.id) {
+      const inicio = this.fechaInicioReporte.toISOString();
+      // Agregar 23:59:59 a la fecha fin
+      const finDate = new Date(this.fechaFinReporte);
+      finDate.setHours(23, 59, 59, 999);
+      const fin = finDate.toISOString();
+
+      this.reporteDialog = false;
+      this.router.navigate([`/caja-bancos/reporte-libro-bancos/${this.cuentaSeleccionada.id}`], {
+        queryParams: { inicio, fin }
+      });
+    } else {
+      Swal.fire('Atención', 'Seleccione el rango de fechas', 'warning');
     }
   }
 

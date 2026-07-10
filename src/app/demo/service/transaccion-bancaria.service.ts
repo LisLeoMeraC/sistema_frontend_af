@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import baseUrl from './helper';
-import { TransaccionBancariaDTO, DepositoRetiroDTO } from '../api/caja-bancos';
+import { TransaccionBancariaDTO, DepositoRetiroDTO, ReporteLibroBancosDTO } from '../api/caja-bancos';
 
 @Injectable({
   providedIn: 'root'
@@ -34,5 +34,9 @@ export class TransaccionBancariaService {
 
   eliminarComprobante(id: number): Observable<any> {
     return this.http.delete(`${baseUrl}/transacciones-bancarias/${id}/comprobante`);
+  }
+
+  generarReporte(cuentaId: number, inicio: string, fin: string): Observable<ReporteLibroBancosDTO> {
+    return this.http.get<ReporteLibroBancosDTO>(`${baseUrl}/transacciones-bancarias/reporte/${cuentaId}?inicio=${inicio}&fin=${fin}`);
   }
 }
