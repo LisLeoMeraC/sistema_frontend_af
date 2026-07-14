@@ -1,0 +1,88 @@
+<div class="p-3">
+    <!-- Header -->
+    <div class="flex align-items-center justify-content-between mb-4">
+        <h2 class="m-0 font-bold text-900" style="font-size: 1.75rem;">Dashboard</h2>
+        <!-- Optional avatar for manager -->
+        <div class="w-2rem h-2rem border-circle bg-gray-300 flex align-items-center justify-content-center overflow-hidden">
+            <i class="pi pi-user text-gray-600"></i>
+        </div>
+    </div>
+
+    <!-- Main Blue Card (Dinero disponible) -->
+    <div class="main-card mb-4">
+        <div class="text-blue-100 text-sm font-medium mb-1">Disponible en Caja</div>
+        <div class="font-bold mb-4" style="font-size: 2.2rem;">
+            {{ liquidezTotal | currency:'USD' }}
+        </div>
+        
+        <!-- Progress bar or metric decoration -->
+        <div class="w-full bg-blue-400 border-round mb-2" style="height: 4px; opacity: 0.5;">
+            <div class="bg-white border-round h-full" style="width: 70%;"></div>
+        </div>
+        <div class="flex justify-content-between text-xs text-blue-100 font-medium">
+            <span>Objetivo mensual: $20,000</span>
+            <span>70%</span>
+        </div>
+    </div>
+
+    <!-- Daily Spends / Últimas Compras -->
+    <div class="flex align-items-center justify-content-between mb-3">
+        <span class="text-xs font-bold text-500 uppercase" style="letter-spacing: 0.5px;">Últimas Compras</span>
+        <span class="text-xs font-bold text-blue-500 cursor-pointer">Ver Todas</span>
+    </div>
+
+    <div class="glass-card mb-4">
+        <div class="spend-item" *ngFor="let item of ultimasCompras">
+            <div class="flex align-items-center">
+                <div class="icon-box" [ngClass]="item.bgClass">
+                    <i [class]="item.iconClass"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-900 text-sm">{{ item.cliente }}</div>
+                    <div class="font-bold text-900 mt-1">{{ item.monto | currency:'USD' }}</div>
+                </div>
+            </div>
+            <div class="text-xs text-500 font-medium">{{ item.fecha }}</div>
+        </div>
+    </div>
+
+    <!-- Wishlist / Opciones -->
+    <div class="flex align-items-center justify-content-between mb-3">
+        <span class="text-xs font-bold text-500 uppercase" style="letter-spacing: 0.5px;">Opciones</span>
+    </div>
+
+    <div class="wishlist-scroll">
+        <!-- Ver transacciones de caja -->
+        <button class="squircle-btn bg-blue-500 flex-shrink-0" (click)="navigate('/caja-bancos/transacciones-banco')">
+            <i class="pi pi-arrow-right-arrow-left"></i>
+            <span>Transacciones Caja</span>
+        </button>
+
+        <!-- Consultar ventas por cliente -->
+        <button class="squircle-btn bg-green-500 flex-shrink-0" (click)="navigate('/administrador/consulta-cacao')">
+            <i class="pi pi-chart-pie"></i>
+            <span>Ventas x Cliente</span>
+        </button>
+
+        <!-- Cuentas por pagar -->
+        <button class="squircle-btn bg-yellow-500 flex-shrink-0" (click)="navigate('/caja-bancos/cuentas-por-pagar')">
+            <i class="pi pi-money-bill"></i>
+            <span>Cuentas x Pagar</span>
+        </button>
+
+        <!-- Compras semanales -->
+        <button class="squircle-btn bg-red-500 flex-shrink-0" (click)="navigate('/administrador/compras-semanales')">
+            <i class="pi pi-shopping-cart"></i>
+            <span>Compras Semanales</span>
+        </button>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <i class="pi pi-home bottom-nav-item active" (click)="navigate('/pwa-gerente')"></i>
+    <i class="pi pi-heart bottom-nav-item"></i>
+    <i class="pi pi-arrow-left bottom-nav-item" (click)="goBack()"></i>
+    <i class="pi pi-map-marker bottom-nav-item"></i>
+    <i class="pi pi-user bottom-nav-item"></i>
+</div>

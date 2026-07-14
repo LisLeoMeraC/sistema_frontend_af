@@ -24,139 +24,14 @@ export class AppMenuComponent implements OnInit {
         if (userRole === 'Gerente') {
             this.model = [
                 {
-
                     items: [
                         {
-                            label: 'Inicio',
-                            icon: 'pi pi-home',
-                            routerLink: ['/administrador/dashboard-admi'],
+                            label: 'PWA Gerente',
+                            icon: 'pi pi-mobile',
+                            routerLink: ['/pwa-gerente'],
                         },
                     ],
-                },
-                {
-
-                    label: 'Administración',
-                    items: [
-                        {
-                            label: 'Usuarios',
-                            icon: 'pi pi-users',
-                            routerLink: ['/administrador/usuarios'],
-                        },
-                        {
-                            label: 'Clientes',
-                            icon: 'pi pi-fw pi-users',
-                            routerLink: ['/administrador/clientes'],
-                        },
-                        {
-                            label: 'Dashboard Financiero',
-                            icon: 'pi pi-fw pi-chart-pie',
-                            routerLink: ['/caja-bancos/dashboard-financiero'],
-                        },
-                        {
-                            label: 'Bancos',
-                            icon: 'pi pi-fw pi-building',
-                            routerLink: ['/caja-bancos/bancos'],
-                        },
-                        {
-                            label: 'Cuentas Bancarias',
-                            icon: 'pi pi-fw pi-id-card',
-                            routerLink: ['/caja-bancos/cuentas-bancarias'],
-                        },
-                        {
-                            label: 'Transacciones Bancarias',
-                            icon: 'pi pi-fw pi-arrow-right-arrow-left',
-                            routerLink: ['/caja-bancos/transacciones-banco'],
-                        },
-                        {
-                            label: 'Cuentas por Pagar',
-                            icon: 'pi pi-fw pi-money-bill',
-                            routerLink: ['/caja-bancos/cuentas-por-pagar'],
-                        },
-                        {
-                            label: 'Cuentas por Cobrar',
-                            icon: 'pi pi-fw pi-dollar',
-                            routerLink: ['/caja-bancos/cuentas-por-cobrar'],
-                        }
-                    ]
-                },
-
-                {
-                    label: 'Compras de Cacao',
-                    items: [
-                        {
-                            label: 'Compras en General',
-                            icon: 'pi pi-shopping-cart',
-                            routerLink: ['/administrador/compras-semanales'],
-                        },
-                        {
-                            label: 'Por Cliente Registrado',
-                            icon: 'pi pi-user-edit',
-                            routerLink: ['/administrador/consulta-cacao'],
-                        }
-                    ],
-
-                },
-
-                {
-                    label: 'Consultas',
-                    items: [
-                        {
-                            label: 'Inventario',
-                            icon: 'pi pi-th-large',
-                            routerLink: ['/administrador/inventario'],
-                        },
-                        {
-                            label: 'Caja',
-                            icon: 'pi pi-money-bill',
-                            routerLink: ['/administrador/caja'],
-                        },
-                        {
-                            label: 'Otras Compras y Ventas',
-                            icon: 'pi pi-cart-plus',
-                            routerLink: ['/administrador/view-otras-compras'],
-                        },
-                        {
-                            label: 'Reporte Mensual de Ventas',
-                            icon: 'pi pi-fw pi-calendar-plus',
-                            routerLink: ['/secretaria/reporte-mensual-clientes'],
-                        },
-                    ],
-
-                },
-                {
-                    label: 'Transacciones',
-                    items: [
-                        {
-                            label: 'Prestamos',
-                            icon: 'pi pi-fw pi-wallet',
-                            routerLink: ['/secretaria/prestamos'],
-                        },
-                        {
-                            label: 'Ventas',
-                            icon: 'pi pi-shopping-cart',
-                            routerLink: ['/secretaria/ventas'],
-                        },
-                        {
-                            label: 'Fijaciones',
-                            icon: 'pi pi-file-edit',
-                            routerLink: ['/administrador/fijaciones'],
-                        },
-                        {
-                            label: 'Balance Comercial',
-                            icon: 'pi pi-chart-line',
-                            routerLink: ['/administrador/balance-comercial'],
-                        },
-                        {
-                            label: 'Control RA',
-                            icon: 'pi pi-shield',
-                            routerLink: ['/administrador/control-ra'],
-                        },
-
-
-                    ]
-                },
-
-
+                }
             ];
         } else if (userRole === 'Secretario/a') {
             this.model = [

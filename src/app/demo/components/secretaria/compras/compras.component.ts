@@ -57,10 +57,12 @@ export class ComprasComponent implements OnInit {
     ) {
         this.registerCompra = this.fb.group({
             tipoCliente: [null, Validators.required],
+            cliente: [null], // Campo para nombre y apellido
             producto: [null, Validators.required],
             fechaCompra: [new Date(), Validators.required],
             cantidad: [null, Validators.required],
-            totalPagado: [null, Validators.required]
+            precioCompra: [null, Validators.required],
+            totalPagado: [{value: null, disabled: true}, Validators.required]
         });
         this.registerFormProducto = this.fb.group({
             nombreProducto: [null, Validators.required],
@@ -83,6 +85,16 @@ export class ComprasComponent implements OnInit {
                 // Actualiza la unidad de medida seleccionada
                 this.unidadMedidaSeleccionada =
                     productoSeleccionado?.unidad_medida || '';
+     });
+
+     // Calculate totalPagado automatically
+     this.registerCompra.valueChanges.subscribe((val) => {
+         if (val.cantidad && val.precioCompra) {
+             const total = (val.cantidad * val.precioCompra).toFixed(2);
+             this.registerCompra.get('totalPagado')?.setValue(total, { emitEvent: false });
+         } else {
+             this.registerCompra.get('totalPagado')?.setValue(null, { emitEvent: false });
+         }
      });
      this.registerVenta
             .get('nombreProducto')
@@ -143,10 +155,12 @@ export class ComprasComponent implements OnInit {
             tipoCliente: {
                 id: this.registerCompra.value.tipoCliente.value,
             }, // Asegurarse de enviar solo el ID
+            cliente: this.registerCompra.value.cliente,
             producto: { id: this.registerCompra.value.producto.id },
             fechaCompra: fechaCompra.toISOString(),
             cantidad: parseFloat(this.registerCompra.value.cantidad), // Convertir a número
-            totalPagado: parseFloat(this.registerCompra.value.totalPagado),
+            precioCompra: parseFloat(this.registerCompra.value.precioCompra),
+            totalPagado: parseFloat(this.registerCompra.getRawValue().totalPagado),
             tipo:'C'
         };
 

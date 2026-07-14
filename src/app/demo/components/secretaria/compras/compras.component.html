@@ -264,6 +264,11 @@
                 styleClass="w-full"></p-selectButton>
         </div>
 
+        <div class="field mb-4">
+            <label class="font-semibold text-700 block mb-1">Nombre y Apellido (Cliente)</label>
+            <input pInputText type="text" formControlName="cliente" placeholder="Ingrese nombre y apellido del cliente" class="w-full"/>
+        </div>
+
         <div class="grid">
             <div class="field col-12 mb-3">
                 <label class="font-semibold text-700 block mb-1">Fecha y Hora</label>
@@ -288,7 +293,15 @@
                     }})</label>
                 <div class="p-inputgroup">
                     <span class="p-inputgroup-addon"><i class="pi pi-tag"></i></span>
-                    <input type="text" pInputText formControlName="cantidad" placeholder="0.00" />
+                    <input type="number" pInputText formControlName="cantidad" placeholder="0.00" />
+                </div>
+            </div>
+
+            <div class="field col-12 mb-3">
+                <label class="font-semibold text-700 block mb-1">Precio de Compra ($)</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><i class="pi pi-money-bill"></i></span>
+                    <input type="number" pInputText formControlName="precioCompra" placeholder="0.00" />
                 </div>
             </div>
 

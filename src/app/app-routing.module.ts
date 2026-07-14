@@ -53,6 +53,7 @@ import { ViewComprasOtrosProductosComponent } from './demo/components/secretaria
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },
             { path: 'landing', loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) },
+            { path: 'pwa-gerente', loadChildren: () => import('./demo/components/pwa-gerente/pwa-gerente.module').then(m => m.PwaGerenteModule) },
             
             { path: '**', redirectTo: 'pages/notfound' },
         ], { scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload' })

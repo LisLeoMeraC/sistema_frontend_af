@@ -321,7 +321,7 @@ export class LoginComponent implements OnInit {
                     this.loginService.setUser(user);
                     const userRole = this.loginService.getUserRole();
                     if (userRole === 'Gerente') {
-                        this.router.navigate(['administrador/dashboard-admi']);
+                        this.router.navigate(['/pwa-gerente']);
                         this.loginService.loginStatusSubjec.next(true);
                     } else if (userRole === 'Secretario/a') {
                         this.router.navigate(['secretaria/dashboard']);
