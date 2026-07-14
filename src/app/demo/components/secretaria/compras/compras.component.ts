@@ -62,7 +62,7 @@ export class ComprasComponent implements OnInit {
             fechaCompra: [new Date(), Validators.required],
             cantidad: [null, Validators.required],
             precioCompra: [null, Validators.required],
-            totalPagado: [{value: null, disabled: true}, Validators.required]
+            totalPagado: [null, Validators.required]
         });
         this.registerFormProducto = this.fb.group({
             nombreProducto: [null, Validators.required],
@@ -87,15 +87,21 @@ export class ComprasComponent implements OnInit {
                     productoSeleccionado?.unidad_medida || '';
      });
 
-     // Calculate totalPagado automatically
-     this.registerCompra.valueChanges.subscribe((val) => {
-         if (val.cantidad && val.precioCompra) {
-             const total = (val.cantidad * val.precioCompra).toFixed(2);
+     // Calculate totalPagado automatically only when cantidad or precioCompra change
+     const calcularTotal = () => {
+         const cantidad = this.registerCompra.get('cantidad')?.value;
+         const precio = this.registerCompra.get('precioCompra')?.value;
+         if (cantidad && precio) {
+             const total = (cantidad * precio).toFixed(2);
              this.registerCompra.get('totalPagado')?.setValue(total, { emitEvent: false });
          } else {
              this.registerCompra.get('totalPagado')?.setValue(null, { emitEvent: false });
          }
-     });
+     };
+
+     this.registerCompra.get('cantidad')?.valueChanges.subscribe(calcularTotal);
+     this.registerCompra.get('precioCompra')?.valueChanges.subscribe(calcularTotal);
+
      this.registerVenta
             .get('nombreProducto')
             ?.valueChanges.subscribe((productoSeleccionado) => {
