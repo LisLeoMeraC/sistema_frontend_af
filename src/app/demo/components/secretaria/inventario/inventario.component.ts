@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, Message, MessageService } from 'primeng/api';
 import { ArticuloService } from 'src/app/demo/service/articulo.service';
+import { CajaService } from 'src/app/demo/service/caja.service';
 import { Articulo } from 'src/app/models/articulo';
 import { IngresoStock } from 'src/app/models/ingresoStock';
 
@@ -34,7 +35,8 @@ export class InventarioComponent implements OnInit {
         private messageService: MessageService,
         private fb: FormBuilder,
         private articuloService: ArticuloService,
-        private confirmationService: ConfirmationService
+        private confirmationService: ConfirmationService,
+        private cajaService: CajaService
     ) {
         this.registerForm = this.fb.group({
             codigo: [null, Validators.required],
@@ -43,7 +45,7 @@ export class InventarioComponent implements OnInit {
             fechaVencimiento: [new Date(), Validators.required],
             unidades: [
                 '',
-                [Validators.required, Validators.pattern('^[0-9]*$')],
+                [Validators.required, Validators.pattern('^\\d+(\\.\\d+)?$')],
             ],
             precioVenta: [
                 '',
@@ -67,7 +69,7 @@ export class InventarioComponent implements OnInit {
             fechaVencimiento: [new Date(), Validators.required],
             unidades: [
                 '',
-                [Validators.required, Validators.pattern('^[0-9]*$')],
+                [Validators.required, Validators.pattern('^\\d+(\\.\\d+)?$')],
             ],
             precioVenta: [
                 '',
@@ -171,9 +173,9 @@ export class InventarioComponent implements OnInit {
             nombreArticulo: ingreso.articulo.nombreArticulo,
             fechaIngreso: fechaIngreso,
             fechaVencimiento: fechaVencimiento,
-            unidades: ingreso.unidades,
-            precioVenta: ingreso.precioVenta,
-            precioCompra: ingreso.precioCompra
+            unidades: ingreso.unidades != null ? String(ingreso.unidades) : '',
+            precioVenta: ingreso.precioVenta != null ? String(ingreso.precioVenta) : '',
+            precioCompra: ingreso.precioCompra != null ? String(ingreso.precioCompra) : ''
         });
     
         // Abrir el modal
@@ -187,8 +189,17 @@ export class InventarioComponent implements OnInit {
 
     onUpdateIngresoStock(){
         if (this.updateFormIngresoStock.invalid) {
-            // Si el formulario no es válido, no procedas
-            console.error("Formulario inválido");
+            // Marcar todos los campos como touched para mostrar errores visuales
+            Object.keys(this.updateFormIngresoStock.controls).forEach(key => {
+                this.updateFormIngresoStock.get(key)?.markAsTouched();
+                this.updateFormIngresoStock.get(key)?.markAsDirty();
+            });
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Formulario inválido',
+                detail: 'Por favor, revisa los campos obligatorios antes de actualizar.',
+            });
+            console.error("Formulario inválido", this.updateFormIngresoStock.controls);
             return;
         }
     
@@ -242,7 +253,7 @@ export class InventarioComponent implements OnInit {
     }
 
     registrarOrdenIngresoStock() {
-        const formValue = this.registerForm.value;
+        const formValue = this.registerForm.getRawValue();
         console.log('Código del artículo:', formValue.codigo);
         const ordenData: IngresoStock = {
             id: 0,
@@ -263,6 +274,18 @@ export class InventarioComponent implements OnInit {
                     summary: 'Éxito',
                     detail: 'Orden de ingreso de artículo registrado exitosamente.',
                 });
+
+                // Registrar egreso en caja de operaciones si hay precio de compra
+                const precioCompra = parseFloat(formValue.precioCompra);
+                const unidades = parseFloat(formValue.unidades);
+                if (precioCompra > 0 && unidades > 0) {
+                    this.registrarEgresoEnCajaOperaciones(
+                        precioCompra * unidades,
+                        formValue.nombreArticulo || 'Artículo',
+                        unidades
+                    );
+                }
+
                 this.onClear();
                 //this.registerForm.reset();
             },
@@ -409,5 +432,69 @@ export class InventarioComponent implements OnInit {
                 nombreArticulo: articulo.nombreArticulo,
             });
         }
+    }
+
+    /**
+     * Registra automáticamente un egreso en la caja de operaciones abierta
+     * cuando se realiza un ingreso de stock con precio de compra.
+     */
+    private registrarEgresoEnCajaOperaciones(montoTotal: number, nombreArticulo: string, unidades: number): void {
+        // Buscar la caja de operaciones abierta
+        this.cajaService.obtenerCajaAbierta('OPERACIONES').subscribe({
+            next: (cajaAbierta) => {
+                if (!cajaAbierta || !cajaAbierta.id) {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Caja no disponible',
+                        detail: 'No hay una caja de operaciones abierta. El egreso por compra no fue registrado.',
+                    });
+                    return;
+                }
+
+                const fechaHora = new Date();
+                const fechaHoraUTC = new Date(
+                    Date.UTC(
+                        fechaHora.getFullYear(),
+                        fechaHora.getMonth(),
+                        fechaHora.getDate(),
+                        fechaHora.getHours(),
+                        fechaHora.getMinutes(),
+                        fechaHora.getSeconds()
+                    )
+                ).toISOString();
+
+                const transaccionData = {
+                    caja: { id: cajaAbierta.id },
+                    tipoTransaccion: { id: 2 }, // 2 = Egreso
+                    fechaHora: fechaHoraUTC,
+                    descripcion: `Compra de inventario: ${unidades} unid. de ${nombreArticulo}`,
+                    monto: montoTotal,
+                };
+
+                this.cajaService.registrarTransaccion(transaccionData).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'info',
+                            summary: 'Egreso registrado',
+                            detail: `Se registró un egreso de $${montoTotal.toFixed(2)} en caja de operaciones.`,
+                        });
+                    },
+                    error: (err) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: err.error?.message || 'No se pudo registrar el egreso en caja de operaciones.',
+                        });
+                    },
+                });
+            },
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Caja no disponible',
+                    detail: 'No se encontró una caja de operaciones abierta. El egreso por compra no fue registrado.',
+                });
+            },
+        });
     }
 }
