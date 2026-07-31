@@ -31,7 +31,17 @@ export class VentasService {
     return this.http.get<pagosOrdenesVenta[]>(`${baseUrl}/ordenes-ventas/pagos/${ordenId}`);
   }
 
+  obtenerDetallesOrdenVenta(ordenId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${baseUrl}/ordenes-ventas/detalles/${ordenId}`);
+  }
+
   eliminarOrdenVenta(ordenId: number): Observable<any> {
     return this.http.delete(`${baseUrl}/ordenes-ventas/${ordenId}`);
+  }
+
+  descargarReporteDiario(fecha: string): Observable<Blob> {
+    return this.http.get(`${baseUrl}/ordenes-ventas/reporte-diario?fecha=${fecha}`, {
+      responseType: 'blob'
+    });
   }
 }

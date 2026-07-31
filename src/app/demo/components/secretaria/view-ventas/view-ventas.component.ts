@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -24,6 +24,9 @@ export class ViewVentasComponent implements OnInit {
 
   displayDialog: boolean = false;
   nuevoPagoForm: FormGroup;
+  displayDetallesDialog: boolean = false;
+  detallesVenta: any[] = [];
+  ordenSeleccionadaDetalle: ordenesVenta | null = null;
 
 
   tiposDePago = [
@@ -35,7 +38,7 @@ export class ViewVentasComponent implements OnInit {
 
 
   constructor(private ventaService: VentasService, private fb: FormBuilder, private messageService: MessageService, private router: Router,
-    private confirmationService: ConfirmationService) {
+    private confirmationService: ConfirmationService, private cdr: ChangeDetectorRef) {
 
     this.nuevoPagoForm = this.fb.group({
       idOrdenVenta: [null, Validators.required],
@@ -152,6 +155,39 @@ export class ViewVentasComponent implements OnInit {
         return of([]);
       })
     );
+  }
+
+  verDetalles(orden: ordenesVenta) {
+    this.ordenSeleccionadaDetalle = orden;
+    console.log("Solicitando detalles para la orden:", orden.id);
+    
+    this.ventaService.obtenerDetallesOrdenVenta(orden.id).subscribe({
+      next: (data) => {
+        console.log("Detalles recibidos:", data);
+        this.detallesVenta = data;
+        
+        // Timeout para asegurar que Angular detecte el cambio en el próximo ciclo
+        setTimeout(() => {
+          this.displayDetallesDialog = true;
+          this.cdr.detectChanges(); 
+          console.log("Modal displayDetallesDialog seteado a:", this.displayDetallesDialog);
+        }, 50);
+      },
+      error: (err) => {
+        console.error("Error al cargar detalles:", err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los detalles de la venta',
+        });
+      }
+    });
+  }
+
+  hideDetalles() {
+    this.displayDetallesDialog = false;
+    this.detallesVenta = [];
+    this.ordenSeleccionadaDetalle = null;
   }
 
   registrarPago() {

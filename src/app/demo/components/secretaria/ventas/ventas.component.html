@@ -44,6 +44,9 @@
                 </div>
             </div>
             <div class="flex gap-3 relative z-1">
+                <button pButton pRipple label="Reporte Diario" icon="pi pi-file-pdf"
+                    class="p-button-danger px-4 py-2 border-round-xl shadow-md font-bold" (click)="abrirDialogoReporte()">
+                </button>
                 <button pButton pRipple label="Historial de Ventas" icon="pi pi-history"
                     class="p-button-warning px-4 py-2 border-round-xl shadow-md font-bold" (click)="mostrarComponenteVenta()">
                 </button>
@@ -93,9 +96,9 @@
                 </button>
             </div>
 
-            <p-table [value]="ventas" [rows]="5" [rowHover]="true"
+            <p-table [value]="ventas" [rowHover]="true"
                 styleClass="p-datatable-gridlines p-datatable-sm"
-                [paginator]="true" responsiveLayout="scroll">
+                responsiveLayout="scroll">
 
                 <ng-template pTemplate="header">
                     <tr>
@@ -339,6 +342,32 @@
         <button pButton pRipple label="Finalizar Selección" icon="pi pi-check" type="button"
             class="p-button-text p-button-primary"
             (click)="closeModalDialogArticulos()">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<!-- ===== DIALOG: REPORTE DIARIO ===== -->
+<p-dialog [(visible)]="displayReporteDialog" [modal]="true" [closable]="true"
+    header="Generar Reporte Diario de Ventas"
+    [style]="{width: '400px'}" styleClass="border-round-xl shadow-5">
+
+    <div class="p-3">
+        <label class="font-semibold text-700 mb-2 block">Seleccione la fecha</label>
+        <div class="p-inputgroup">
+            <span class="p-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+            <p-calendar [(ngModel)]="fechaReporte" [showIcon]="true" dateFormat="dd/mm/yy" [appendTo]="'body'" placeholder="dd/mm/aaaa"></p-calendar>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" type="button"
+            class="p-button-text p-button-secondary"
+            (click)="cerrarDialogoReporte()">
+        </button>
+        <button pButton pRipple label="Descargar PDF" icon="pi pi-download" type="button"
+            class="p-button-danger border-round-lg"
+            [loading]="descargandoReporte"
+            (click)="descargarReporte()">
         </button>
     </ng-template>
 </p-dialog>

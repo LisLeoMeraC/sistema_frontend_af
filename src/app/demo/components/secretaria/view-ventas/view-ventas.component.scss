@@ -1,28 +1,19 @@
+/* ===== STATUS LABELS (tabla principal) ===== */
 .status-label {
-   padding: 0.25rem 0.5rem;
-   border-radius: 0.25rem;
-   font-weight: bold;
-   display: inline-block;
-   text-align: center;
-   min-width: 80px;
-}
-
-.status-activo {
-   background-color: #e79494;
-   color: #a81616;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
 }
 
 .status-pagado {
-   background-color: #c3e6cb;
-   color: #155724;
+    background: #dcfce7;
+    color: #15803d;
 }
 
-.dialog-header {
-   position: relative;
-}
-
-.cancel-button {
-   position: absolute;
-   top: 10px;
-   right: 10px;
+.status-activo {
+    background: #fef3c7;
+    color: #b45309;
 }

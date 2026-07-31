@@ -1,7 +1,7 @@
 <p-toast></p-toast>
-<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle"
-    [style]="{ width: '350px' }" acceptButtonStyleClass="p-button-text"
-    rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+<p-confirmDialog header="Confirmación" key="confirm" icon="pi pi-exclamation-triangle" [style]="{ width: '350px' }"
+    acceptButtonStyleClass="p-button-text" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+
 <div class="card" style="height: 30px">
     <h4 style="margin-top: -10px">Ordenes de ventas</h4>
 </div>
@@ -15,16 +15,10 @@
                     <button pButton pRipple label="Ir a Ventas" icon="pi pi-arrow-left" class="p-button-warning mr-2"
                         (click)="mostrarComponenteVenta()"></button>
                 </div>
-                <!--  <div class="flex">
-                    <span class="p-input-icon-left mr-2">
-                        <i class="pi pi-search"></i>
-                        <input pInputText type="text" placeholder="Nombre - Apellido - Cédula" />
-                    </span>
-
-                </div>-->
             </div>
             <div class="flex table-header"></div>
         </ng-template>
+
         <ng-template pTemplate="header">
             <tr>
                 <th style="width: 2rem; text-align: center;"></th>
@@ -36,6 +30,7 @@
                 <th style="text-align: center;">Acciones</th>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-orden let-expanded="expanded">
             <tr>
                 <td style="text-align: center;">
@@ -47,20 +42,18 @@
                 <td style="min-width: 1rem; text-align: center;">{{ orden.comprador }}</td>
                 <td style="min-width: -10rem; text-align: center;">{{ orden.fecha | date }}</td>
                 <td style="min-width: 7rem; text-align: center;">{{ orden.valorTotal | currency:'USD':'code' }}</td>
-
                 <td style="min-width: 7rem; text-align: center;">
                     <span [ngClass]="{
                         'status-label': true,
-                        'status-activo': !orden.estado,   
+                        'status-activo': !orden.estado,
                         'status-pagado': orden.estado
                     }">
                         {{ orden.estado ? 'Pagado' : 'Pendiente' }}
                     </span>
                 </td>
-
                 <td style="text-align: center;">
                     <button pButton pRipple type="button" icon="pi pi-eye" class="p-button-info mb-2 mr-2"
-                        pTooltip="Ver Detalles" tooltipPosition="top"></button>
+                        pTooltip="Ver Detalles" tooltipPosition="top" (click)="verDetalles(orden)"></button>
                     <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-success mr-2 mb-2"
                         pTooltip="Registrar Pago" tooltipPosition="top" (click)="showPagoDialog(orden)"
                         [disabled]="orden.estado"></button>
@@ -70,48 +63,55 @@
                 </td>
             </tr>
         </ng-template>
+
         <ng-template pTemplate="rowexpansion" let-orden>
             <tr>
                 <td colspan="7">
                     <div class="p-3">
                         <p-table [value]="orden.pagosOrdenesVenta" dataKey="id" responsiveLayout="scroll">
                             <ng-template pTemplate="header">
-            <tr>
-                <th style="text-align: center;">Id</th>
-                <th style="text-align: center;">Fecha Pago</th>
-                <th style="text-align: center;">Tipo de Pago</th>
-                <th style="text-align: center;">Monto Pagado</th>
-                <th style="text-align: center;">Saldo</th>
+                                <tr>
+                                    <th style="text-align: center;">Id</th>
+                                    <th style="text-align: center;">Fecha Pago</th>
+                                    <th style="text-align: center;">Tipo de Pago</th>
+                                    <th style="text-align: center;">Monto Pagado</th>
+                                    <th style="text-align: center;">Saldo</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-pago>
+                                <tr>
+                                    <td style="text-align: center;">{{ pago.id }}</td>
+                                    <td style="text-align: center;">{{ pago.fechaPago | date }}</td>
+                                    <td style="text-align: center;">{{ pago.tipoPago === 'E' ? 'Efectivo' : 'Transferencia' }}</td>
+                                    <td style="text-align: center;">{{ pago.valorPago | currency:'USD':'code' }}</td>
+                                    <td style="text-align: center;">{{ pago.saldo | currency:'USD':'code' }}</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="5">No hay pagos para esta venta.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-pago>
-            <tr>
-                <td style="text-align: center;">{{ pago.id }}</td>
-                <td style="text-align: center;">{{ pago.fechaPago | date }}</td>
-                <td style="text-align: center;">{{ pago.tipoPago === 'E' ? 'Efectivo' : 'Transferencia' }}</td>
-                <td style="text-align: center;">{{ pago.valorPago | currency:'USD':'code' }}</td>
-                <td style="text-align: center;">{{ pago.saldo | currency:'USD':'code' }}</td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="4">No hay pagos para esta venta.</td>
-            </tr>
-        </ng-template>
+
     </p-table>
 </div>
 
-
+<!-- ===== DIALOG: REGISTRAR PAGO ===== -->
 <p-dialog [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
     <form [formGroup]="nuevoPagoForm" (ngSubmit)="registrarPago()">
         <h3 style="text-align: center;" class="mt-3">Registro de Pago</h3>
-        <div class="dialog-header cancel-button ">
+        <div class="dialog-header cancel-button">
             <button pButton pRipple type="button" icon="pi pi-times" (click)="closePagoDialog()"
-                class="p-button-danger mr-2 "></button>
+                class="p-button-danger mr-2"></button>
         </div>
         <div class="grid p-fluid">
-            <div class="field col-12 ">
-                <div class="p-inputgroup ">
+            <div class="field col-12">
+                <div class="p-inputgroup">
                     <span class="p-inputgroup-addon">
                         <i class="pi pi-code"></i>
                     </span>
@@ -119,9 +119,7 @@
                         <input type="text" pInputText formControlName="idOrdenVenta" />
                         <label for="codigoPrestamo">Código de la orden</label>
                     </span>
-
                 </div>
-
                 <div class="p-inputgroup mt-4">
                     <span class="p-inputgroup-addon">
                         <i class="pi pi-calendar"></i>
@@ -133,9 +131,7 @@
                         <label for="fechaPago">Fecha del pago</label>
                     </span>
                 </div>
-
                 <div class="mt-4">
-
                     <span class="p-float-label">
                         <p-dropdown id="tipoPago" placeholder="Elija.." optionLabel="nombre" optionValue="valor"
                             [options]="tiposDePago" [showClear]="true" [appendTo]="'body'" formControlName="tipoPago">
@@ -143,7 +139,6 @@
                         <label for="tipoPago">Tipo de Pago</label>
                     </span>
                 </div>
-
                 <div class="p-inputgroup mt-4">
                     <span class="p-inputgroup-addon">
                         <i class="pi pi-dollar"></i>
@@ -161,4 +156,138 @@
             </div>
         </div>
     </form>
+</p-dialog>
+
+<!-- ===== DIALOG: VER DETALLES DE LA VENTA ===== -->
+<p-dialog [(visible)]="displayDetallesDialog" [modal]="true" [closable]="true"
+    [style]="{width: '75vw'}"
+    [breakpoints]="{'960px': '90vw', '640px': '98vw'}"
+    header="Detalle de la Orden"
+    styleClass="p-fluid">
+
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="flex align-items-center justify-content-center bg-primary-50 border-round" style="width: 3rem; height: 3rem">
+                <i class="pi pi-receipt text-primary text-2xl"></i>
+            </div>
+            <div>
+                <span class="font-bold text-xl block text-900">Detalle de la Venta</span>
+                <span class="text-500 font-medium" *ngIf="ordenSeleccionadaDetalle">
+                    Orden #{{ ordenSeleccionadaDetalle.id }} &nbsp;|&nbsp; {{ ordenSeleccionadaDetalle.fecha | date:'dd MMM yyyy, HH:mm' }}
+                </span>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="mt-3 mb-4" *ngIf="ordenSeleccionadaDetalle">
+        <div class="grid">
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="surface-card p-3 shadow-2 border-round-xl border-left-3 border-blue-500 h-full flex flex-column justify-content-between transition-all transition-duration-200 hover:shadow-4">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-1 text-sm uppercase">Comprador</span>
+                            <div class="text-900 font-bold text-lg white-space-nowrap overflow-hidden text-overflow-ellipsis" style="max-width: 130px;" [title]="ordenSeleccionadaDetalle.comprador">
+                                {{ ordenSeleccionadaDetalle.comprador }}
+                            </div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-blue-50 border-round-lg" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-user text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="surface-card p-3 shadow-2 border-round-xl border-left-3 border-purple-500 h-full flex flex-column justify-content-between transition-all transition-duration-200 hover:shadow-4">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-1 text-sm uppercase">Fecha Emisión</span>
+                            <div class="text-900 font-bold text-lg">{{ ordenSeleccionadaDetalle.fecha | date:'shortDate' }}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-purple-50 border-round-lg" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-calendar text-purple-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="surface-card p-3 shadow-2 border-round-xl border-left-3 border-orange-500 h-full flex flex-column justify-content-between transition-all transition-duration-200 hover:shadow-4">
+                    <div class="flex justify-content-between mb-3">
+                        <div>
+                            <span class="block text-500 font-medium mb-1 text-sm uppercase">Forma de Pago</span>
+                            <div class="text-900 font-bold text-lg">{{ ordenSeleccionadaDetalle.tipoPago === 'E' ? 'Efectivo' : 'Transferencia' }}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center bg-orange-50 border-round-lg" style="width:2.5rem;height:2.5rem">
+                            <i class="pi pi-wallet text-orange-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-6 lg:col-3">
+                <div class="surface-card p-3 shadow-2 border-round-xl border-left-3 h-full flex flex-column justify-content-between transition-all transition-duration-200 hover:shadow-4" 
+                    [ngClass]="ordenSeleccionadaDetalle.estado ? 'border-green-500' : 'border-yellow-500'">
+                    <div class="flex justify-content-between mb-2">
+                        <div>
+                            <span class="block text-500 font-medium mb-1 text-sm uppercase">Total de Venta</span>
+                            <div class="text-900 font-bold text-xl">{{ ordenSeleccionadaDetalle.valorTotal | currency:'USD' }}</div>
+                        </div>
+                        <div class="flex align-items-center justify-content-center border-round-lg" 
+                            [ngClass]="ordenSeleccionadaDetalle.estado ? 'bg-green-50' : 'bg-yellow-50'"
+                            style="width:2.5rem;height:2.5rem">
+                            <i class="pi text-xl" [ngClass]="ordenSeleccionadaDetalle.estado ? 'pi-check-circle text-green-500' : 'pi-clock text-yellow-500'"></i>
+                        </div>
+                    </div>
+                    <span class="font-semibold text-sm flex align-items-center gap-2" [ngClass]="ordenSeleccionadaDetalle.estado ? 'text-green-600' : 'text-yellow-600'">
+                        {{ ordenSeleccionadaDetalle.estado ? 'Cobrado' : 'Pago Pendiente' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="surface-card shadow-2 border-round-xl overflow-hidden mt-3">
+        <p-table [value]="detallesVenta" responsiveLayout="scroll" styleClass="p-datatable-sm" [rowHover]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm" style="width: 3rem; text-align: center;">#</th>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm">ARTÍCULO</th>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm text-center">CANTIDAD</th>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm text-center">UNIDAD</th>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm text-right">P. UNITARIO</th>
+                    <th class="bg-bluegray-50 text-bluegray-500 text-sm text-right">SUBTOTAL</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-detalle let-rowIndex="rowIndex">
+                <tr>
+                    <td class="text-center text-500">{{ rowIndex + 1 }}</td>
+                    <td class="font-medium text-700">
+                        <div class="flex align-items-center gap-2">
+                            <div class="w-2rem h-2rem surface-200 border-round flex align-items-center justify-content-center">
+                                <i class="pi pi-box text-500"></i>
+                            </div>
+                            {{ detalle.ingresoStock?.articulo?.nombreArticulo || detalle.articulo?.nombreArticulo || 'N/A' }}
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="bg-blue-50 text-blue-700 font-bold px-2 py-1 border-round">{{ detalle.cantidad }}</span>
+                    </td>
+                    <td class="text-center text-600">{{ detalle.unidadMedida }}</td>
+                    <td class="text-right text-700">{{ detalle.precioUnitario | currency:'USD' }}</td>
+                    <td class="text-right font-bold text-900">{{ (detalle.cantidad * detalle.precioUnitario) | currency:'USD' }}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-center p-4">
+                        <div class="flex flex-column align-items-center text-500">
+                            <i class="pi pi-inbox text-4xl mb-2"></i>
+                            <span>No se encontraron artículos.</span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
 </p-dialog>

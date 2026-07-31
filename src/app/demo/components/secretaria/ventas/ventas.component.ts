@@ -710,6 +710,50 @@ export class VentasComponent implements OnInit {
            }
        }
    */
-    //Metodos para busqueda
+    displayReporteDialog: boolean = false;
+    fechaReporte: Date = new Date();
+    descargandoReporte: boolean = false;
+
+    abrirDialogoReporte() {
+        this.displayReporteDialog = true;
+        this.fechaReporte = new Date();
+    }
+
+    cerrarDialogoReporte() {
+        this.displayReporteDialog = false;
+    }
+
+    descargarReporte() {
+        if (!this.fechaReporte) {
+            this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Debe seleccionar una fecha' });
+            return;
+        }
+
+        this.descargandoReporte = true;
+        const month = (this.fechaReporte.getMonth() + 1).toString().padStart(2, '0');
+        const day = this.fechaReporte.getDate().toString().padStart(2, '0');
+        const formattedDate = `${this.fechaReporte.getFullYear()}-${month}-${day}`;
+
+        this.ventasService.descargarReporteDiario(formattedDate).subscribe(
+            (blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reporte_ventas_diarias_${formattedDate}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                this.descargandoReporte = false;
+                this.cerrarDialogoReporte();
+                this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Reporte descargado' });
+            },
+            (error) => {
+                console.error('Error al descargar el reporte', error);
+                this.descargandoReporte = false;
+                this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo generar el reporte' });
+            }
+        );
+    }
 
 }
